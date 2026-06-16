@@ -1,0 +1,12 @@
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.extracted.txt
+__pycache__/
+.DS_Store
+Thumbs.db

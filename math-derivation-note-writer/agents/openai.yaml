@@ -1,0 +1,4 @@
+interface:
+  display_name: "Math Derivation Note Writer"
+  short_description: "Expand formulas and proofs into step-by-step LaTeX notes."
+  default_prompt: "Use $math-derivation-note-writer to expand these formulas or proofs into a clear Chinese LaTeX study-note section."

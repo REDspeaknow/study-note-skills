@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagram Mechanism Note Writer"
+  short_description: "Create mechanism chains and editable TikZ figures."
+  default_prompt: "Use $diagram-mechanism-note-writer to create LaTeX mechanism chains and TikZ diagrams for these course materials."

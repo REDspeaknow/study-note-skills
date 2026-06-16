@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto Study Note Orchestrator"
+  short_description: "Build complete LaTeX/PDF study guides with content-type subagents."
+  default_prompt: "Use $auto-study-note-orchestrator to turn my selected course materials into a complete Chinese LaTeX/PDF study guide, automatically dispatching content-type specialist subagents and running coverage audit."

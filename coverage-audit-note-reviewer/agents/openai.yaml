@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coverage Audit Note Reviewer"
+  short_description: "Audit study-guide PDFs against source coverage inventories."
+  default_prompt: "Use $coverage-audit-note-reviewer to check this generated study guide against the source inventory and find omissions before delivery."

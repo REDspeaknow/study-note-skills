@@ -1,0 +1,4 @@
+interface:
+  display_name: "Concept Outline Note Writer"
+  short_description: "Synthesize definitions and textual knowledge into LaTeX notes."
+  default_prompt: "Use $concept-outline-note-writer to turn these textual course knowledge points into a Chinese LaTeX study-note section."
