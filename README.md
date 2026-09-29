@@ -1,51 +1,51 @@
-# Study Note Skills
+# 学习笔记 Skills
 
-Codex skills for building complete, concept-first Chinese LaTeX/PDF study guides from course materials.
+这是一套用于把课程资料整理成中文 LaTeX/PDF 学习笔记的 Codex Skills。默认先写完整概念正文，再补充必要的推导与图表，并逐项核对来源覆盖情况。
 
-The suite uses `study-note-style-v1`, derived from the bundled `通用笔记模板.tex`: compact green/blue/cream layout, borderless clickable contents, Times New Roman for ordinary Latin text, XITS Math, a source-grounded core-knowledge map for 1–3 main sections or chapter map for 4 or more, and topic-separated page-breakable formula summary tables.
+全套笔记使用 `study-note-style-v1`，以 `通用笔记模板.tex` 为版式基准：紧凑的绿、蓝、米白配色；可点击且无红框的目录；西文使用 Times New Roman，数学使用 XITS Math；1–3 个正文主章节绘制核心知识关系导图，4 章及以上绘制章节关系导图；末尾使用按主题分组、可跨页的公式速查表。
 
-## Skills
+## 组成
 
-- `auto-study-note-orchestrator`: inventories materials, batches long sources, drafts concepts first, dispatches specialists, integrates the canonical template, and runs final audit.
-- `concept-outline-note-writer`: writes complete concept bodies with priority, scope, relations, cases, exam cues, and mistakes.
-- `math-derivation-note-writer`: attaches source-faithful derivations and compact formula summaries to established concepts.
-- `diagram-mechanism-note-writer`: rejects unnecessary visuals and creates the smallest justified chain, table, or TikZ figure.
-- `coverage-audit-note-reviewer`: audits item-level coverage, layout, fonts, links, visual balance, compile logs, and PDF quality.
+- `auto-study-note-orchestrator`：盘点资料、规划长资料批次、统筹写作、整合模板并完成最终检查。
+- `concept-outline-note-writer`：编写定义、适用条件、相邻概念关系、案例、考试提示和易错点。
+- `math-derivation-note-writer`：在概念正文之后补充推导，并整理简短的公式速查内容。
+- `diagram-mechanism-note-writer`：判断图表是否必要，只绘制有资料依据的机制图或比较表。
+- `coverage-audit-note-reviewer`：可在后期需要独立复核时检查覆盖情况、版式、字体、链接及 PDF 质量；不会在任务开始时自动创建。
 
-The canonical template and style package live under `auto-study-note-orchestrator/assets/`. Generated notes should copy both files instead of rebuilding the preamble.
+权威模板与样式文件位于 `auto-study-note-orchestrator/assets/`。生成笔记时应复制这两个文件，不要重新拼写导言区。
 
-## Install
+## 安装与调用
 
-Copy the skill folders into your Codex skills directory:
+将五个 Skill 文件夹复制到 Codex 的个人 Skills 目录：
 
 ```powershell
 Copy-Item -Recurse .\auto-study-note-orchestrator,.\math-derivation-note-writer,.\concept-outline-note-writer,.\diagram-mechanism-note-writer,.\coverage-audit-note-reviewer "$env:USERPROFILE\.codex\skills"
 ```
 
-Then invoke:
+调用总编排器时可以说：
 
 ```text
-Use $auto-study-note-orchestrator to turn my selected course materials into a concept-first Chinese LaTeX/PDF study guide using study-note-style-v1.
+使用 $auto-study-note-orchestrator，把我指定的课程资料整理成采用 study-note-style-v1 的中文 LaTeX/PDF 学习笔记。
 ```
 
-The orchestrator automatically assigns drafting work to concept, math, and visual specialists by content type unless the user explicitly opts out. The coverage-audit reviewer is available for a separate final review when needed; it is not created at the start.
+默认按内容类型安排概念、数学和图表写作器；用户可以明确要求不使用子代理。总编排器负责常规覆盖审计，独立覆盖审计器只在后期确有需要时使用。
 
-## Validate a Generated Note
+## 编译与校验
 
-Compile with XeLaTeX on demand until the table of contents, bookmarks, and references are stable, then validate:
+先运行一次 XeLaTeX；仅当目录、书签或交叉引用尚未稳定时继续编译：
 
 ```powershell
 python .\auto-study-note-orchestrator\scripts\compile_study_note.py `
-  --tex '<output>\notes.tex'
+  --tex '<输出目录>\notes.tex'
 python .\auto-study-note-orchestrator\scripts\validate_study_note.py `
-  --tex '<output>\notes.tex' `
-  --pdf '<output>\notes.pdf' `
-  --log '<output>\notes.log' `
-  --inventory '<output>\source_inventory.md'
+  --tex '<输出目录>\notes.tex' `
+  --pdf '<输出目录>\notes.pdf' `
+  --log '<输出目录>\notes.log' `
+  --inventory '<输出目录>\source_inventory.md'
 ```
 
-The compiler starts with one pass and reruns only when needed. The read-only validator checks the canonical style marker, document order, relationship-map type or documented omission, formula-summary interface, A4 output, embedded Times New Roman and XITS Math resources, visible link borders, extractable text, compile blockers, and concept/visual counts.
+只读校验器检查样式版本、章节顺序、导图类型或省略原因、公式速查表接口、A4 页面、PDF 字体资源、链接边框、文字可提取性及编译错误，并报告概念与视觉内容数量。
 
-There is no hard maximum-page setting for generated notes. The `80`, `120`, and `200` source-page thresholds trigger inventory, batching, and deeper coverage checks; the `source_pages / 8` and `25 pages for a 200+ page source` rules flag outputs that may be implausibly short unless the user asked for a compressed summary.
+笔记没有固定的最大页数。来源资料达到 80、120、200 页等阈值时，会加强逐项清单、分批和覆盖检查；`来源页数 / 8`、以及 200 页以上资料对应的 25 页，是“成品可能过短”的审计警示，不是输出页数上限。
 
-`auto-study-note-orchestrator/tests/multipage-toc-smoke.tex` is the regression fixture for multi-page contents, priority symbols, Latin/math/code fonts, and link borders.
+`auto-study-note-orchestrator/tests/` 中的样例用于回归检查导图类型、多页目录、公式表跨页、字体和无边框链接。
