@@ -80,4 +80,4 @@ python scripts/validate_study_note.py `
   --inventory '<output>/source_inventory.md'
 ```
 
-The validator is read-only. It checks the style marker, document order, relationship-map type and position, topic-separated formula-table interface, A4 size, embedded Times New Roman and XITS Math fonts, visible link borders, extractable text, blocking log messages, and reported concept/visual counts. Visual counts are diagnostic rather than a fixed quota; the orchestrator decides whether every visual is justified, with an independent semantic challenge from ChatGPT when `$codex-with-chatgpt` is active.
+The validator is read-only. It checks the style marker, document order, relationship-map type and position, topic-separated formula-table interface, A4 size, embedded Times New Roman and XITS Math fonts, visible link borders, extractable text, blocking log messages, and reported concept/visual counts. Visual counts are diagnostic rather than a fixed quota; the orchestrator decides whether every visual is justified. The coverage-audit reviewer is available for a warranted independent final review, not an initial subagent.

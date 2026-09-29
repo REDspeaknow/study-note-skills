@@ -169,7 +169,7 @@ Do not merge batches until their mini-audits pass or their open issues are expli
 
 ## 4. Specialist Delegation Requirements
 
-Specialist delegation is the default architecture of this skill. Invoking `$auto-study-note-orchestrator` should be treated as authorization to use the specialist subagents named by this skill, unless the user explicitly opts out. Do not require the user's prompt to separately say "use subagents".
+Concept, math, and visual specialist delegation is the default drafting architecture of this skill. Invoking `$auto-study-note-orchestrator` should be treated as authorization to use those drafting subagents, unless the user explicitly opts out. Do not require the user's prompt to separately say "use subagents". `$coverage-audit-note-reviewer` exists as a separate final reviewer, but must not be created at the start.
 
 The architecture is content-type based rather than course-specific. Do not hard-code a course, lecture, textbook, model family, or local folder as the delegation logic. First classify inventory rows by required treatment, then assign owners from the universal role set:
 
@@ -191,7 +191,7 @@ Automatic ownership rules:
 - `visual-mechanism`: any batch or section with an approved comparison/process table or requiring mechanism chains, model diagrams, curve shifts, timelines, market-design flows, matching flows, decision trees, causal graphs, Sankey-like flows, platform ranking flows, or TikZ QA.
 - `orchestrator`: glue work, style normalization, cross-reference consolidation, preamble integration, coverage and gap closure, deterministic validation, and final assembly.
 
-Coverage review is not a subagent role. The orchestrator performs the item-level status pass and all deterministic compile/PDF gates. When the user explicitly invokes `$codex-with-chatgpt`, use ChatGPT for one independent semantic review at each agreed checkpoint (normally after a completed batch or after the final local validation). ChatGPT reads the inventory and outputs through the workspace connection; do not paste source files, diffs, or logs, and do not dispatch a second coverage-review specialist for the same checkpoint. Without C2C, the orchestrator performs the semantic coverage pass locally.
+Coverage review is not an initial batch owner. The orchestrator performs the item-level status pass, semantic coverage check, and deterministic compile/PDF gates. Only after the draft and local checks, request a bounded independent final review from `$coverage-audit-note-reviewer` if the user asks for one or a concrete unresolved coverage concern warrants it. Do not spawn the reviewer merely because the workflow has begun.
 
 Mixed batches should be split into multiple task packets and dispatched in dependency order: concept body first, formal reasoning second, and an optional visual packet last. Do not create a visual packet unless `visual_needed: yes` has a valid `visual_reason`.
 
@@ -246,7 +246,7 @@ During integration:
 2. Resolve duplicated definitions by keeping the earliest complete definition and replacing later repeats with cross-references.
 3. Normalize notation across batches.
 4. Consolidate formula sheets, mistakes, and glossary entries.
-5. Run a global coverage validation after the merge, not only batch mini-audits. When C2C is active, follow it with one independent ChatGPT semantic review and resolve any findings locally.
+5. Run a global coverage validation after the merge, not only batch mini-audits. Resolve any findings locally; a separate final reviewer is optional under the rule above.
 
 Workflow artifacts stay outside the final PDF by default:
 

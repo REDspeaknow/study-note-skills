@@ -28,7 +28,7 @@ Then invoke:
 Use $auto-study-note-orchestrator to turn my selected course materials into a concept-first Chinese LaTeX/PDF study guide using study-note-style-v1.
 ```
 
-The orchestrator automatically assigns content to specialist subagents by content type unless the user explicitly opts out.
+The orchestrator automatically assigns drafting work to concept, math, and visual specialists by content type unless the user explicitly opts out. The coverage-audit reviewer is available for a separate final review when needed; it is not created at the start.
 
 ## Validate a Generated Note
 

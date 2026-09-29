@@ -1,6 +1,6 @@
 ---
 name: auto-study-note-orchestrator
-description: Build complete Chinese LaTeX/PDF study guides from course materials with item-level source coverage, concept-first writing, a canonical Times New Roman study-note template, content-type specialist delegation, compilation, deterministic validation, and optional ChatGPT review.
+description: Build complete Chinese LaTeX/PDF study guides from course materials with item-level source coverage, concept-first writing, a canonical Times New Roman study-note template, content-type specialist delegation, compilation, and deterministic validation.
 ---
 
 # Auto Study Note Orchestrator
@@ -16,10 +16,11 @@ This skill coordinates specialist skills:
 - `$math-derivation-note-writer` for derivations, proofs, formulas, and calculation procedures.
 - `$concept-outline-note-writer` for definitions, textual knowledge, comparison content, and exam-oriented summaries.
 - `$diagram-mechanism-note-writer` for mechanism chains, TikZ diagrams, model movement, and diagram QA.
+- `$coverage-audit-note-reviewer` is available for a separate final coverage review when needed; it is not an initial drafting subagent.
 
-There is no dedicated coverage-review subagent in this workflow. The orchestrator owns item-level coverage closure, compilation, validator execution, and PDF/layout gates. When the user explicitly combines this skill with `$codex-with-chatgpt`, ChatGPT provides the independent semantic review through the workspace connection; do not also dispatch a coverage-review specialist for the same checkpoint.
+The orchestrator owns item-level coverage closure, compilation, validator execution, and PDF/layout gates. Do not create a coverage-audit subagent at the start. After the draft and local checks, use the reviewer only if the user requests an independent review or a specific unresolved coverage concern warrants one; otherwise finish the audit locally.
 
-Invoking `$auto-study-note-orchestrator` means the standard workflow should automatically use specialist subagents when the environment provides subagent tools, even if the user's prompt does not separately mention subagents. The user can opt out with phrases such as "不要派 subagent", "本地完成", or "不要并行代理".
+Invoking `$auto-study-note-orchestrator` means the standard drafting workflow should automatically use the concept, math, and visual specialists when the environment provides subagent tools, even if the user's prompt does not separately mention subagents. The user can opt out with phrases such as "不要派 subagent", "本地完成", or "不要并行代理".
 
 The delegation architecture is content-type based, not course-specific. Classify work by what the knowledge point requires:
 
@@ -94,7 +95,7 @@ For the full orchestration protocol, read `references/orchestration-workflow.md`
    - Use `pdfinfo` to confirm a nonempty PDF and `pdftotext` to confirm extractable Chinese text.
    - Run `scripts/validate_study_note.py` with the TeX entrypoint, PDF, compile log, and source inventory. Visible link borders, missing Times New Roman or XITS Math resources, font substitution, incorrect section order, a missing or wrong map type without a documented source-grounded omission, a noncanonical formula summary, or a missing style marker block delivery.
    - The orchestrator must mark every source inventory item as represented, represented indirectly, intentionally omitted, or missing, using source evidence and extracted PDF text rather than delegation.
-   - When `$codex-with-chatgpt` is active, send one review checkpoint after local validation and ask ChatGPT to inspect the inventory, generated sources, and current outputs through the workspace connection. Treat its findings as an independent semantic challenge, then resolve them locally. Do not run a second coverage-review subagent for the same checkpoint.
+   - Do not create a coverage-audit subagent before the draft exists. A separate final review by `$coverage-audit-note-reviewer` is optional under the condition above and does not replace the orchestrator's own audit.
    - Require prose body coverage for every substantive concept. A table, figure, formula sheet, or glossary entry alone does not qualify as represented.
    - Audit every visual against its recorded `visual_reason`, source cue, coverage ids, and adjacent concept section. Remove decorative, duplicate, guessed, or coverage-only visuals.
    - For long sources, audit at slide/title level. A coarse range such as `pages 1--30 covered` is not acceptable unless it is backed by item-level rows.
@@ -107,7 +108,7 @@ For the full orchestration protocol, read `references/orchestration-workflow.md`
 - Do not let the user's outline replace source coverage; the outline controls order, the source inventory controls inclusion.
 - Do not copy large slide text blocks. Synthesize, teach, and make the result exam-usable.
 - For large ranges, auto-batch by coherent learning units before writing; do not attempt a whole-course final draft in one pass.
-- Specialist subagents are part of the default architecture. Use them automatically by content type, not by course name, unless the user explicitly opts out or the environment does not provide subagent tools.
+- Concept, math, and visual specialists are part of the default drafting architecture. Do not launch the coverage-audit reviewer at startup; it remains available for a warranted final independent review.
 - Large-range deliverables must include visible artifacts or sections for source inventory, batch plan, batch mini-audits, and global audit.
 - Process artifacts prove the workflow but do not belong in the final study guide unless explicitly requested.
 - A topic is not covered merely because a broad section mentions its parent model; named subresults, parameter effects, variants, empirical conflicts, and policy tools need explicit treatment.
