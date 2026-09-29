@@ -1,0 +1,36 @@
+% !TEX program = xelatex
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+\begin{document}
+\begin{center}{\Huge\bfseries 四章章节关系测试}\end{center}
+\tableofcontents
+\clearpage
+\section*{各章节关系导图}
+\begin{center}
+\begin{tikzpicture}[study map base]
+  \node[study map foundation] (a) {概念};
+  \node[study map core,below left=of a] (b) {条件};
+  \node[study map core,below right=of a] (c) {推导};
+  \node[study map extension,below=of a] (d) {应用};
+  \draw[study map arrow] (a) -- (b) node[study map label,midway,left] {先修};
+  \draw[study map arrow] (a) -- (c) node[study map label,midway,right] {先修};
+  \draw[study map extension arrow] (c) -- (d) node[study map label,midway,right] {扩展};
+\end{tikzpicture}
+\end{center}
+\section{概念}
+\StudyTerm{\PriorityMust}{Concept}{说明基础概念。}
+\section{条件}
+解释概念成立的条件。
+\section{推导}
+从概念导出结论。
+\section{应用}
+根据推导解决问题。
+\section{公式速查手册}
+\begin{FormulaSummaryTable}
+  \FormulaSummaryRow{示例}{$y=x$}{\PriorityKnow\ 了解。}
+\end{FormulaSummaryTable}
+\section{背诵优先级速览}
+\PriorityMust\ 概念。
+\section{全局易错点}
+不要忽略成立条件。
+\end{document}

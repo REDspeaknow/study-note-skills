@@ -1,0 +1,30 @@
+% !TEX program = xelatex
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+\begin{document}
+\begin{center}{\Huge\bfseries 三章知识关系测试}\end{center}
+\tableofcontents
+\clearpage
+\section*{核心知识关系导图}
+\begin{center}
+\begin{tikzpicture}[study map base]
+  \node[study map foundation] (a) {概念定义};
+  \node[study map core,below=of a] (b) {适用条件};
+  \draw[study map arrow] (a) -- (b) node[study map label,midway,right] {限定};
+\end{tikzpicture}
+\end{center}
+\section{概念定义}
+\StudyTerm{\PriorityMust}{Definition}{说明核心概念。}
+\section{适用条件}
+解释何时可以使用该概念。
+\section{应用检验}
+根据条件检查应用。
+\section{公式速查手册}
+\begin{FormulaSummaryTable}
+  \FormulaSummaryRow{示例}{$y=x$}{\PriorityKnow\ 了解。}
+\end{FormulaSummaryTable}
+\section{背诵优先级速览}
+\PriorityMust\ 概念定义。
+\section{全局易错点}
+不要忽略适用条件。
+\end{document}

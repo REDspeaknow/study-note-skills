@@ -1,4 +1,4 @@
 interface:
   display_name: "Math Derivation Note Writer"
-  short_description: "Expand formulas and proofs into step-by-step LaTeX notes."
-  default_prompt: "Use $math-derivation-note-writer to expand these formulas or proofs into a clear Chinese LaTeX study-note section."
+  short_description: "Write derivations and body-backed grouped formula-summary rows."
+  default_prompt: "Use $math-derivation-note-writer to attach source-faithful step-by-step Chinese LaTeX derivations and return body-backed formula-summary rows grouped by topic for the canonical three-column long tables."

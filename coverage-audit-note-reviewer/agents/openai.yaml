@@ -1,4 +1,4 @@
 interface:
   display_name: "Coverage Audit Note Reviewer"
-  short_description: "Audit study-guide PDFs against source coverage inventories."
-  default_prompt: "Use $coverage-audit-note-reviewer to check this generated study guide against the source inventory and find omissions before delivery."
+  short_description: "Audit coverage, adaptive maps, formula tables, fonts, and links."
+  default_prompt: "Use $coverage-audit-note-reviewer to audit this study guide for item-level source coverage, study-note-style-v1 compliance, the correct source-backed knowledge map for 1–3 main sections or chapter map for 4+, body-backed topic formula tables, Times New Roman fonts, borderless links, and concept-first visual balance."

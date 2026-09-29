@@ -4,8 +4,8 @@
 
 Create a compact table before writing:
 
-| id | source | page/slide | raw title or cue | type | assigned section | required treatment | status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| id | source | page/slide | raw title or cue | type | importance | primary_treatment | assigned section | required_treatment | visual_needed | visual_reason | status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 For long sources, the inventory must be saved as an explicit artifact such as `source_inventory.md` or `source_inventory.csv`. A final document appendix is not a substitute for the working inventory unless it contains item-level rows.
 
@@ -45,6 +45,17 @@ Required-treatment rule:
 
 Do not assign a substantive row only to `formula sheet entry` or `glossary entry`; those are supplements, not replacements for body coverage.
 
+Importance values are `必背`, `重点`, and `了解`. Every substantive concept receives `primary treatment: concept body` even when it also needs a derivation, comparison, case, mechanism, or figure.
+
+Default `visual needed` to `no`. Set it to `yes` only with one recorded reason:
+
+- `source-essential`: the source figure's geometry, axes, or movement is examinable.
+- `mechanism-essential`: prose alone would materially obscure a spatial, temporal, or equilibrium mechanism.
+- `comparison-efficient`: a compact table removes substantial repetitive prose across genuinely comparable items.
+- `user-requested`: the user explicitly asked for a more visual treatment.
+
+Decorative, duplicate, guessed, or coverage-only visuals are not eligible.
+
 ## 1.5 Gap Backlog From User Feedback
 
 If the user provides a screenshot, handwritten list, reviewer comments, or any missing-topic list, create `gap_backlog.md` before modifying the note or skill.
@@ -77,17 +88,28 @@ Examples from any economics or finance course may include search models, auction
 
 ## 2. Outline Construction
 
-Use this hierarchy unless a local note style is stronger:
+Use the canonical `study-note-style-v1` order for complete documents:
 
-1. Learning map.
-2. Unit title.
-3. Learning goals.
-4. Definitions and assumptions.
-5. Core model or argument.
-6. Derivation, mechanism chain, diagram, or comparison table as needed.
-7. Example or case.
-8. Common mistakes.
-9. Exam quick reference.
+1. Compact title block, priority legend, and reading order.
+2. Borderless clickable table of contents.
+3. Source-grounded relationship map: core knowledge for 1–3 main sections; chapters for 4 or more.
+4. Main units.
+5. Topic-separated formula summary tables.
+6. Memorization-priority overview.
+7. Global common mistakes.
+8. Closing line.
+
+Count substantive main sections before the formula summary. Build a compact front-matter `map_contract` before drawing:
+
+| node id | displayed concept/chapter | target body section | role | evidence cue |
+|---|---|---|---|---|
+| edge id | from | to | relation label | evidence cue |
+
+For 1–3 sections, use `核心知识关系导图` and make nodes the important concepts or mechanisms. For 4 or more, use `各章节关系导图` and make nodes the actual chapters. Every node must resolve to body prose. Every edge must be supported by the source or explicit outline and use a meaningful relation label. Use `visual_reason: user-requested`; when no genuine relation can be supported, omit the map and record `% study-map-omitted: <specific reason>` in the TeX. The map is navigation, not inventory coverage.
+
+Within each unit, place definitions, importance, conditions, adjacent-concept relations, source examples, exam cues, and local mistakes before dependent derivations or visuals. The overview map is the only front-matter exception and does not replace later concept prose.
+
+In the final `公式速查手册`, group formula rows by chapter or conceptual family. Use the canonical page-breakable three-column interface: formula name, formula, and applicability/use/warning. Include only body-backed formulas and keep all derivation steps in their parent concept section.
 
 The user's requested outline controls section order. The source inventory controls inclusion. If a source topic does not fit the outline, place it in the nearest relevant section or add a short supplementary subsection.
 
@@ -152,27 +174,26 @@ Specialist delegation is the default architecture of this skill. Invoking `$auto
 The architecture is content-type based rather than course-specific. Do not hard-code a course, lecture, textbook, model family, or local folder as the delegation logic. First classify inventory rows by required treatment, then assign owners from the universal role set:
 
 - `formal-reasoning`: formulas, derivations, proofs, algorithms, optimization, statistics, quantitative examples, formal model setup, inference, equilibrium, valuation, and computation.
-- `concept-synthesis`: definitions, assumptions, textual theory, taxonomy, cases, institutional context, empirical findings, policy/managerial implications, and comparison tables.
-- `visual-mechanism`: mechanism chains, graphs, diagrams, timelines, flows, model movement, process tables, and visual QA.
-- `coverage-audit`: source inventory closure, gap backlog closure, compile/PDF QA, and final item-level completeness checks.
-- `orchestrator`: planning, inventory, batching, integration, style normalization, cross-reference consolidation, and final assembly only.
+- `concept-synthesis`: definitions, assumptions, textual theory, taxonomy, cases, institutional context, empirical findings, policy/managerial implications, and comparison dimensions in prose.
+- `visual-mechanism`: justified comparison or process tables, mechanism chains, graphs, diagrams, timelines, flows, model movement, and visual QA after the concept body is complete.
+- `orchestrator`: planning, inventory, batching, integration, style normalization, cross-reference consolidation, source inventory closure, gap backlog closure, compile/PDF QA, final item-level completeness checks, and final assembly.
 
 For long sources, or any batch with a non-`orchestrator` owner, subagent delegation is mandatory when the environment provides subagent tools:
 
 - `formal-reasoning` batch: delegate to `$math-derivation-note-writer`.
 - `concept-synthesis` batch: delegate to `$concept-outline-note-writer`.
 - `visual-mechanism` batch: delegate to `$diagram-mechanism-note-writer`.
-- `coverage-audit` batch or final pass: delegate or run `$coverage-audit-note-reviewer`.
 
 Automatic ownership rules:
 
 - `formal-reasoning`: any batch or section whose required treatment includes full derivation, proof, FOC, Euler equation, Bellman equation, estimator, variance, equilibrium formula, probability, bound, comparative-static formula, valuation formula, algorithm, quantitative example, or steady-state formula.
-- `concept-synthesis`: any batch or section dominated by definitions, assumptions, institutional context, empirical evidence, policy implications, cases, concept distinctions, or comparison tables.
-- `visual-mechanism`: any batch or section requiring mechanism chains, model diagrams, curve shifts, timelines, market-design flows, matching flows, decision trees, causal graphs, Sankey-like flows, platform ranking flows, or TikZ QA.
-- `coverage-audit`: the final global coverage pass and any gap-backlog closure pass.
-- `orchestrator`: only glue work, style normalization, cross-reference consolidation, preamble integration, and final assembly.
+- `concept-synthesis`: any batch or section dominated by definitions, assumptions, institutional context, empirical evidence, policy implications, cases, concept distinctions, or comparison dimensions in prose.
+- `visual-mechanism`: any batch or section with an approved comparison/process table or requiring mechanism chains, model diagrams, curve shifts, timelines, market-design flows, matching flows, decision trees, causal graphs, Sankey-like flows, platform ranking flows, or TikZ QA.
+- `orchestrator`: glue work, style normalization, cross-reference consolidation, preamble integration, coverage and gap closure, deterministic validation, and final assembly.
 
-Mixed batches should be split into multiple task packets and dispatched to multiple specialists. Do not keep a mixed batch local merely because it contains several content types.
+Coverage review is not a subagent role. The orchestrator performs the item-level status pass and all deterministic compile/PDF gates. When the user explicitly invokes `$codex-with-chatgpt`, use ChatGPT for one independent semantic review at each agreed checkpoint (normally after a completed batch or after the final local validation). ChatGPT reads the inventory and outputs through the workspace connection; do not paste source files, diffs, or logs, and do not dispatch a second coverage-review specialist for the same checkpoint. Without C2C, the orchestrator performs the semantic coverage pass locally.
+
+Mixed batches should be split into multiple task packets and dispatched in dependency order: concept body first, formal reasoning second, and an optional visual packet last. Do not create a visual packet unless `visual_needed: yes` has a valid `visual_reason`.
 
 Owner assignment should be regenerated for every new course or folder. Never reuse a prior course's batch plan, model list, or owner map unless the user explicitly asks to continue that exact project.
 
@@ -194,7 +215,13 @@ When using subagents, send a bounded packet:
 Use $<specialist-skill> to write the following LaTeX-ready section.
 Batch id: ...
 Coverage item ids: ...
-Agent owner: formal-reasoning | concept-synthesis | visual-mechanism | coverage-audit
+Agent owner: formal-reasoning | concept-synthesis | visual-mechanism
+Style contract: study-note-style-v1
+Importance: 必背 | 重点 | 了解
+Primary treatment: concept body | derivation | comparison | case | mechanism | ...
+Parent concept section: ...
+Visual needed: yes | no
+Visual reason: source-essential | mechanism-essential | comparison-efficient | user-requested | blank
 Expected section title: ...
 Language rule: Chinese by default; add English labels only if requested.
 Source excerpt: ...
@@ -219,7 +246,7 @@ During integration:
 2. Resolve duplicated definitions by keeping the earliest complete definition and replacing later repeats with cross-references.
 3. Normalize notation across batches.
 4. Consolidate formula sheets, mistakes, and glossary entries.
-5. Run a global coverage audit after the merge, not only batch mini-audits.
+5. Run a global coverage validation after the merge, not only batch mini-audits. When C2C is active, follow it with one independent ChatGPT semantic review and resolve any findings locally.
 
 Workflow artifacts stay outside the final PDF by default:
 
@@ -234,23 +261,15 @@ These files should be linked in the delivery note, not inserted as numbered sect
 
 ## 7. Integration Template
 
-Use a new file name such as `course_range_complete_study_guide.tex`. Reuse local preambles where possible. If no local style exists, use a compact `ctexart` preamble with:
+Use a new file name such as `course_range_complete_study_guide.tex`. Copy the canonical `assets/通用笔记模板.tex` and `assets/study-note-style.sty` into the output project and integrate content into that skeleton. Do not construct a substitute preamble or duplicate style declarations in the main document.
 
-- `amsmath`, `amssymb`, `mathtools`
-- `booktabs`, `longtable`, `array`
-- `tikz` with `arrows.meta`, `positioning`, `intersections`
-- `tcolorbox` with light boxes
-- `hyperref`
+The style package owns A4 geometry, the supplied colors, FandolKai/FandolHei Chinese fonts, Times New Roman ordinary Latin text, XITS Math, code monospace, heading spacing, priority symbols, light breakable boxes, page numbering, and borderless clickable links.
 
-Default end matter:
-
-- Formula sheet for all major equations.
-- Common mistakes checklist.
-- Glossary only when useful or requested; bilingual entries only when requested.
+Default end matter is formula quick reference, memorization-priority overview, and global common mistakes in that order. Add a glossary only when useful or requested; add bilingual entries only when requested.
 
 ## 8. Compile and Coverage Audit
 
-Run at least two LaTeX passes. Then audit:
+Run `scripts/compile_study_note.py --tex <entrypoint>.tex`; it performs one XeLaTeX pass and reruns only while the table of contents, bookmarks, or references are stale. If the bounded retries cannot stabilize them, report a failure. Then audit:
 
 1. PDF exists and has pages.
 2. Text extracts in Chinese.
@@ -260,6 +279,15 @@ Run at least two LaTeX passes. Then audit:
 6. Complex diagrams render and labels do not collide.
 7. Formula-heavy sections do not contain skipped algebra.
 8. No disallowed box names appear in new notes.
+9. Every substantive concept has prose body coverage before visual support.
+10. Every visual has a valid reason, source cue, coverage ids, and adjacent concept section.
+11. The PDF embeds Times New Roman and XITS Math, has no visible link borders, and contains no font-substitution warnings.
+
+Run the canonical validator after compilation:
+
+```powershell
+python scripts/validate_study_note.py --tex '.\notes.tex' --pdf '.\notes.pdf' --log '.\notes.log' --inventory '.\source_inventory.md'
+```
 
 Long-source audit must include:
 

@@ -2,7 +2,7 @@
 
 ## Definition Pattern
 
-Use:
+Use ordinary LaTeX paragraphs unless the canonical style provides an appropriate short box:
 
 ```latex
 \paragraph{概念。}
@@ -13,11 +13,11 @@ Use:
 ...
 ```
 
-When a box is available, a concise definition can use `definitionbox`; core takeaways can use `takeawaybox`; mistakes can use `mistakebox`.
+Under `study-note-style-v1`, begin key concepts with `\PriorityMust`, `\PriorityImportant`, or `\PriorityKnow`. A concise definition can use `definitionbox`; core takeaways can use `takeawaybox`; mistakes can use `mistakebox`. Keep long explanations outside boxes.
 
 ## Comparison Pattern
 
-Use a table when two or more concepts are likely to be confused:
+Use compact prose first. Request a table only when two or more concepts, regimes, extensions, assumptions, or policy tools are easily confused and the table removes substantial repetitive prose. The prose definition for each concept must already exist. Emit final table LaTeX only when the orchestration packet confirms that the visual gate has approved it.
 
 ```latex
 \begin{center}
@@ -41,15 +41,19 @@ For source cases:
 2. Connect it to the concept.
 3. Extract the exam-useful lesson.
 4. Avoid long narrative detail.
+5. List the handled coverage id.
 
 ## Coverage QA
 
 Before returning, confirm:
 
+- The handled coverage item ids are listed.
 - The concept's definition is present.
 - The concept's role in the course argument is explained.
 - Similar concepts are distinguished.
 - Source examples or cases are not silently dropped.
+- Extensions, limitations, remarks, and policy implications are not collapsed into parent-topic mentions.
+- No table, diagram, formula sheet, or glossary entry is being used as the sole concept coverage.
 - No English labels are added unless requested.
 
 ## Model and Mechanism Completeness
@@ -63,6 +67,9 @@ For named textual models or mechanisms, do not write only a broad overview. Incl
 - Which parameter or institutional feature drives the result.
 - How it differs from the previous model.
 - How it is used in the course's larger argument.
+- Which derivation, diagram, or formula coverage ids must be handled elsewhere.
+
+A concept definition cannot substitute for model setup, decision rules, equilibrium conditions, or algebraic derivations when the source includes them.
 
 ## Empirical, Policy, and Platform Topics
 

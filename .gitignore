@@ -1,12 +1,35 @@
+# XeLaTeX / latexmk generated files (keep .tex and .sty sources tracked)
 *.aux
-*.log
-*.out
-*.toc
-*.pdf
-*.synctex.gz
-*.fls
+*.bbl
+*.bcf
+*.blg
 *.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.xdv
+*.pdf
 *.extracted.txt
+
+# Python caches and local environments
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Local editor and OS files
+.vscode/
+.idea/
+*.code-workspace
 .DS_Store
 Thumbs.db

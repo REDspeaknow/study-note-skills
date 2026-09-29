@@ -1,0 +1,71 @@
+% !TEX program = xelatex
+% Regression fixture: forces FormulaSummaryTable to break across pages.
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+
+\begin{document}
+\begin{center}
+  {\Huge\bfseries 公式总表跨页回归测试}
+\end{center}
+\StudyDivider
+\tableofcontents
+\clearpage
+
+\section*{核心知识关系导图}
+\begin{center}
+\begin{tikzpicture}[study map base]
+  \node[study map foundation] (definition) {估计量定义};
+  \node[study map core,below=of definition] (formula) {样本均值公式};
+  \draw[study map arrow] (definition) -- (formula) node[study map label,midway,right] {数学表达};
+\end{tikzpicture}
+\end{center}
+
+\section{公式正文}
+\StudyTerm{\PriorityMust}{估计量（Estimator）}{以下各式均应先在正文解释，再进入公式总表。}
+\begin{align*}
+  \widehat\theta_j &= \frac{1}{n}\sum_{i=1}^n x_{ij}, & j&=1,\ldots,32.
+\end{align*}
+
+\section{公式速查手册}
+\subsection{估计与推断}
+\begin{FormulaSummaryTable}
+  \FormulaSummaryRow{估计量 01}{$\widehat\theta_1=n^{-1}\sum_i x_{i1}$}{\PriorityMust\ 必背；有限二阶矩。}
+  \FormulaSummaryRow{估计量 02}{$\widehat\theta_2=n^{-1}\sum_i x_{i2}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 03}{$\widehat\theta_3=n^{-1}\sum_i x_{i3}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 04}{$\widehat\theta_4=n^{-1}\sum_i x_{i4}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 05}{$\widehat\theta_5=n^{-1}\sum_i x_{i5}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 06}{$\widehat\theta_6=n^{-1}\sum_i x_{i6}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 07}{$\widehat\theta_7=n^{-1}\sum_i x_{i7}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 08}{$\widehat\theta_8=n^{-1}\sum_i x_{i8}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 09}{$\widehat\theta_9=n^{-1}\sum_i x_{i9}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 10}{$\widehat\theta_{10}=n^{-1}\sum_i x_{i,10}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 11}{$\widehat\theta_{11}=n^{-1}\sum_i x_{i,11}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 12}{$\widehat\theta_{12}=n^{-1}\sum_i x_{i,12}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 13}{$\widehat\theta_{13}=n^{-1}\sum_i x_{i,13}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 14}{$\widehat\theta_{14}=n^{-1}\sum_i x_{i,14}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 15}{$\widehat\theta_{15}=n^{-1}\sum_i x_{i,15}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 16}{$\widehat\theta_{16}=n^{-1}\sum_i x_{i,16}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 17}{$\widehat\theta_{17}=n^{-1}\sum_i x_{i,17}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 18}{$\widehat\theta_{18}=n^{-1}\sum_i x_{i,18}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 19}{$\widehat\theta_{19}=n^{-1}\sum_i x_{i,19}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 20}{$\widehat\theta_{20}=n^{-1}\sum_i x_{i,20}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 21}{$\widehat\theta_{21}=n^{-1}\sum_i x_{i,21}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 22}{$\widehat\theta_{22}=n^{-1}\sum_i x_{i,22}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 23}{$\widehat\theta_{23}=n^{-1}\sum_i x_{i,23}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 24}{$\widehat\theta_{24}=n^{-1}\sum_i x_{i,24}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 25}{$\widehat\theta_{25}=n^{-1}\sum_i x_{i,25}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 26}{$\widehat\theta_{26}=n^{-1}\sum_i x_{i,26}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 27}{$\widehat\theta_{27}=n^{-1}\sum_i x_{i,27}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 28}{$\widehat\theta_{28}=n^{-1}\sum_i x_{i,28}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 29}{$\widehat\theta_{29}=n^{-1}\sum_i x_{i,29}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 30}{$\widehat\theta_{30}=n^{-1}\sum_i x_{i,30}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 31}{$\widehat\theta_{31}=n^{-1}\sum_i x_{i,31}$}{写明样本范围与单位。}
+  \FormulaSummaryRow{估计量 32}{$\widehat\theta_{32}=n^{-1}\sum_i x_{i,32}$}{写明样本范围与单位。}
+\end{FormulaSummaryTable}
+
+\section{背诵优先级速览}
+\PriorityMust\ 估计量 01。
+
+\section{全局易错点}
+不要用公式总表代替正文推导。
+\end{document}

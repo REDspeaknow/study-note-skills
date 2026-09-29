@@ -1,0 +1,49 @@
+% !TEX program = xelatex
+% Regression fixture: forces a multi-page clickable table of contents.
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+
+\begin{document}
+\begin{center}
+  {\Huge\bfseries 多页目录与字体回归测试 \\[0.6em]}
+  {\small English text must use Times New Roman; mathematics uses XITS Math.}
+\end{center}
+\StudyDivider
+\tableofcontents
+\clearpage
+
+\section*{各章节关系导图}
+\begin{center}
+\begin{tikzpicture}[study map base]
+  \node[study map foundation] (a) {课程目标};
+  \node[study map core,below left=of a] (b) {单元 1--36};
+  \node[study map extension,below right=of a] (c) {单元 37--72};
+  \draw[study map arrow] (a) -- (b);
+  \draw[study map extension arrow] (a) -- (c);
+\end{tikzpicture}
+
+\StudyMapLegend
+\end{center}
+
+\foreach \n in {1,...,72}{
+  \section{核心概念单元 \n}
+  \StudyTerm{\PriorityMust}{Concept \n}{用于目录分页、优先级符号和西文字体回归测试。}
+  \paragraph{为什么重要。}该条目验证概念正文先于任何视觉内容。
+}
+
+\section{公式速查手册}
+\subsection{Regression formulas}
+\begin{FormulaSummaryTable}
+  \FormulaSummaryRow{Linear model}{$y=\alpha+\beta x$}{English table text uses Times New Roman.}
+\end{FormulaSummaryTable}
+
+\section{背诵优先级速览}
+\PriorityMust\ 必背；\PriorityImportant\ 重点；\PriorityKnow\ 了解。
+
+\section{全局易错点}
+\begin{mistakebox}[title={Final check}]
+目录链接不得显示边框；Latin text 必须使用 Times New Roman。
+
+代码例外保持等宽：\texttt{for x in data: print(x)}。
+\end{mistakebox}
+\end{document}

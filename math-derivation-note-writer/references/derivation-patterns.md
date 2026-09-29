@@ -4,6 +4,7 @@
 
 Include:
 
+- Coverage item id, source page/formula cue, and parent concept section.
 - Objective function, equilibrium condition, identity, or theorem statement.
 - Assumptions and domain restrictions.
 - Complete model setup when the formula belongs to a named model: agents, parameters, timing, information, actions, payoffs, and equilibrium concept.
@@ -20,6 +21,8 @@ Avoid:
 - Changing notation from the source without saying so.
 - Mixing population and sample notation.
 - Treating sufficient conditions as necessary conditions.
+- Treating a formula-sheet entry as body coverage for a derivation item.
+- Wrapping an entire long derivation in a box under `study-note-style-v1`.
 
 ## Optimization Pattern
 
@@ -58,6 +61,24 @@ Before returning, check:
 - Each assumption is used in the correct step.
 - The final formula uses the same notation as the task packet.
 - Common mistakes target likely exam errors, not generic warnings.
+- The output lists handled coverage item ids.
+- Any `formulabox` contains only the final formula and a compact usage note, not the full derivation.
+- Every proposed final-summary row names its topic group and uses `\FormulaSummaryRow{名称}{公式}{适用条件、用途或注意事项}`.
+- No final-summary row introduces a formula that lacks body setup, derivation, or explanation.
+
+## Final Formula Summary Pattern
+
+After the derivation body, propose compact retrieval rows rather than another derivation:
+
+```latex
+\subsection{主题名称}
+\begin{FormulaSummaryTable}
+  \FormulaSummaryRow{估计量名称}{$\widehat\theta=\cdots$}{\PriorityMust\ 必背；成立条件、变量含义与常见误区。}
+  \FormulaSummaryRow{检验统计量}{$T=\cdots$}{$H_0$、参考分布、自由度或大样本条件。}
+\end{FormulaSummaryTable}
+```
+
+Use one row per distinct retrieval target. Keep intermediate algebra, proofs, worked substitutions, and long prose in the main section.
 
 ## Economics and Finance Model Pattern
 
