@@ -7,6 +7,8 @@ description: Write one coherent Chinese study-guide unit from grouped course evi
 
 Write **one bounded writing unit (batch)**, not a miniature study guide. A course unit/chapter may contain many such batches; `unit_id` identifies this packet's writing scope. The orchestrator supplies its parent chapter, learning question, grouped source/coverage IDs, importance, source excerpts, prior definitions and notation, and any must-preserve results. Read `references/unit-writing.md` for treatment choices and the handoff format.
 
+Other instances may write independent batches concurrently. Use the packet's confirmed context and definition ownership; edit only its assigned body/handoff paths. Prefix new body labels as assigned, retain inherited labels, and report context conflicts in `unresolved`. The orchestrator owns shared records and integration.
+
 ## Deliverables
 
 1. `<unit_id>_body.tex`: body content only. It may contain subsection headings, explanations, necessary intermediate algebra, cases, and approved local visuals. It must not contain a preamble, `\begin{document}`, a relationship map, `\section{公式速查手册}`, `FormulaSummaryTable`, a priority overview, or global mistakes. A final equation belongs beside its explanation; a short local takeaway is optional, not a required ending.
