@@ -1,63 +1,21 @@
 ---
 name: coverage-audit-note-reviewer
-description: Audit study-guide LaTeX/PDF outputs for item-level source coverage, concept-first balance, canonical study-note-style-v1 layout, embedded fonts, borderless links, compilation quality, justified visuals, and final completeness.
+description: Independently review a Chinese LaTeX/PDF study guide for source coverage, correct derivations, semantic repetition, formula provenance, justified visuals, and technical PDF quality.
 ---
 
 # Coverage Audit Note Reviewer
 
-## Purpose
+Use this skill only when the user requests an independent review or the orchestrator has a concrete unresolved coverage or correctness concern. Read `references/audit-protocol.md` and the orchestrator's `references/style-contract.md` for a complete document.
 
-Review a generated study guide against the source inventory and compiled PDF. Catch omissions, skipped derivations, broken LaTeX, unreadable text, workflow-artifact leakage, style drift, font/link regressions, and unjustified visual expansion before delivery.
+Review the source inventory, synthesis plan, body fragments, unit handoffs, final TeX/PDF, and available original materials. If originals are absent, state that raw-source completeness cannot be certified.
 
-Read `references/audit-protocol.md` before auditing any full chapter or course-range guide.
+## Findings to report
 
-This skill is item-level and gate-driven. For canonical notes, also read the orchestrator's `references/style-contract.md` and inspect the output of `scripts/validate_study_note.py`.
+- Every substantive inventory ID has a specific passage, an intentional omission reason, or a missing/weak finding. A title, keyword hit, or formula-sheet row alone is insufficient evidence.
+- Important derivations have the correct setup, conditions, key intermediate step, and result. Do not demand a full model card for a formula that inherits earlier setup.
+- Repeated claims across neighboring units, prose/table/caption/box, exam tips, local mistakes, and end matter are identified with concrete locations. Prefer one clear treatment and a cross-reference.
+- Every accepted figure has a source-supported purpose and correct geometry or flow. A comparison table may carry dimensions when a short governing sentence explains the distinction.
+- Unit fragments contain no document-level formula tables or summary sections. The final guide has at most one formula-reference section, after all main chapters; each retained row is body-backed and useful for retrieval.
+- The PDF passes typography, link, reference, extractability, and layout checks.
 
-## Audit Statuses
-
-Mark every inventory item as:
-
-- `represented`: directly covered with the row's required body treatment; an inherently formula- or visual-specific row may use its artifact only when adjacent explanatory prose is present.
-- `represented indirectly`: covered under another title or integrated into a broader section.
-- `intentionally omitted`: duplicate review, administrative, outside scope, or explicitly excluded.
-- `missing`: substantive content absent from the output.
-- `resolved after revision`: previously missing or weak content that has been added and verified.
-
-## Pass/Fail Gates
-
-For long sources, require separate item-level inventory, batch plan, mini-audits, global audit, and count summaries. Reject broad page-range coverage claims.
-
-For `study-note-style-v1`, require all three gates:
-
-- **Layout:** canonical style marker and required section order; a core-knowledge map for 1–3 main sections or chapter map for 4 or more, after the table of contents, unless a specific source-grounded omission reason is recorded; topic-separated page-breakable formula tables; no unrequested workflow artifacts in the final PDF.
-- **Technical:** A4 PDF, extractable text, embedded Times New Roman and XITS Math, zero-width link borders, no missing-font substitution or unresolved references.
-- **Content balance:** every substantive concept has prose body coverage; every visual has a valid reason, source cue, coverage ids, and adjacent concept section; no visual is decorative, duplicate, guessed, or sole coverage.
-
-## Rules
-
-- Missing substantive content must be fixed or clearly reported.
-- Do not accept a table of contents as proof of coverage; search the extracted PDF text.
-- Do not accept coarse page-range coverage claims for long sources; require item-level rows from the source inventory.
-- For sources over 120 PDF pages, report source page count, final PDF page count, inventory row count, and batch count. Treat a very short final PDF as a coverage failure unless the user asked for a compressed summary.
-- If the user supplies a missing-topic list or screenshot, require a `gap_backlog.md` or equivalent closure table and mark the audit `revise` until every source-supported gap is explicitly covered.
-- Do not accept a parent section as coverage for a named subtopic. Named models, subresults, parameter effects, empirical conflicts, and policy tools require explicit body text, table rows, formulas, or cross-references.
-- Do not accept a table, diagram, formula sheet, glossary entry, or box as the sole coverage for a substantive concept.
-- Process artifacts such as inventories, batch plans, mini-audits, and global audits should not appear as numbered final-PDF study-guide sections unless explicitly requested.
-- Check derivations for setup, notation, intermediate algebra, final result, and intuition; long derivations must not be trapped in boxes.
-- Check diagrams for eligibility, point placement, arrows, labels, source cues, adjacent concept references, redundancy, and convention consistency.
-- For the overview map, verify that its type matches the main-section count, every node resolves to body prose, every edge has an evidence-backed relation label, the map remains legible, and it is not counted as sole concept coverage. If omitted, verify the recorded reason against the source.
-- For the final formula summary, verify topic grouping, repeated three-column headers, body provenance for every row, and a specific applicability/use/warning cell. Reject long derivations or new formulas introduced only in the summary.
-- Treat visible link borders, absent required fonts, missing style marker, wrong end-matter order, and font-substitution warnings as blockers for canonical notes.
-- Treat LaTeX errors as blockers. Treat warnings as review items unless harmless and content is verified.
-
-## Output Contract
-
-Return:
-
-- Coverage audit table or compact status list with item-level statuses.
-- Compile/PDF QA summary.
-- Layout, technical, and content-balance gate results.
-- Long-source gate and final-PDF cleanliness status when applicable.
-- Missing or weak sections to fix.
-- Intentional omission notes.
-- Final pass/fail recommendation.
+Use page counts, source-to-output ratio, and content counts as diagnostics, never automatic evidence of completeness or concision. Give a short pass/revise recommendation with exact fixes rather than a long checklist of passed items.

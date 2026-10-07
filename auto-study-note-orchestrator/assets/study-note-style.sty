@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{study-note-style}[2026/09/18 study-note-style-v1]
+\ProvidesPackage{study-note-style}[2026/10/07 study-note-style-v1]
 
 \RequirePackage{iftex}
 \ifXeTeX\else
@@ -11,13 +11,21 @@
 \setmainfont{Times New Roman}
 \setsansfont{Times New Roman}
 \setmonofont{Latin Modern Mono}
-\setCJKmainfont{FandolKai-Regular.otf}[
-  BoldFont=FandolHei-Bold.otf,
-  ItalicFont=FandolKai-Regular.otf,
-  BoldItalicFont=FandolHei-Bold.otf
+% Set \StudyKaiFont before loading this package to select another installed
+% standard Kai font. Keep PDF embedding; do not substitute a handwritten font.
+\providecommand{\StudyKaiFont}{KaiTi}
+\setCJKmainfont{\StudyKaiFont}[
+  BoldFont=\StudyKaiFont,
+  BoldFeatures={FakeBold=1.5},
+  ItalicFont=\StudyKaiFont,
+  BoldItalicFont=\StudyKaiFont,
+  BoldItalicFeatures={FakeBold=1.5}
 ]
-\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
-\setCJKmonofont{FandolFang-Regular.otf}
+\setCJKsansfont{\StudyKaiFont}[
+  BoldFont=\StudyKaiFont,
+  BoldFeatures={FakeBold=1.5}
+]
+\setCJKmonofont{\StudyKaiFont}
 
 \RequirePackage{geometry}
 \geometry{left=2cm,right=2cm,top=2cm,bottom=2cm}

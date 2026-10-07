@@ -66,6 +66,9 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
         return
 
     fonts: set[str] = set()
+    embedded_fonts: set[str] = set()
+    unembedded_fonts: set[str] = set()
+    legacy_cjk_fonts: set[str] = set()
     link_count = 0
     visible_link_borders = 0
     page_sizes: list[tuple[float, float]] = []
@@ -82,6 +85,19 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
             base_font = font.get("/BaseFont")
             if base_font:
                 fonts.add(str(base_font).lstrip("/"))
+            leaves = font.get("/DescendantFonts") or [font]
+            for leaf_ref in leaves:
+                leaf = dereference(leaf_ref) or {}
+                name = str(leaf.get("/BaseFont") or base_font or "unnamed").lstrip("/")
+                descriptor = dereference(leaf.get("/FontDescriptor", {})) or {}
+                streams = [dereference(descriptor.get(key)) for key in ("/FontFile", "/FontFile2", "/FontFile3")]
+                if any(stream is not None and hasattr(stream, "get_data") and stream.get_data() for stream in streams):
+                    embedded_fonts.add(name)
+                elif str(leaf.get("/Subtype")) != "/Type3":
+                    unembedded_fonts.add(name)
+                cid_info = dereference(leaf.get("/CIDSystemInfo", {})) or {}
+                if str(cid_info.get("/Ordering")) in {"GB1", "CNS1", "Japan1", "Korea1"}:
+                    legacy_cjk_fonts.add(name)
 
         for annotation_ref in page.get("/Annots", []) or []:
             annotation = dereference(annotation_ref) or {}
@@ -99,6 +115,9 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
                 visible_link_borders += 1
 
     metrics["fonts"] = sorted(fonts)
+    metrics["embedded_fonts"] = sorted(embedded_fonts)
+    metrics["unembedded_fonts"] = sorted(unembedded_fonts)
+    metrics["legacy_cjk_collection_fonts"] = sorted(legacy_cjk_fonts)
     metrics["link_annotations"] = link_count
     metrics["visible_link_borders"] = visible_link_borders
     metrics["page_sizes_pt"] = sorted(set(page_sizes))
@@ -108,6 +127,12 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
         failures.append("Times New Roman was not found in PDF font resources")
     if "xitsmath" not in normalized_fonts:
         failures.append("XITS Math was not found in PDF font resources")
+    if "kaiti" not in normalized_fonts:
+        failures.append("a standard Kai font (KaiTi / Kaiti SC / STKaiti) was not found in PDF font resources")
+    if unembedded_fonts:
+        failures.append("PDF contains unembedded fonts: " + ", ".join(sorted(unembedded_fonts)))
+    if legacy_cjk_fonts:
+        failures.append("CJK fonts use predefined Adobe CID collections; this template requires self-contained Identity mapping")
     if visible_link_borders:
         failures.append(f"{visible_link_borders} link annotations have visible borders")
 
@@ -164,6 +189,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "Times New Roman main font": r"\setmainfont{Times New Roman}",
             "Times New Roman sans font": r"\setsansfont{Times New Roman}",
             "XITS Math": r"\setmathfont{XITS Math}",
+            "standard Kai font configuration": r"\providecommand{\StudyKaiFont}{KaiTi}",
+            "Kai bold treatment": "FakeBold=1.5",
             "borderless links": "hidelinks",
             "must-know priority macro": r"\PriorityMust",
             "important priority macro": r"\PriorityImportant",
@@ -176,13 +203,13 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             if token not in style:
                 failures.append(f"style package is missing {label}")
 
-    formula_match = re.search(r"\\section\{公式速查手册\}", tex)
+    formula_matches = list(re.finditer(r"\\section\{公式速查手册\}", tex))
+    formula_match = formula_matches[0] if formula_matches else None
     section_matches = list(re.finditer(r"\\section(\*?)\{([^{}]+)\}", tex))
     special_titles = {"核心知识关系导图", "各章节关系导图", "公式速查手册", "背诵优先级速览", "全局易错点"}
     main_sections = [
         match for match in section_matches
         if not match.group(1) and match.group(2) not in special_titles
-        and (formula_match is None or match.start() < formula_match.start())
     ]
     main_count = len(main_sections)
     # A compact regression fixture can generate many sections via \foreach.
@@ -203,32 +230,19 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         failures.append("document contains multiple relationship maps")
     if omission and map_matches:
         failures.append("map omission reason is present alongside a relationship map")
-    if main_count >= 1 and not map_matches and not omission:
-        failures.append("relationship map is missing without a specific omission reason")
     if map_matches:
         expected = "knowledge" if main_count <= 3 else "chapter"
         if not maps[expected]:
             failures.append(f"{main_count} main section(s) require the {expected} relationship map")
 
-    required_order = [r"\\tableofcontents"]
-    if map_matches:
-        required_order.append(r"\\section\*?\{(?:核心知识关系导图|各章节关系导图)\}")
-    required_order.extend(
-        [
-            r"\\section\{公式速查手册\}",
-            r"\\section\{背诵优先级速览\}",
-            r"\\section\{全局易错点\}",
-        ]
-    )
-    positions = [re.search(pattern, tex) for pattern in required_order]
-    if any(match is None for match in positions):
-        failures.append("required document order sections are missing")
-    elif [match.start() for match in positions if match] != sorted(match.start() for match in positions if match):
-        failures.append("required document sections are out of order")
+    toc_match = re.search(r"\\tableofcontents", tex)
+    if toc_match is None:
+        failures.append("table of contents is missing")
+    elif main_sections and toc_match.start() > main_sections[0].start():
+        failures.append("table of contents must precede main chapters")
 
     if map_matches:
         map_position = min(match.start() for match in map_matches)
-        toc_match = re.search(r"\\tableofcontents", tex)
         if toc_match is not None and map_position < toc_match.start():
             failures.append("relationship map must appear after the table of contents")
         if main_sections and map_position > main_sections[0].start():
@@ -240,10 +254,49 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     formula_rows = len(re.findall(r"\\FormulaSummaryRow\b", tex))
     metrics["formula_summary_tables"] = formula_tables
     metrics["formula_summary_rows"] = formula_rows
-    if formula_tables == 0:
-        failures.append("formula summary does not use FormulaSummaryTable")
-    if formula_rows == 0:
-        failures.append("formula summary has no FormulaSummaryRow entries")
+    metrics["formula_summary_sections"] = len(formula_matches)
+    if len(formula_matches) > 1:
+        failures.append("document contains more than one formula summary section")
+    if formula_match is None:
+        if formula_tables or formula_rows:
+            failures.append("formula summary table/rows appear without a document-level formula section")
+    else:
+        if main_sections and formula_match.start() < max(match.start() for match in main_sections):
+            failures.append("formula summary must follow all main chapters")
+        if formula_tables == 0 or formula_rows == 0:
+            failures.append("formula summary section needs at least one table and row")
+        first_table = re.search(r"\\begin\{FormulaSummaryTable\}", tex)
+        first_row = re.search(r"\\FormulaSummaryRow\b", tex)
+        if (first_table and first_table.start() < formula_match.start()) or (
+            first_row and first_row.start() < formula_match.start()
+        ):
+            failures.append("formula summary content appears before the global formula section")
+
+    priority_match = re.search(r"\\section\{背诵优先级速览\}", tex)
+    mistake_match = re.search(r"\\section\{全局易错点\}", tex)
+    for label, match in (("priority overview", priority_match), ("global mistakes", mistake_match)):
+        if match and main_sections and match.start() < max(item.start() for item in main_sections):
+            failures.append(f"{label} must follow all main chapters")
+        if match and formula_match and match.start() < formula_match.start():
+            failures.append(f"{label} must follow the formula summary")
+    if priority_match and mistake_match and priority_match.start() > mistake_match.start():
+        failures.append("priority overview must precede global mistakes")
+
+    for fragment_path in args.unit_fragment or []:
+        fragment = strip_comments(read_text(fragment_path.resolve()))
+        forbidden = {
+            "document class": r"\\documentclass\b",
+            "document start": r"\\begin\{document\}",
+            "formula summary section": r"\\section\{公式速查手册\}",
+            "formula summary table": r"\\begin\{FormulaSummaryTable\}",
+            "formula summary row": r"\\FormulaSummaryRow\b",
+            "priority overview": r"\\section\{背诵优先级速览\}",
+            "global mistakes": r"\\section\{全局易错点\}",
+        }
+        for label, pattern in forbidden.items():
+            if re.search(pattern, fragment):
+                failures.append(f"unit fragment {fragment_path.name} contains {label}")
+    metrics["unit_fragments_checked"] = len(args.unit_fragment or [])
 
     metrics["concept_priority_markers"] = len(
         re.findall(r"\\Priority(?:Must|Important|Know)\b", tex)
@@ -277,6 +330,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         "undefined control sequence": r"Undefined control sequence",
         "missing font": r"fontspec error|The font .* cannot be found",
         "font substitution": r"Font shape .* undefined|Some font shapes were not available",
+        "missing glyph": r"Missing character:",
         "undefined references": r"There were undefined references|Reference .* undefined",
     }
     for label, pattern in blocking_log_patterns.items():
@@ -309,6 +363,7 @@ def main() -> int:
     parser.add_argument("--pdf", type=Path, help="compiled PDF")
     parser.add_argument("--log", type=Path, help="XeLaTeX log")
     parser.add_argument("--inventory", type=Path, help="source inventory markdown")
+    parser.add_argument("--unit-fragment", type=Path, action="append", default=[], help="unit body fragment; repeatable")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
 
@@ -316,6 +371,9 @@ def main() -> int:
         path = getattr(args, label)
         if path is not None and not path.is_file():
             parser.error(f"--{label} is not a file: {path}")
+    for path in args.unit_fragment:
+        if not path.is_file():
+            parser.error(f"--unit-fragment is not a file: {path}")
 
     report = validate(args)
     if args.format == "json":

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Study Note Unit Writer"
+  short_description: "Write one coherent study-guide unit with concise concepts and necessary derivations."
+  default_prompt: "Use $study-note-unit-writer to write one source-grounded Chinese study-guide unit and a separate coverage/formula handoff record; do not create document-level summaries."

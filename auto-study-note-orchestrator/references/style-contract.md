@@ -1,83 +1,31 @@
 # Study Note Style Contract v1
 
-Read this reference whenever a complete `.tex` document is created, integrated, or audited.
+Read this when creating or auditing a complete document. `study-note-style-v1` fixes the **visual language**, not the number of paragraphs or document modules.
 
-## Canonical Assets
+## Canonical assets
 
-Copy both files from `assets/` into the output project before drafting:
+Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty` beside the main TeX. Compile with XeLaTeX. Keep the package's A4 geometry, standard KaiTi Chinese text, Times New Roman ordinary Latin text, XITS Math, priority macros, colors, boxes, and `hyperref` `hidelinks` behavior. Chinese bold uses the same Kai font with `FakeBold=1.5`; it must not switch to Hei or WenKai. Do not rebuild these in the main TeX.
 
-- `通用笔记模板.tex`: the canonical document skeleton and section order.
-- `study-note-style.sty`: the only source of typography, colors, spacing, boxes, priority symbols, and hyperlink behavior.
+The compiler uses the installed KaiTi TrueType font and embeds it into the PDF. Readers should not need to install it. Do not redistribute proprietary system font files with the skill. On another system, define `\StudyKaiFont` before loading the style to select an installed standard Kai font (for example Kaiti SC or STKaiti), then check the output. Do not silently fall back to WenKai. Verify both font embedding and rendered Chinese; font-name detection or text extraction alone cannot prove that a previewer displays the glyphs.
 
-Start from the template instead of rebuilding a preamble. Do not duplicate or locally redefine its colors, fonts, heading formats, priority symbols, or boxes unless the user explicitly requests a different style.
+Use `\PriorityMust`, `\PriorityImportant`, and `\PriorityKnow` to show study priority. Do not force a priority marker on every paragraph.
 
-The required style marker is `study-note-style-v1`, exposed as `\StudyNoteStyleVersion`.
+## Document structure
 
-## Typography and Links
+Keep a compact title block, clickable contents, and coherent main chapters. Optional modules follow their purpose:
 
-- Compile with XeLaTeX.
-- Chinese body: FandolKai; explicit Chinese bold: FandolHei-Bold.
-- Latin titles, body, table text, captions, and table of contents: Times New Roman.
-- Mathematics: XITS Math.
-- Code: the configured monospaced font; code is the only ordinary Latin-font exception.
-- Use `\PriorityMust`, `\PriorityImportant`, and `\PriorityKnow`; never type literal Unicode stars as priority markers.
-- Keep `hyperref` in `hidelinks` mode. Table-of-contents links remain clickable but must have zero-width borders and unchanged text color.
+- Add a source-grounded relationship map after the contents only when it improves navigation. Its nodes resolve to body sections and its edges express real relationships. Otherwise omit it; a comment `% study-map-omitted: <reason>` can document the decision.
+- Add at most one `\section{公式速查手册}` **after all main chapters** when the guide has distinct formulas worth retrieving. Group rows by topic with `FormulaSummaryTable` and `\FormulaSummaryRow`. A row contains one canonical result and its minimum conditions/use. No intermediate algebra, worked substitution, or numerical-example step belongs here.
+- Add a priority overview or global mistakes section only when it condenses cross-chapter decisions that the body does not already make easy to retrieve. Keep each brief and place it after the main body and any formula reference.
 
-## Required Document Order
+The presence or absence of optional modules does not change the style version. The unit writer does not author any of them.
 
-1. Compact title block, priority legend, and reading order.
-2. Clickable borderless table of contents.
-3. A source-grounded relationship map: core knowledge for 1–3 main sections; chapters for 4 or more.
-4. Main chapters.
-5. Topic-separated formula summary tables.
-6. Memorization-priority overview.
-7. Global common-mistakes section.
-8. Closing line.
+## Content and visual economy
 
-Count substantive main sections before `公式速查手册`. With 1–3 sections, place a compact `核心知识关系导图` after the table of contents: nodes are key concepts or mechanisms with explicit targets in the body. With 4 or more sections, use `各章节关系导图`: nodes name real body chapters. Use the reusable `study map ...` TikZ styles from `study-note-style.sty`. Every edge must state a source-supported prerequisite, extension, cause, assumption failure, remedy, or other meaningful relation. Do not infer attractive but unsupported links. If the source supports no meaningful relationship, omit the map and write `% study-map-omitted: <specific reason>` in the TeX for audit. Either map is navigation and synthesis, not concept coverage.
+A key concept needs an accurate explanation, not a seven-heading block. A comparison may use a governing sentence plus table. A model may need a full setup once, then shorter inherited results. Put equations beside the explanation that licenses them.
 
-In `公式速查手册`, divide formulas into meaningful topic subsections and use `FormulaSummaryTable` plus `\FormulaSummaryRow`. The table must be page-breakable, repeat its header, and use the columns `公式名称`, `公式`, and `适用条件、用途或注意事项`. Include only formulas already explained or derived in the main body. Put priority, assumptions, variable meaning, test hypothesis, distribution, or common trap in the third column; never paste full derivations into the table.
+Choose the smallest adequate representation: prose, compact chain, comparison table, then full diagram if spatial or equilibrium geometry matters. A figure or table must add information or reduce repetition. Do not repeat its content in a long caption and adjacent paragraph. Keep boxes short and optional.
 
-## Concept-First Content Contract
+## QA
 
-Every substantive concept must have prose coverage before any dependent formula, table, or diagram. A complete key-concept block contains:
-
-1. Definition.
-2. Why it matters.
-3. Conditions, assumptions, or scope.
-4. Relation to adjacent concepts.
-5. Source example or case when present.
-6. Exam cue.
-7. Common mistake.
-
-Use the priority macros to mark key concepts. Tables, formulas, figures, glossary entries, and formula-sheet entries supplement this body coverage; none of them counts as the sole representation of a concept.
-
-## Visual Eligibility Gate
-
-Default to no new visual. Set `visual_needed: yes` only when at least one of these reasons applies:
-
-- `source-essential`: the source contains a graph or figure whose geometry, axes, or movement is examinable.
-- `mechanism-essential`: a spatial, temporal, or equilibrium mechanism would be materially harder to understand in prose.
-- `comparison-efficient`: a compact table removes substantial repetitive prose across genuinely comparable items.
-- `user-requested`: the user explicitly asks for a more visual treatment.
-
-Every accepted visual must record `visual_reason`, coverage item ids, its adjacent concept section, and a short QA note. Reject decorative, duplicate, guessed, or coverage-only visuals. A visual must not appear before its concept explanation.
-
-The overview map is the one front-matter exception to the adjacency rule because the user explicitly requested it as a navigation overview. It still requires `visual_reason: user-requested`, a node-to-body-target list, an edge-evidence list, and a QA note. Its concepts must be explained later in the body.
-
-Keep boxes short. Use them for definitions, takeaways, final formula summaries, and mistakes. Keep long derivations and cases in ordinary breakable prose even though the box environments themselves support page breaks.
-
-## Integration and QA
-
-Compile on demand until references are stable, then run:
-
-```powershell
-python scripts/compile_study_note.py --tex '<output>/notes.tex'
-python scripts/validate_study_note.py `
-  --tex '<output>/notes.tex' `
-  --pdf '<output>/notes.pdf' `
-  --log '<output>/notes.log' `
-  --inventory '<output>/source_inventory.md'
-```
-
-The validator is read-only. It checks the style marker, document order, relationship-map type and position, topic-separated formula-table interface, A4 size, embedded Times New Roman and XITS Math fonts, visible link borders, extractable text, blocking log messages, and reported concept/visual counts. Visual counts are diagnostic rather than a fixed quota; the orchestrator decides whether every visual is justified. The coverage-audit reviewer is available for a warranted independent final review, not an initial subagent.
+The validator checks technical and structural invariants: style marker, A4, fonts, extractable text, link borders, references, optional module order, and unit-fragment boundaries. Editorial review checks source coverage, derivation correctness, formula provenance, and redundancy; counts are diagnostics rather than quotas.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Auto Study Note Orchestrator"
-  short_description: "Build concept-first guides with adaptive maps and formula tables."
-  default_prompt: "Use $auto-study-note-orchestrator to turn my selected course materials into a concept-first Chinese LaTeX/PDF study guide using study-note-style-v1, a source-grounded knowledge map for 1–3 main sections or chapter map for 4+, on-demand XeLaTeX compilation, topic-separated formula summary tables, specialist delegation, and final coverage and layout audit."
+  short_description: "Build concise, source-traceable Chinese study guides."
+  default_prompt: "Use $auto-study-note-orchestrator to turn my course materials into a concise Chinese LaTeX/PDF study guide with coherent learning units, necessary derivations, one optional end-of-book formula reference, and coverage and layout checks."
