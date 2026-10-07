@@ -13,5 +13,9 @@
 调用示例：
 
 ```text
-使用 $auto-study-note-orchestrator，把指定的课程资料整理成简洁、可溯源的中文 LaTeX/PDF 复习指南。
+/auto-study-note-orchestrator 把指定的课程资料整理成简洁、可溯源的中文 LaTeX/PDF 复习指南。
 ```
+
+在 Claude Code 的目标项目中，将三个现行 skill 文件夹放入 .claude/skills/，将本仓库的 [.claude/agents/study-note-unit-writer.md](.claude/agents/study-note-unit-writer.md) 放入同名项目路径；跨项目安装也可使用个人目录 ~/.claude/skills/ 与 ~/.claude/agents/。两者分别提供写作规则与子代理注册，agents/openai.yaml 属于 Codex 元数据。仓库根目录的 skill 文件夹不会因被克隆就自动注册到 Claude Code。
+
+委派规则见 [delegation-policy.md](auto-study-note-orchestrator/references/delegation-policy.md)：默认按规划单元数决定就地或委派，用户指令优先；单文件长课件和多文件短资料都按同一判据处理。continuity.md 与每次任务包记录已建立的定义、记号和正文标签，恢复或更换写作器时继续使用。

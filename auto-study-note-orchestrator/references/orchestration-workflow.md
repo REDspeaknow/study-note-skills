@@ -1,6 +1,6 @@
 # Orchestration workflow
 
-Use this for multi-file or chapter-range guides. The inventory is an evidence ledger; the synthesis plan is the writing plan. Keep them distinct.
+Use this for all guides. The inventory is an evidence ledger; the synthesis plan is the writing plan. Keep them distinct. Apply `delegation-policy.md` after planning units and before drafting.
 
 ## 1. Source ledger
 
@@ -19,26 +19,31 @@ Importance guides space and retrieval priority, not the number of mandatory head
 
 ## 2. Synthesis plan and unit packet
 
-Group inventory IDs into learning units around one central question or model. Save `synthesis_plan.md` with unit ID, source IDs, learning question, primary claim, prerequisite notation, depth, visual decision, and master-outline position. Keep a model's setup and application together; do not create one batch per slide.
+Group inventory IDs into learning units around one central question or model. Save `synthesis_plan.md` with unit ID, source IDs, learning question, primary claim, prerequisite notation, depth, visual decision, and master-outline position. Keep a model's setup and application together; do not create one batch per slide. Add the execution decision required by `delegation-policy.md`. Maintain `continuity.md` with canonical definitions, notation, result/formula keys, body labels and owning units; track each unit as planned, drafting, received or integrated.
 
 Give the integrated writer current source excerpts and relevant prior context:
 
 ```text
 unit_id:
+output_paths: absolute paths for this unit's two files
+writer_skill_path: absolute path to study-note-unit-writer/SKILL.md
+writer_reference_path: absolute path to references/unit-writing.md
 learning_question:
 coverage_ids:
 source_evidence:
 importance_and_depth:
 already_defined_terms_and_notation:
+prior_results_and_body_labels:
+new_definitions_owned_by_this_unit:
 must_preserve_results_and_boundaries:
 approved_visual_and_reason: optional
 style_contract: study-note-style-v1
 deliver: <unit_id>_body.tex + <unit_id>_handoff.json
 ```
 
-The writer owns prose, math, and visuals within that unit. Keep related units sequential and reuse writer context if possible. If delegation is unavailable or declined, write locally under the same boundaries.
+The writer owns prose, math, and visuals within that unit. Follow the execution mode and resumption rules in `delegation-policy.md`. A resumed writer still receives the current packet and continuity entries; its memory does not replace these files.
 
-After each unit, locate each assigned ID in the body or an unresolved note, inspect key algebra and visuals, and identify claims already explained elsewhere. Record findings and fixes compactly.
+After each unit, locate each assigned ID in the body or an unresolved note, inspect key algebra and visuals, and identify claims already explained elsewhere. Reconcile the handoff's `continuity_updates` into `continuity.md`, resolving notation/definition conflicts before the next unit. Record findings and fixes compactly.
 
 ## 3. Document assembly
 

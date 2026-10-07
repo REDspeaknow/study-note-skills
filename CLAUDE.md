@@ -1,6 +1,8 @@
 # Study Note Skills — Claude Code 协作说明
 
-默认使用中文。先阅读 auto-study-note-orchestrator/SKILL.md，再按需阅读其 references。用户要求优先于本文件。
+默认使用中文。主会话编排器先阅读 auto-study-note-orchestrator/SKILL.md；任何规模的笔记在起草前都必须读取 auto-study-note-orchestrator/references/delegation-policy.md，按顺序判定、记录执行模式并交接上下文。委派阈值仅在该文件维护。用户要求优先于本文件。
+
+收到主编排器单元任务包的写作子代理，执行 study-note-unit-writer 与该任务包，仅交付分配的单元正文和交接文件；计划、执行模式、下一单元、全书汇总及编译由主编排器维护。收到独立审核任务包的子代理，执行 coverage-audit-note-reviewer 并返回具体问题与建议。以下工作流描述主编排器的职责。
 
 ## 架构
 

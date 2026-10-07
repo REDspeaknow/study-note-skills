@@ -19,6 +19,14 @@ Save UTF-8 JSON beside the body fragment:
   "unit_id": "U03",
   "coverage_ids": ["L1-13", "L1-14", "L1-15"],
   "unresolved": [],
+  "continuity_updates": [
+    {
+      "kind": "notation",
+      "name": "p_B",
+      "meaning": "向买方收取的费用",
+      "body_label": "sec:two-sided-pricing"
+    }
+  ],
   "formula_candidates": [
     {
       "key": "two_sided_price_structure_foc",
@@ -32,5 +40,7 @@ Save UTF-8 JSON beside the body fragment:
 ```
 
 `key` identifies the result across units. If another unit reuses the result, use the same key and point to its earlier body explanation; do not create a new summary row. Formula candidates are optional nominations. The orchestrator decides which distinct retrieval targets enter one end-of-book formula section.
+
+Use `continuity_updates` only for definitions, notation or results newly established or explicitly changed in this unit; use an empty list otherwise. Reuse prior canonical names and body labels from the packet. If prior context conflicts with source evidence, report the conflict in `unresolved` for the orchestrator to resolve before the next unit.
 
 Keep process notes and source coverage metadata outside the `.tex` body. Never add a local `\section{公式速查手册}` or `FormulaSummaryTable` even when the unit contains many formulas.
