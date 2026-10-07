@@ -6,7 +6,7 @@ Read the requested scope, available sources, inventory, plan, bodies/handoffs, `
 
 ## Coverage and correctness
 
-1. For each substantive inventory ID, locate the actual teaching passage and record its section/label. Mark represented, represented indirectly, intentionally omitted, weak, or missing. A keyword match is a search aid only.
+1. For each substantive inventory ID, locate the actual teaching passage and record its section/label. Use the handoff contract's exact status values: `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing`. A keyword match is a search aid only.
 2. For major models, compare setup, symbols, equilibrium/result, necessary algebra, and boundary conditions with available evidence. Later results may inherit a setup already established.
 3. Check whether the reader can answer the unit's central question without reading repeated restatements.
 4. Inspect visuals for valid source cues, meaningful placement, readable labels, and correct axes/arrows/intersections. Reject decorative or duplicate figures.
