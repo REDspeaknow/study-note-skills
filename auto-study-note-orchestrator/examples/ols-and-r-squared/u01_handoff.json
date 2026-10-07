@@ -1,0 +1,52 @@
+{
+  "unit_id": "U01",
+  "coverage_ids": ["L1-01", "L1-02", "L1-03", "L1-04"],
+  "unresolved": [],
+  "continuity_updates": [
+    {
+      "kind": "definition",
+      "name": "总体回归函数",
+      "meaning": "E(y|x)=β0+β1x，描述给定 x 时 y 的条件均值",
+      "body_label": "sec:prf-srf"
+    },
+    {
+      "kind": "definition",
+      "name": "样本回归函数",
+      "meaning": "ŷ=β̂0+β̂1x，总体回归函数的样本对应物",
+      "body_label": "sec:prf-srf"
+    },
+    {
+      "kind": "notation",
+      "name": "\\hat S_{xy}",
+      "meaning": "Σ(xi-x̄)(yi-ȳ)",
+      "body_label": "sec:foc"
+    },
+    {
+      "kind": "notation",
+      "name": "\\hat S_{xx}",
+      "meaning": "Σ(xi-x̄)²",
+      "body_label": "sec:foc"
+    },
+    {
+      "kind": "notation",
+      "name": "\\hat\\beta_1",
+      "meaning": "OLS 斜率估计量",
+      "body_label": "eq:ols-slope"
+    },
+    {
+      "kind": "result",
+      "name": "ols_slope",
+      "meaning": "β̂1=Ŝxy/Ŝxx，成立需 Ŝxx>0",
+      "body_label": "eq:ols-slope"
+    }
+  ],
+  "formula_candidates": [
+    {
+      "key": "ols_slope",
+      "name": "OLS 斜率",
+      "formula": "\\hat\\beta_1=\\hat S_{xy}/\\hat S_{xx}",
+      "conditions": "一元回归；样本中 x 有变异，即 Ŝxx>0",
+      "body_label": "eq:ols-slope"
+    }
+  ]
+}

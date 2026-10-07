@@ -6,6 +6,8 @@ Use this for all guides. The inventory is an evidence ledger; the synthesis plan
 
 List source files and exact ranges. For every substantive item, record `id`, source page/slide, title or cue, type, importance, required fact/result, and status. Types may include concept, derivation, comparison, diagram, case, and admin/duplicate. Merge continuation slides that express one result; do not merge unrelated claims just to reduce row count.
 
+`status` starts at `pending` and closes as one of `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing` — the same vocabulary the audit protocol uses, so the inventory and the independent audit can be compared row by row.
+
 | Source item | Typical treatment |
 | --- | --- |
 | Simple definition or scope note | One precise sentence or compact paragraph |
@@ -60,6 +62,8 @@ Only after all units are merged, write at most one `\section{公式速查手册}
 
 Use `scripts/collect_formula_candidates.py` to detect duplicate keys and inconsistent submissions before editorial selection. It does not mandate including every candidate.
 
+Run `scripts/check_handoffs.py` over every handoff and body before merging. It is the only check that reads the JSON and the LaTeX together: it resolves each `body_label` in `formula_candidates` and `continuity_updates` against the supplied bodies, rejects an unknown `kind` or a result key repeated inside one handoff, and verifies each `coverage_ids` entry exists in the inventory. A candidate whose label names nothing, or a result the writer forgot to label, passes both `collect_formula_candidates.py` and `validate_study_note.py` and would otherwise reach the merge unnoticed.
+
 ## 5. Final audit
 
 Create a compact coverage map: each inventory ID -> body section/label, intentional omission reason, or unresolved. Review actual passages; keyword occurrence alone is not proof. Check important derivations against available source or inherited notes, including assumptions and boundaries.
@@ -67,3 +71,5 @@ Create a compact coverage map: each inventory ID -> body section/label, intentio
 Identify each unit's central claim and remove repeated paraphrases from exam cues, mistakes, takeaway boxes, tables, and end matter. Page and heading/box/formula counts are diagnostics, not pass/fail limits.
 
 Compile and run `scripts/validate_study_note.py --tex <entrypoint> --pdf <pdf> --log <log> --inventory <inventory> --unit-fragment <fragment> ...`. Render representative concept, math, table, and end-matter pages. Do not certify raw-source completeness when only an earlier guide is available.
+
+`examples/ols-and-r-squared/` is a small but complete run showing how the five artifacts connect, including a result defined in one batch and reused by another. Use it as the shape reference for the inventory, plan, continuity record, handoffs, and merged output.

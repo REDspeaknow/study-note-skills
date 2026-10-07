@@ -1,0 +1,41 @@
+{
+  "unit_id": "U02",
+  "coverage_ids": ["L1-05", "L1-06"],
+  "unresolved": [],
+  "continuity_updates": [
+    {
+      "kind": "definition",
+      "name": "拟合优度 R²",
+      "meaning": "被解释平方和占总平方和的比例",
+      "body_label": "sec:sst-decomp"
+    },
+    {
+      "kind": "notation",
+      "name": "SST, SSE, SSR",
+      "meaning": "总平方和、被解释平方和、残差平方和",
+      "body_label": "sec:sst-decomp"
+    },
+    {
+      "kind": "result",
+      "name": "r_squared",
+      "meaning": "R²=SSE/SST=1-SSR/SST",
+      "body_label": "eq:r-squared"
+    }
+  ],
+  "formula_candidates": [
+    {
+      "key": "r_squared",
+      "name": "拟合优度",
+      "formula": "R^2=1-SSR/SST",
+      "conditions": "含常数项的 OLS；只描述样本内拟合",
+      "body_label": "eq:r-squared"
+    },
+    {
+      "key": "ols_slope",
+      "name": "OLS 斜率",
+      "formula": "\\hat\\beta_1=\\hat S_{xy}/\\hat S_{xx}",
+      "conditions": "一元回归；样本中 x 有变异，即 Ŝxx>0",
+      "body_label": "eq:ols-slope"
+    }
+  ]
+}

@@ -1,5 +1,28 @@
 # 改动记录
 
+## 2026-10-07 · 交接契约校验与完整样例
+
+补上交接 JSON 与正文片段之间唯一没人检查的那一环，并给五份流程产物配一份可运行的样例。
+
+### 新增
+
+- `scripts/check_handoffs.py`：目前唯一同时读取 handoff JSON 与正文 `.tex` 的检查。解析 `formula_candidates` 与 `continuity_updates` 里每个 `body_label` 是否真的对得上 `\label{}`，校验 `kind` 取值、单个 handoff 内重复的结果键，以及 `coverage_ids` 是否都在来源清单里；跨批次复用的结果会被单独列出，便于统稿时只保留一处解释。此前没有任何工具同时持有这两类文件：`validate_study_note.py` 看不到 JSON，`collect_formula_candidates.py` 看不到 LaTeX，指向空气的 `body_label` 会安静通过。
+- `examples/ols-and-r-squared/`：一次小而完整的运行——来源清单、综合计划、连续性记录、两个批次的正文片段与交接、合并稿。特意演示三件事：正文片段不含文档级模块；`ols_slope` 由 U01 定义、被 U02 复用且标签位于 U01 的正文；两批共 3 条候选去重后只剩 2 行速查。
+- `tests/test_handoff_contract.py`：12 个用例覆盖样例本身、悬空标签、未知 `kind`、重复结果键、清单中不存在的 coverage id，以及合并稿与片段通过结构校验。
+
+### 修正
+
+- `unit-writing.md` 现在枚举 `continuity_updates.kind` 的三个取值（`definition` / `notation` / `result`），并说明 `name` 各放什么。此前只在散文里暗示，写作器只能自行发明。
+- `orchestration-workflow.md` 现在枚举来源清单 `status` 的取值（`pending` 起，落到 `represented` / `represented-indirectly` / `intentionally-omitted` / `weak` / `missing`），与审核协议的用词对齐，使清单和独立审核能逐行比对。
+- `tests/fixtures/duplicate-u0{1,2}.json` 早于 `continuity_updates` 字段，且 `body_label` 指向一个不存在的标签；已补齐字段并把标签落到 `unit-body-clean.tex` 上。
+- 三个脚本在 Windows 旧码页（本机为 GBK）下 `print()` 含 `Ŝ`（U+015C）等字符会抛 `UnicodeEncodeError` 直接中断。中文恰好在 GBK 内所以此前未暴露；现统一把 stdout 重配为 UTF-8。
+
+### 验证状态
+
+- 已运行 `python -m unittest`：`test_handoff_contract` 与 `test_formula_boundaries` 共 17 个用例全部通过。
+- `check_handoffs.py`、`collect_formula_candidates.py`、`validate_study_note.py` 均已对样例运行并 pass。
+- 仍未执行 XeLaTeX 编译与 PDF 校验，`examples/` 的 `merged.tex` 只做了结构检查，未经排版验证。
+
 ## 2026-10-07 · 修正课程单元与写作批次的判据
 
 - 取消未经实测的“四个单元”委派门槛：课程单元跨度差别很大，数量不能反映起草工作量。

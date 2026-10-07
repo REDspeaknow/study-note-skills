@@ -27,6 +27,9 @@ __pycache__/
 .venv/
 venv/
 
+# Personal notes and outputs kept locally for reference only
+计量经济学复习指南.tex
+
 # Local editor and OS files
 .vscode/
 .idea/

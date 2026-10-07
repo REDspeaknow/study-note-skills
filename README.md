@@ -6,7 +6,7 @@
 - `study-note-unit-writer`：一个写作器同时处理单元内的概念、必要推导、案例和有依据的图表。只输出正文片段与独立交接记录。
 - `coverage-audit-note-reviewer`：按需独立审查覆盖、推导、重复和 PDF 技术质量；不参与日常分批写作。
 
-三项 skill 共用 `study-note-style-v1` 的视觉组件。总编排器的 `assets/` 包含模板和样式文件；`scripts/` 提供编译、候选公式汇集和结构/PDF 校验。全书至多在正文末尾有一个公式速查章节，可以按主题分表。概念型资料可省略它。
+三项 skill 共用 `study-note-style-v1` 的视觉组件。总编排器的 `assets/` 包含模板和样式文件；`scripts/` 提供编译、交接契约校验、候选公式汇集和结构/PDF 校验。五份流程产物怎么互相接上，见 `auto-study-note-orchestrator/examples/ols-and-r-squared/`。全书至多在正文末尾有一个公式速查章节，可以按主题分表。概念型资料可省略它。
 
 仓库中的旧概念、数学、图表三个专职写作 skill 已退休，可从 Git 历史取回。改动详情与尚未执行的校验见 [改动记录](CHANGELOG.md)。克隆或更新仓库不会自动覆盖个人 Skills 目录；需要启用新版时再安装这三个现行 skill。
 

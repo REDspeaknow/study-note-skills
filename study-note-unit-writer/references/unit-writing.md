@@ -45,4 +45,14 @@ Save UTF-8 JSON beside the body fragment:
 
 Use `continuity_updates` only for definitions, notation or results newly established or explicitly changed in this unit; use an empty list otherwise. Reuse prior canonical names and body labels from the packet. If prior context conflicts with source evidence, report the conflict in `unresolved` for the orchestrator to resolve before the next unit.
 
+`kind` is one of exactly three values:
+
+| `kind` | Use for | `name` holds |
+| --- | --- | --- |
+| `definition` | A term introduced or redefined here | The Chinese term |
+| `notation` | A symbol introduced or changed here | The LaTeX symbol, e.g. `\hat S_{xy}` |
+| `result` | A result worth retrieving later | The result key, matching any `formula_candidates[].key` for the same result |
+
+Every `body_label` must be a label this unit actually emits with `\label{...}`, or one inherited from an earlier batch that this unit reuses. A label naming nothing is the most common silent handoff defect; `scripts/check_handoffs.py` resolves every `body_label` against the supplied bodies and fails the run when one does not resolve.
+
 Keep process notes and source coverage metadata outside the `.tex` body. Never add a local `\section{公式速查手册}` or `FormulaSummaryTable` even when the unit contains many formulas.

@@ -1,0 +1,35 @@
+\section{OLS 斜率是怎么定出来的？}\label{sec:ols-slope}
+
+\subsection{两个函数不能混用}\label{sec:prf-srf}
+
+\StudyTerm{\PriorityMust}{总体回归函数}{$E(y\mid x)=\beta_0+\beta_1x$ 描述给定 $x$ 时 $y$ 的条件均值。}
+
+\StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 是它的样本对应物，拟合的是手头这组数据。}
+
+讲义反复强调的一点：$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是它的估计量。前者不会因为重抽样本而改变，
+后者会。混用这两个符号是本课程最常见的失分点。
+
+\subsection{一阶条件与斜率}\label{sec:foc}
+
+最小二乘准则把 $\hat\beta_0,\hat\beta_1$ 取为使残差平方和
+$SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
+
+记 $\hat S_{xy}=\sum_i (x_i-\bar x)(y_i-\bar y)$、$\hat S_{xx}=\sum_i (x_i-\bar x)^2$。
+对 $\hat\beta_1$ 求偏导并令其为零，得到一阶条件
+
+\begin{equation}
+  \hat S_{xy}-\hat\beta_1\hat S_{xx}=0.
+\end{equation}
+
+两边解出斜率即得
+
+\begin{equation}
+  \hat\beta_1=\frac{\hat S_{xy}}{\hat S_{xx}}.\label{eq:ols-slope}
+\end{equation}
+
+整理时除以 $\hat S_{xx}$ 这一步骤要求 $\hat S_{xx}>0$，也就是 $x$ 在样本中不是常数。
+若 $x$ 取值全部相同，一阶条件对 $\hat\beta_1$ 不再构成约束，斜率不可识别——这不是技术细节，
+而是“解释变量必须有变异”这一要求的代数来源。
+
+同一个一阶条件的另一支给出 $\sum_i\hat u_i=0$，即残差和为零；代回可得回归线过样本均值点
+$(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖任何分布假设。

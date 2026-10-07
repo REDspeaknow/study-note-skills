@@ -330,6 +330,10 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def main() -> int:
+    # Windows consoles often default to a legacy code page (GBK here) that cannot
+    # encode characters such as U+015C, so printing a report could crash the run.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tex", type=Path, required=True, help="LaTeX entrypoint")
     parser.add_argument("--pdf", type=Path, help="compiled PDF")

@@ -2,14 +2,14 @@
   "unit_id": "U01",
   "coverage_ids": ["A-01"],
   "unresolved": [],
+  "continuity_updates": [],
   "formula_candidates": [
     {
       "key": "network_pairs",
       "name": "潜在配对数",
       "formula": "L(n)=n(n-1)/2",
       "conditions": "无序两两配对",
-      "body_label": "unit:U01"
+      "body_label": "unit:demo"
     }
   ]
 }
-

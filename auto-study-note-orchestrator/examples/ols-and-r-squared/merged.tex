@@ -1,0 +1,105 @@
+% !TEX program = xelatex
+% 示例合并稿：U01 与 U02 两份正文片段按教学顺序合并，加上编排器独自撰写的文档级模块。
+% 编译或跑 validate_study_note.py 前，需把 ../../assets/study-note-style.sty 复制到本目录
+% （工作流本来就要复制 assets，见 orchestration-workflow.md §3）。
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+
+\begin{document}
+
+\begin{center}
+  {\Huge\bfseries 计量经济学 \\[0.5ex]}
+  {\LARGE 一元回归复习 \\[1ex]}
+  {\small handout-01（12 页）}
+
+  \vspace{0.4em}
+  {\small 标注：\PriorityMust\ 必背\quad\PriorityImportant\ 重点\quad\PriorityKnow\ 了解}
+\end{center}
+\StudyDivider
+
+\tableofcontents
+\clearpage
+
+% ════ U01 正文片段（u01_body.tex）════
+
+\section{OLS 斜率是怎么定出来的？}\label{sec:ols-slope}
+
+\subsection{两个函数不能混用}\label{sec:prf-srf}
+
+\StudyTerm{\PriorityMust}{总体回归函数}{$E(y\mid x)=\beta_0+\beta_1x$ 描述给定 $x$ 时 $y$ 的条件均值。}
+
+\StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 是它的样本对应物，拟合的是手头这组数据。}
+
+讲义反复强调的一点：$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是它的估计量。前者不会因为重抽样本而改变，
+后者会。混用这两个符号是本课程最常见的失分点。
+
+\subsection{一阶条件与斜率}\label{sec:foc}
+
+最小二乘准则把 $\hat\beta_0,\hat\beta_1$ 取为使残差平方和
+$SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
+
+记 $\hat S_{xy}=\sum_i (x_i-\bar x)(y_i-\bar y)$、$\hat S_{xx}=\sum_i (x_i-\bar x)^2$。
+对 $\hat\beta_1$ 求偏导并令其为零，得到一阶条件
+
+\begin{equation}
+  \hat S_{xy}-\hat\beta_1\hat S_{xx}=0.
+\end{equation}
+
+两边解出斜率即得
+
+\begin{equation}
+  \hat\beta_1=\frac{\hat S_{xy}}{\hat S_{xx}}.\label{eq:ols-slope}
+\end{equation}
+
+整理时除以 $\hat S_{xx}$ 这一步骤要求 $\hat S_{xx}>0$，也就是 $x$ 在样本中不是常数。
+若 $x$ 取值全部相同，一阶条件对 $\hat\beta_1$ 不再构成约束，斜率不可识别——这不是技术细节，
+而是“解释变量必须有变异”这一要求的代数来源。
+
+同一个一阶条件的另一支给出 $\sum_i\hat u_i=0$，即残差和为零；代回可得回归线过样本均值点
+$(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖任何分布假设。
+
+% ════ U02 正文片段（u02_body.tex）════
+
+\section{$R^2$ 衡量了什么、不衡量什么？}\label{sec:r-squared}
+
+\subsection{平方和分解}\label{sec:sst-decomp}
+
+按 \eqref{eq:ols-slope} 定出的 OLS 斜率，其残差 $\hat u_i=y_i-\hat y_i$ 与拟合值 $\hat y_i$ 正交。
+这个正交性是下面分解成立的原因，而不是一条额外假设。
+
+把 $y_i$ 写成 $\hat y_i+\hat u_i$ 再展开总平方和，交叉项因正交性消失：
+
+\begin{equation}
+  \underbrace{\sum_i(y_i-\bar y)^2}_{SST}
+  =\underbrace{\sum_i(\hat y_i-\bar y)^2}_{SSE}
+  +\underbrace{\sum_i\hat u_i^2}_{SSR}.
+\end{equation}
+
+拟合优度定义为被解释部分占总部分的比例：
+
+\begin{equation}
+  R^2=\frac{SSE}{SST}=1-\frac{SSR}{SST}.\label{eq:r-squared}
+\end{equation}
+
+$R^2$ 描述的是同一样本内部的拟合程度，不携带任何关于 $\beta_1$ 真实取值的信息。
+
+\subsection{常见误读}\label{sec:r2-misread}
+
+讲义列了三条，这里合并为一句：$R^2$ 高既不说明模型设定正确，也不说明解释变量是原因。
+往回归里加一个与本无关系的趋势变量同样能推高 $R^2$；反过来，$R^2$ 只有 $0.1$ 而斜率估计得很准的情形
+在横截面数据里相当常见。把 $R^2$ 当作“模型好不好”的总评分，是本课程明确要避免的做法。
+
+% ════ 编排器撰写的唯一一处公式速查 ════
+% 两个批次共提名 3 条候选，去重后得 2 个结果键：ols_slope 被 U01、U02 各提名一次，
+% 合并为一行；r_squared 单独一行。全书仅此一处公式表格。
+
+\section{公式速查手册}
+
+\subsection{一元回归}
+
+\begin{FormulaSummaryTable}
+\FormulaSummaryRow{OLS 斜率}{$\hat\beta_1=\hat S_{xy}/\hat S_{xx}$}{一元回归；需 $\hat S_{xx}>0$，即 $x$ 在样本中有变异；见第 1 节}
+\FormulaSummaryRow{拟合优度}{$R^2=1-SSR/SST$}{含常数项 OLS；只描述样本内拟合，不反映因果或设定正确性；见第 2 节}
+\end{FormulaSummaryTable}
+
+\end{document}

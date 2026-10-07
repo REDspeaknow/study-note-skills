@@ -2,14 +2,14 @@
   "unit_id": "U02",
   "coverage_ids": ["A-02"],
   "unresolved": [],
+  "continuity_updates": [],
   "formula_candidates": [
     {
       "key": "network_pairs",
       "name": "连接数",
       "formula": "L(n) = n(n-1)/2",
       "conditions": "无序配对",
-      "body_label": "unit:U02"
+      "body_label": "unit:demo"
     }
   ]
 }
-
