@@ -4,7 +4,9 @@ Read this when creating or auditing a complete document. `study-note-style-v1` f
 
 ## Canonical assets
 
-Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty`. Compile with XeLaTeX. Keep the package's A4 geometry, FandolKai/FandolHei Chinese text, Times New Roman ordinary Latin text, XITS Math, priority macros, colors, boxes, and `hyperref` `hidelinks` behavior. Do not rebuild these in the main TeX.
+Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty`. Compile with XeLaTeX. Keep the package's A4 geometry, Chinese text fonts, Times New Roman ordinary Latin text, XITS Math, priority macros, colors, boxes, and `hyperref` `hidelinks` behavior. Do not rebuild these in the main TeX.
+
+Chinese text uses FandolKai for the body, FandolHei for sans-serif, and FandolSong Bold for emphasis: `\setCJKmainfont` maps `BoldFont` to `FandolSong-Bold.otf`, so every `\bfseries` — headings, table headers, box titles, map nodes, and inline emphasis alike — renders as bold Song. This is deliberate. FandolKai ships only a Regular weight, so the previous mapping to FandolHei made emphasis change typeface rather than gain weight, which read as an unrelated sans-serif intrusion inside Kai prose. All three families come from TeX Live, so the style needs no separately installed font; do not substitute a system font or an algorithmic `AutoFakeBold`, which would break byte-identical output across machines.
 
 Use `\PriorityMust`, `\PriorityImportant`, and `\PriorityKnow` to show study priority. Do not force a priority marker on every paragraph.
 

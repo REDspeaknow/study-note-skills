@@ -1,5 +1,17 @@
 # 改动记录
 
+## 2026-10-07 · 中文加粗改用宋体真字重
+
+- `study-note-style.sty` 的中文主字体把 `BoldFont` 从 `FandolHei-Bold.otf` 改为 `FandolSong-Bold.otf`。原因是 FandolKai 只有 Regular，原先的加粗映射到黑体，等于**换字体**而不是**加粗**；楷体正文里突然出现无衬线黑体，风格割裂。宋体与楷体同属衬线书写传统，且 `FandolSong-Bold` 是设计出的真 Bold 字重，小字号下比算法加粗清晰。
+- 该映射对所有 `\bfseries` 生效，因此章节标题、`FormulaSummaryTable` 表头、盒子标题、关系图节点与正文强调的中文一并变为宋体粗。这是有意为之，不是副作用遗漏。
+- 仍不引入额外字体依赖：FandolKai / FandolHei / FandolSong 均由 TeX Live 分发。
+- 备选方案曾实测对比：楷体 `AutoFakeBold=4`（字形一致但加粗偏弱）、仿宋 + `AutoFakeBold`（仿宋笔画细而均匀，算法加粗几乎无变化）。`style-contract.md` 记录了取舍理由，避免以后被"修回"黑体。
+
+### 验证状态
+
+- 样例 `merged.tex` 重新编译通过；`validate_study_note.py` 全项 pass，PDF 字体表由 `FandolHei-Bold` 变为 `FandolSong-Bold`，Times New Roman 与 XITS Math 检查不受影响，编译日志无字体替换警告。
+- 17 个回归用例仍全部通过。
+
 ## 2026-10-07 · 交接契约校验与完整样例
 
 补上交接 JSON 与正文片段之间唯一没人检查的那一环，并给五份流程产物配一份可运行的样例。

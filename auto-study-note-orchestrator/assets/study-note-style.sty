@@ -11,10 +11,12 @@
 \setmainfont{Times New Roman}
 \setsansfont{Times New Roman}
 \setmonofont{Latin Modern Mono}
+% 正文用楷体，加粗改用宋体真 Bold 字重：FandolKai 只有 Regular，映射到黑体会让
+% 强调处与正文风格割裂。FandolSong-Bold 随 TeX Live 分发，不引入额外字体依赖。
 \setCJKmainfont{FandolKai-Regular.otf}[
-  BoldFont=FandolHei-Bold.otf,
+  BoldFont=FandolSong-Bold.otf,
   ItalicFont=FandolKai-Regular.otf,
-  BoldItalicFont=FandolHei-Bold.otf
+  BoldItalicFont=FandolSong-Bold.otf
 ]
 \setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
 \setCJKmonofont{FandolFang-Regular.otf}
