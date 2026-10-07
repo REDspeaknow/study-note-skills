@@ -5,7 +5,7 @@ description: Write one coherent Chinese study-guide unit from grouped course evi
 
 # Study Note Unit Writer
 
-Write **one learning unit**, not a miniature study guide. The orchestrator supplies a unit question, grouped source/coverage IDs, importance, the source excerpts, prior definitions and notation, and any must-preserve results. Read `references/unit-writing.md` for treatment choices and the handoff format.
+Write **one bounded writing unit (batch)**, not a miniature study guide. A course unit/chapter may contain many such batches; `unit_id` identifies this packet's writing scope. The orchestrator supplies its parent chapter, learning question, grouped source/coverage IDs, importance, source excerpts, prior definitions and notation, and any must-preserve results. Read `references/unit-writing.md` for treatment choices and the handoff format.
 
 ## Deliverables
 

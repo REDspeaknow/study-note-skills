@@ -18,4 +18,4 @@
 
 在 Claude Code 的目标项目中，将三个现行 skill 文件夹放入 .claude/skills/，将本仓库的 [.claude/agents/study-note-unit-writer.md](.claude/agents/study-note-unit-writer.md) 放入同名项目路径；跨项目安装也可使用个人目录 ~/.claude/skills/ 与 ~/.claude/agents/。两者分别提供写作规则与子代理注册，agents/openai.yaml 属于 Codex 元数据。仓库根目录的 skill 文件夹不会因被克隆就自动注册到 Claude Code。
 
-委派规则见 [delegation-policy.md](auto-study-note-orchestrator/references/delegation-policy.md)：默认按规划单元数决定就地或委派，用户指令优先；单文件长课件和多文件短资料都按同一判据处理。continuity.md 与每次任务包记录已建立的定义、记号和正文标签，恢复或更换写作器时继续使用。
+委派规则见 [delegation-policy.md](auto-study-note-orchestrator/references/delegation-policy.md)：用户指令优先；整章/整本课件整理默认委派唯一的综合写作器，指定片段起草或已有笔记局部修订就地完成。课程的一个“单元”可有一两百页，应按连贯子主题和模型阶段分为多个写作批次；不使用单元数量门槛。continuity.md 与每次任务包传递已建立的定义、记号和正文标签，各批次最终由主编排器统一去重。

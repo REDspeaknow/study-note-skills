@@ -2,7 +2,9 @@
 
 ## Unit shape
 
-The title should answer one learning question. Start with the result or distinction that organizes the unit, then add only the setup, mechanism, derivation, example, or boundary needed to understand it. Several source slides may map to one paragraph or table. One source slide may require a worked derivation. Importance changes the depth of explanation; it does not create a mandatory list of subheadings.
+Here, a unit is a bounded writing batch, not the course's own chapter/teaching-unit label. Several batches can build one chapter. The packet supplies the parent chapter and earlier definitions/results; continue that exposition without giving each batch a standalone introduction, recap or new heading by default.
+
+When the exposition needs a heading, its title should answer one learning question. Start with the result or distinction that organizes the batch, then add only the setup, mechanism, derivation, example, or boundary needed to understand it. Several source slides may map to one paragraph or table. One source slide may require a worked derivation. Importance changes the depth of explanation; it does not create a mandatory list of subheadings.
 
 For a model, establish notation once. A first substantive result may need actors, choices, assumptions, and equilibrium. Later results in the same model should inherit that setup and show only the changed step. Distinguish a source-derived result from an added explanation.
 

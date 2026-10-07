@@ -19,12 +19,13 @@ Importance guides space and retrieval priority, not the number of mandatory head
 
 ## 2. Synthesis plan and unit packet
 
-Group inventory IDs into learning units around one central question or model. Save `synthesis_plan.md` with unit ID, source IDs, learning question, primary claim, prerequisite notation, depth, visual decision, and master-outline position. Keep a model's setup and application together; do not create one batch per slide. Add the execution decision required by `delegation-policy.md`. Maintain `continuity.md` with canonical definitions, notation, result/formula keys, body labels and owning units; track each unit as planned, drafting, received or integrated.
+Distinguish course chapters from writing units (batches). A course unit can span hundreds of pages; one writer packet covers a coherent question, model result or derivation stage within it. Follow the batching rules in `delegation-policy.md`; `unit_id` identifies a writing batch, not an entire course chapter. Save `synthesis_plan.md` with the parent course unit/chapter, writing-unit ID, source IDs and ranges, learning question, primary claim, prerequisite notation, depth, visual decision and master-outline position. Record the execution decision there. Maintain `continuity.md` with canonical definitions, notation, result/formula keys, body labels and owning writing units; track each batch as planned, drafting, received or integrated.
 
 Give the integrated writer current source excerpts and relevant prior context:
 
 ```text
 unit_id:
+course_unit_or_chapter: parent chapter and this batch's position within it
 output_paths: absolute paths for this unit's two files
 writer_skill_path: absolute path to study-note-unit-writer/SKILL.md
 writer_reference_path: absolute path to references/unit-writing.md
@@ -41,7 +42,7 @@ style_contract: study-note-style-v1
 deliver: <unit_id>_body.tex + <unit_id>_handoff.json
 ```
 
-The writer owns prose, math, and visuals within that unit. Follow the execution mode and resumption rules in `delegation-policy.md`. A resumed writer still receives the current packet and continuity entries; its memory does not replace these files.
+The writer owns prose, math, and visuals within that writing batch. Later batches in the same course unit inherit established setup rather than rewriting it. Follow the execution mode and resumption rules in `delegation-policy.md`. A resumed writer still receives the current packet and continuity entries; its memory does not replace these files.
 
 After each unit, locate each assigned ID in the body or an unresolved note, inspect key algebra and visuals, and identify claims already explained elsewhere. Reconcile the handoff's `continuity_updates` into `continuity.md`, resolving notation/definition conflicts before the next unit. Record findings and fixes compactly.
 
