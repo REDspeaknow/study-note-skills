@@ -20,6 +20,11 @@ Save UTF-8 JSON beside the body fragment:
 {
   "unit_id": "U03",
   "coverage_ids": ["L1-13", "L1-14", "L1-15"],
+  "coverage_map": {
+    "L1-13": {"status": "represented", "body_labels": ["sec:two-sided-pricing"]},
+    "L1-14": {"status": "represented-indirectly", "body_labels": ["sec:two-sided-pricing"]},
+    "L1-15": {"status": "represented", "body_labels": ["sec:two-sided-pricing"]}
+  },
   "unresolved": [],
   "continuity_updates": [
     {
@@ -40,6 +45,16 @@ Save UTF-8 JSON beside the body fragment:
   ]
 }
 ```
+
+### Coverage and issue records
+
+`coverage_ids` lists the assigned items, including unfinished ones. `coverage_map` has exactly those IDs as keys. Each entry uses the inventory's `status` vocabulary: `pending`, `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing`. Represented/indirect/weak entries identify the actual teaching passage with `body_labels`; all other statuses, and `weak`, require a short `reason`. Several IDs may share an existing paragraph/table label; add anchors where useful, not headings per ID. A label proves location, not sufficient explanation.
+
+Each `unresolved` entry is `{"issue_id":"U03-Q01","coverage_ids":["L1-15"],"description":"来源未说明内点解成立条件"}`. Use a stable batch-prefixed ID for a new issue; reuse the supplied ID and original description for an existing one. Report new or still-open issues relevant to this batch. The orchestrator owns closure after reading the correction.
+
+The orchestrator initializes `issues.json` as `[]`, then retains every issue as the same object plus `status` (`open`, `resolved`, or `accepted`), `resolution`, and `body_labels`. Closing requires a concrete resolution explanation; `resolved` also points to the corrected body passage. `accepted` means an explicitly documented source limitation or authorized omission, not an unexplained waiver. Preserve original ID, description and coverage IDs; retain closed entries. An empty later handoff leaves the ledger unchanged. Give the next writer the open issues relevant to its packet.
+
+After merging, the orchestrator reviews passages and updates handoff coverage locations/statuses and inventory statuses. Run `check_handoffs.py` with all handoffs in teaching/repair order; later entries for the same coverage ID supersede earlier ones. Its JSON report contains the consolidated `coverage_map`. For final accounting, supply only the final TeX and any fragments it actually includes as `--body`, with `--final --inventory <inventory> --issues <issues.json> --out <audit.json>`: every inventory ID needs a terminal coverage entry, all reported issues must still exist in the ledger, and open issues block completion. Accepted limitations remain visible in the report and delivery note. Keep unresolved work as a draft when it cannot be closed.
 
 `key` identifies the result across units. If another unit reuses the result, use the same key and point to its earlier body explanation; do not create a new summary row. Formula candidates are optional nominations. The orchestrator decides which distinct retrieval targets enter one end-of-book formula section.
 

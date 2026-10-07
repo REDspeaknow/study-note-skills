@@ -22,8 +22,10 @@ from validate_study_note import validate  # noqa: E402
 def example_report():
     return check(
         [EXAMPLES / "u01_handoff.json", EXAMPLES / "u02_handoff.json"],
-        [EXAMPLES / "u01_body.tex", EXAMPLES / "u02_body.tex"],
+        [EXAMPLES / "merged.tex"],
         EXAMPLES / "source_inventory.md",
+        EXAMPLES / "issues.json",
+        final=True,
     )
 
 
@@ -38,7 +40,7 @@ class ExampleRun(unittest.TestCase):
         reused = {item["body_label"]: item for item in report["reused_results"]}
         self.assertIn("eq:ols-slope", reused)
         self.assertEqual(reused["eq:ols-slope"]["referenced_by"], ["U01", "U02"])
-        self.assertEqual(reused["eq:ols-slope"]["declared_in"], ["u01_body.tex"])
+        self.assertEqual(reused["eq:ols-slope"]["declared_in"], ["merged.tex"])
 
     def test_existing_fixtures_still_satisfy_the_contract(self):
         fixtures = TESTS / "fixtures"
@@ -105,6 +107,72 @@ class ContractViolations(unittest.TestCase):
         self.record["coverage_ids"] = []
         failures = self.report()["failures"]
         self.assertTrue(any("coverage_ids must be a non-empty list" in item for item in failures), failures)
+
+
+class CoverageAndClosure(unittest.TestCase):
+    """Accounting gaps and issue loss should fail independently of prose quality."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.records = [json.loads((EXAMPLES / f"u0{i}_handoff.json").read_text(encoding="utf-8")) for i in (1, 2)]
+        self.issues = json.loads((EXAMPLES / "issues.json").read_text(encoding="utf-8"))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def report(self, final=True):
+        paths = []
+        for i, record in enumerate(self.records):
+            path = self.tmp / f"u{i}_handoff.json"
+            path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+            paths.append(path)
+        ledger = self.tmp / "issues.json"
+        ledger.write_text(json.dumps(self.issues, ensure_ascii=False), encoding="utf-8")
+        return check(paths, [EXAMPLES / "u01_body.tex", EXAMPLES / "u02_body.tex"],
+                     EXAMPLES / "source_inventory.md", ledger, final=final)
+
+    def test_unassigned_inventory_item_fails_only_at_final_accounting(self):
+        self.records[1]["coverage_ids"].remove("L1-05")
+        del self.records[1]["coverage_map"]["L1-05"]
+        self.assertEqual(self.report(final=False)["failures"], [])
+        self.assertTrue(any("has no coverage_map entry" in f for f in self.report()["failures"]))
+
+    def test_coverage_claim_requires_an_existing_body_location(self):
+        self.records[0]["coverage_map"]["L1-01"]["body_labels"] = ["sec:absent"]
+        self.assertTrue(any("resolves to no" in f for f in self.report()["failures"]))
+
+    def test_pending_coverage_blocks_final_completion(self):
+        self.records[0]["coverage_map"]["L1-01"] = {"status": "missing", "reason": "尚未起草"}
+        self.assertTrue(any("is not complete" in f for f in self.report()["failures"]))
+
+    def test_omission_needs_a_reason(self):
+        self.records[0]["coverage_map"]["L1-01"] = {"status": "intentionally-omitted"}
+        self.assertTrue(any("requires a reason" in f for f in self.report()["failures"]))
+
+    def test_reported_issue_cannot_disappear_from_ledger(self):
+        self.issues = []
+        self.assertTrue(any("missing from issues.json" in f for f in self.report()["failures"]))
+
+    def test_later_empty_handoff_does_not_close_an_open_issue(self):
+        self.issues[0].update(status="open", resolution="", body_labels=[])
+        self.records.append({"unit_id": "U03", "coverage_ids": ["L1-05"],
+                             "coverage_map": {"L1-05": self.records[1]["coverage_map"]["L1-05"]},
+                             "unresolved": [], "formula_candidates": [], "continuity_updates": []})
+        self.assertEqual(self.report(final=False)["status"], "pass")
+        self.assertTrue(any("remains open" in f for f in self.report()["failures"]))
+
+    def test_closure_needs_evidence_and_a_real_correction_location(self):
+        self.issues[0].update(resolution="", body_labels=["sec:absent"])
+        failures = self.report()["failures"]
+        self.assertTrue(any("resolution evidence" in f for f in failures))
+        self.assertTrue(any("resolves to no" in f for f in failures))
+
+    def test_accepted_limitation_stays_visible(self):
+        self.issues[0].update(status="accepted", resolution="原资料缺失，交付说明明确本项依据现有笔记", body_labels=[])
+        report = self.report()
+        self.assertEqual(report["status"], "pass")
+        self.assertTrue(any("accepted limitation" in w for w in report["warnings"]))
 
 
 class MergedExample(unittest.TestCase):

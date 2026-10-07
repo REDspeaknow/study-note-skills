@@ -1,4 +1,4 @@
-# 样例：从讲义到合并稿的五份产物
+# 样例：从讲义到合并稿的交接流程
 
 这份样例演示的是**流程产物之间能不能接上**，不是版式参考。视觉样式看
 `../../assets/通用笔记模板.tex`；本目录关心的是 `source_inventory.md`、`synthesis_plan.md`、
@@ -13,6 +13,7 @@
 | `source_inventory.md` | 编排器 | 6 个盘点项，附 `status` 终态 |
 | `synthesis_plan.md` | 编排器 | 交付范围、execution_mode、两个批次的划分 |
 | `continuity.md` | 编排器 | 可复用的定义、记号、结果键与正文标签 |
+| `issues.json` | 编排器 | 保留问题原始编号、描述及解决依据 |
 | `u01_body.tex` / `u01_handoff.json` | 写作批次 U01 | OLS 斜率的推导 |
 | `u02_body.tex` / `u02_handoff.json` | 写作批次 U02 | $R^2$ 的解释，复用 U01 的记号 |
 | `merged.tex` | 编排器 | 两份片段合并 + 唯一一处公式速查 |
@@ -27,15 +28,17 @@
 3. **提名不等于收录。** 两个批次共提名 3 条候选，去重后 `merged.tex` 里只有 2 行。
 4. **一个盘点项可以只被间接覆盖。** `L1-04` 标为 `represented-indirectly`：两条代数性质由
    L1-03 的一阶条件直接落出，正文在推导尾部一段交代，不单独设小节。
+5. **覆盖与问题分别对账。** 每份交接的 `coverage_map` 对应实际段落；U02 提出的问题在
+   `issues.json` 中保留原始记录及解决依据，关闭后不从交接中删除。
 
 ## 怎么跑
 
 ```bash
-# 交接契约与标签解析（本目录的样例应当 pass）
+# 最终对账：只读取合并后的实际正文
 python ../../scripts/check_handoffs.py \
   --handoff u01_handoff.json --handoff u02_handoff.json \
-  --body u01_body.tex --body u02_body.tex \
-  --inventory source_inventory.md
+  --body merged.tex \
+  --inventory source_inventory.md --issues issues.json --final --out audit.json
 
 # 公式候选去重
 python ../../scripts/collect_formula_candidates.py u01_handoff.json u02_handoff.json
@@ -49,8 +52,8 @@ python ../../scripts/validate_study_note.py --tex merged.tex \
 （见 `orchestration-workflow.md` §3），本目录没有把 `.sty` 复制进来，以免样式文件出现第二份副本
 而产生版本漂移。测试脚本会在临时目录里复制后运行。
 
-## 已知未覆盖的部分
+## 检查边界
 
-本样例能证明交接 JSON 与正文片段、合并稿、片段边界三者一致，以及公式候选能去重。
-它**不能**证明 `source_inventory.md` 的每一项都真的在正文里有对应段落——覆盖质量仍是判断问题，
-`check_handoffs.py` 只校验交接里引用的 coverage id 确实存在于清单，不校验覆盖是否充分。
+最终交接检查会逐项对账来源 ID、正文标签、覆盖状态和问题关闭记录，报告中汇总 `coverage_map`。
+它能发现未认领的条目与丢失的问题记录，但标签存在不能证明解释充分，仍须主编阅读对应正文。
+本轮更新了样例契约，未重新运行检查、测试或编译。

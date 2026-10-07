@@ -2,7 +2,7 @@
 
 ## Inputs
 
-Read the requested scope, available source files, source inventory, synthesis plan, unit bodies and handoffs, final TeX/PDF, compile log, and deterministic validator report. If only a prior note exists, audit preservation relative to that note and the inventory, not the unavailable original course material.
+Read the requested scope, available sources, inventory, plan, bodies/handoffs, `issues.json`, consolidated coverage report, final TeX/PDF and technical reports. If only a prior note exists, audit preservation relative to that note and the inventory, not the unavailable original course material.
 
 ## Coverage and correctness
 
@@ -10,6 +10,7 @@ Read the requested scope, available source files, source inventory, synthesis pl
 2. For major models, compare setup, symbols, equilibrium/result, necessary algebra, and boundary conditions with available evidence. Later results may inherit a setup already established.
 3. Check whether the reader can answer the unit's central question without reading repeated restatements.
 4. Inspect visuals for valid source cues, meaningful placement, readable labels, and correct axes/arrows/intersections. Reject decorative or duplicate figures.
+5. Check issue closures against the cited corrections and acceptance reasons, using `study-note-unit-writer/references/unit-writing.md`. Structural accounting cannot establish teaching quality; open gaps prevent completion, and accepted limitations must appear in the delivery note.
 
 ## Repetition and retrieval
 

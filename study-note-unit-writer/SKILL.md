@@ -10,7 +10,7 @@ Write **one bounded writing unit (batch)**, not a miniature study guide. A cours
 ## Deliverables
 
 1. `<unit_id>_body.tex`: body content only. It may contain subsection headings, explanations, necessary intermediate algebra, cases, and approved local visuals. It must not contain a preamble, `\begin{document}`, a relationship map, `\section{公式速查手册}`, `FormulaSummaryTable`, a priority overview, or global mistakes. A final equation belongs beside its explanation; a short local takeaway is optional, not a required ending.
-2. `<unit_id>_handoff.json`: `unit_id`, `coverage_ids`, `unresolved`, `formula_candidates`, and `continuity_updates`. Each formula candidate has `key`, `name`, `formula`, `conditions`, and `body_label`. Each continuity update identifies a new or changed definition, notation or result with its canonical name, meaning and body label. These are metadata for the orchestrator, not LaTeX for the PDF. Return empty lists when nothing needs nomination or continuity updates.
+2. `<unit_id>_handoff.json`: `unit_id`, `coverage_ids`, `coverage_map`, `unresolved`, `formula_candidates`, and `continuity_updates`, following the schema in `references/unit-writing.md`. Map each assigned ID to its teaching passage or explicit gap/omission; give unresolved issues stable IDs. These are metadata for the orchestrator, not LaTeX for the PDF. Optional lists may be empty.
 
 ## Editorial decisions
 

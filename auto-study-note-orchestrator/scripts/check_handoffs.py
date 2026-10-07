@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-"""Check unit handoff JSON against body fragments and the source inventory.
+"""Check handoff locations, coverage accounting and persistent issue closure.
 
-This is the only check that reads both sides of the handoff contract at once.
-`validate_study_note.py` sees the merged document and the unit fragments but never
-the JSON; `collect_formula_candidates.py` sees the JSON but never the LaTeX.
-A body_label that points at no \\label therefore passes both and rots silently.
+Structural accounting only: actual teaching quality still needs editorial review.
 """
 
 from __future__ import annotations
@@ -22,6 +19,8 @@ CANDIDATE_FIELDS = ("key", "name", "formula", "conditions", "body_label")
 UPDATE_FIELDS = ("kind", "name", "meaning", "body_label")
 LABEL_RE = re.compile(r"\\label\{([^{}]+)\}")
 ID_HEADERS = {"id", "coverage id", "gap id"}
+COVERAGE_STATES = {"pending", "represented", "represented-indirectly", "intentionally-omitted", "weak", "missing"}
+COMPLETE_STATES = {"represented", "represented-indirectly", "intentionally-omitted"}
 
 
 def read_text(path: Path) -> str:
@@ -62,7 +61,10 @@ def _text_field(record: dict[str, Any], field: str) -> str:
     return value.strip() if isinstance(value, str) else ""
 
 
-def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = None) -> dict[str, Any]:
+def check(
+    handoffs: list[Path], bodies: list[Path], inventory: Path | None = None,
+    issues: Path | None = None, final: bool = False,
+) -> dict[str, Any]:
     failures: list[str] = []
     warnings: list[str] = []
     metrics: dict[str, Any] = {}
@@ -77,6 +79,24 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
 
     units: list[str] = []
     referenced: dict[str, set[str]] = {}
+    coverage_map: dict[str, dict[str, Any]] = {}
+    reported_issues: dict[str, dict[str, Any]] = {}
+
+    def resolve(where: str, label: str, unit_id: str | None = None) -> None:
+        if label not in labels:
+            failures.append(f"{where}: body_label {label!r} resolves to no \\label in the supplied bodies")
+        elif unit_id is not None:
+            referenced.setdefault(label, set()).add(unit_id)
+
+    def locations(where: str, item: dict[str, Any], required: bool) -> None:
+        values = item.get("body_labels", [])
+        if not isinstance(values, list) or not all(isinstance(v, str) and v.strip() for v in values):
+            failures.append(f"{where}: body_labels must be a list of non-empty strings")
+            return
+        if required and not values:
+            failures.append(f"{where}: body_labels must identify the teaching passage")
+        for label in values:
+            resolve(where, label.strip())
 
     for path in handoffs:
         name = path.name
@@ -99,19 +119,61 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
         units.append(unit_id)
 
         coverage = record.get("coverage_ids")
+        assigned: set[str] = set()
         if not isinstance(coverage, list) or not coverage:
             failures.append(f"{name}: coverage_ids must be a non-empty list")
         elif not all(isinstance(item, str) and item.strip() for item in coverage):
             failures.append(f"{name}: coverage_ids entries must be non-empty strings")
-        elif known_ids is not None:
-            for coverage_id in coverage:
-                if coverage_id.strip() not in known_ids:
+        else:
+            assigned = {item.strip() for item in coverage}
+            if len(assigned) != len(coverage):
+                failures.append(f"{name}: duplicate coverage_ids")
+            for coverage_id in assigned:
+                if known_ids is not None and coverage_id not in known_ids:
                     failures.append(
                         f"{name}: coverage id {coverage_id.strip()!r} is not in the source inventory"
                     )
 
-        if not isinstance(record.get("unresolved"), list):
+        mapping = record.get("coverage_map")
+        if not isinstance(mapping, dict):
+            failures.append(f"{name}: coverage_map must be an object keyed by coverage ID")
+            mapping = {}
+        if set(mapping) != assigned:
+            failures.append(f"{name}: coverage_map keys must match coverage_ids")
+        for coverage_id, item in mapping.items():
+            where = f"{name}: coverage {coverage_id}"
+            if not isinstance(item, dict):
+                failures.append(f"{where} must be an object")
+                continue
+            state = _text_field(item, "status")
+            if state not in COVERAGE_STATES:
+                failures.append(f"{where}: unknown status {state!r}")
+            locations(where, item, state in {"represented", "represented-indirectly", "weak"})
+            if state not in {"represented", "represented-indirectly"} and not _text_field(item, "reason"):
+                failures.append(f"{where}: status {state!r} requires a reason")
+            # Ordered handoffs allow a later repair batch to replace an earlier claim.
+            coverage_map[coverage_id] = {**item, "unit_id": unit_id}
+
+        unresolved = record.get("unresolved")
+        if not isinstance(unresolved, list):
             failures.append(f"{name}: unresolved must be a list (use [] when there is none)")
+            unresolved = []
+        for index, item in enumerate(unresolved, 1):
+            where = f"{name}: unresolved {index}"
+            if not isinstance(item, dict) or not all(_text_field(item, field) for field in ("issue_id", "description")):
+                failures.append(f"{where}: requires issue_id and description")
+                continue
+            ids = item.get("coverage_ids")
+            if not isinstance(ids, list) or not ids or not all(isinstance(v, str) and v.strip() for v in ids):
+                failures.append(f"{where}: coverage_ids must be a non-empty list of strings")
+                continue
+            if known_ids is not None and not set(ids) <= known_ids:
+                failures.append(f"{where}: coverage_ids not in the source inventory")
+                continue
+            issue_id = _text_field(item, "issue_id")
+            if issue_id in reported_issues and item != reported_issues[issue_id]:
+                failures.append(f"{where}: conflicting identity for issue {issue_id!r}")
+            reported_issues[issue_id] = item
 
         candidates = record.get("formula_candidates")
         if not isinstance(candidates, list):
@@ -121,14 +183,6 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
         if not isinstance(updates, list):
             failures.append(f"{name}: continuity_updates must be a list (use [] when empty)")
             updates = []
-
-        def resolve(where: str, label: str) -> None:
-            if label not in labels:
-                failures.append(
-                    f"{where}: body_label {label!r} resolves to no \\label in the supplied bodies"
-                )
-            else:
-                referenced.setdefault(label, set()).add(unit_id)
 
         seen_keys: dict[str, int] = {}
         for index, item in enumerate(candidates, 1):
@@ -145,7 +199,7 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
                 failures.append(f"{where}: duplicate result key {key!r} (first at candidate {seen_keys[key]})")
             else:
                 seen_keys[key] = index
-            resolve(where, _text_field(item, "body_label"))
+            resolve(where, _text_field(item, "body_label"), unit_id)
 
         seen_names: dict[str, int] = {}
         for index, item in enumerate(updates, 1):
@@ -165,7 +219,58 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
                 failures.append(f"{where}: duplicate continuity entry {identity!r}")
             else:
                 seen_names[identity] = index
-            resolve(where, _text_field(item, "body_label"))
+            resolve(where, _text_field(item, "body_label"), unit_id)
+
+    ledger: dict[str, dict[str, Any]] = {}
+    if issues is not None:
+        try:
+            entries = json.loads(read_text(issues))
+            if not isinstance(entries, list):
+                raise ValueError("issues root must be a list")
+        except (OSError, ValueError) as exc:
+            failures.append(f"issues: unreadable ledger ({exc})")
+            entries = []
+        for index, item in enumerate(entries, 1):
+            where = f"issues: entry {index}"
+            if not isinstance(item, dict) or not all(_text_field(item, field) for field in ("issue_id", "description")):
+                failures.append(f"{where}: requires issue_id and description")
+                continue
+            issue_id = _text_field(item, "issue_id")
+            if issue_id in ledger:
+                failures.append(f"{where}: duplicate issue_id {issue_id!r}")
+            ledger[issue_id] = item
+            ids = item.get("coverage_ids")
+            if not isinstance(ids, list) or not ids or not all(isinstance(v, str) and v.strip() for v in ids):
+                failures.append(f"{where}: coverage_ids must be a non-empty list of strings")
+            elif known_ids is not None and not set(ids) <= known_ids:
+                failures.append(f"{where}: coverage_ids not in the source inventory")
+            state = _text_field(item, "status")
+            if state not in {"open", "resolved", "accepted"}:
+                failures.append(f"{where}: unknown issue status {state!r}")
+            if state in {"resolved", "accepted"} and not _text_field(item, "resolution"):
+                failures.append(f"{where}: closing an issue requires resolution evidence")
+            locations(where, item, state == "resolved")
+            if state == "open":
+                (failures if final else warnings).append(f"issue {issue_id!r} remains open")
+            elif state == "accepted":
+                warnings.append(f"issue {issue_id!r}: accepted limitation — {_text_field(item, 'resolution')}")
+
+    for issue_id, item in reported_issues.items():
+        saved = ledger.get(issue_id)
+        if saved is None:
+            failures.append(f"issue {issue_id!r} reported in a handoff is missing from issues.json")
+        elif any(saved.get(field) != item.get(field) for field in ("coverage_ids", "description")):
+            failures.append(f"issue {issue_id!r}: ledger must preserve its original coverage_ids and description")
+
+    if final:
+        if inventory is None or issues is None:
+            failures.append("final accounting requires --inventory and --issues (use [] for an empty ledger)")
+        if known_ids is not None:
+            for coverage_id in sorted(known_ids - set(coverage_map)):
+                failures.append(f"inventory item {coverage_id!r} has no coverage_map entry")
+        for coverage_id, item in coverage_map.items():
+            if _text_field(item, "status") not in COMPLETE_STATES:
+                failures.append(f"coverage {coverage_id!r} is not complete: {_text_field(item, 'status')}")
 
     # A result cited by a unit other than the one that declares it is the intended
     # reuse pattern; surface it so the merge step keeps a single explanation.
@@ -186,6 +291,8 @@ def check(handoffs: list[Path], bodies: list[Path], inventory: Path | None = Non
             for label in reused
         ],
         "label_owners": labels,
+        "coverage_map": coverage_map,
+        "issues": list(ledger.values()),
     }
 
 
@@ -198,11 +305,13 @@ def main() -> int:
     parser.add_argument("--handoff", type=Path, action="append", required=True, help="unit handoff JSON; repeatable")
     parser.add_argument("--body", type=Path, action="append", default=[], help="unit body fragment; repeatable")
     parser.add_argument("--inventory", type=Path, help="source inventory markdown")
+    parser.add_argument("--issues", type=Path, help="persistent issues.json ledger")
+    parser.add_argument("--final", action="store_true", help="require full inventory accounting and closed issues")
     parser.add_argument("--out", type=Path, help="optional JSON report path")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
 
-    report = check(args.handoff, args.body, args.inventory)
+    report = check(args.handoff, args.body, args.inventory, args.issues, args.final)
     output = json.dumps(report, ensure_ascii=False, indent=2)
     if args.out:
         args.out.write_text(output + "\n", encoding="utf-8")

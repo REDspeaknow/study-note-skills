@@ -1,0 +1,10 @@
+[
+  {
+    "issue_id": "U02-Q01",
+    "coverage_ids": ["L1-06"],
+    "description": "需核对“高 R² 不等于因果”的解释是否落在正文，而非只列结论。",
+    "status": "resolved",
+    "resolution": "主编已核对误读段：无关趋势变量也可推高 R² 的例子说明拟合程度不能推出因果关系。",
+    "body_labels": ["sec:r2-misread"]
+  }
+]

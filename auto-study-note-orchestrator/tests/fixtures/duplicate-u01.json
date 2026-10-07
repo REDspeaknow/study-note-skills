@@ -1,6 +1,9 @@
 {
   "unit_id": "U01",
   "coverage_ids": ["A-01"],
+  "coverage_map": {
+    "A-01": {"status": "represented", "body_labels": ["unit:demo"]}
+  },
   "unresolved": [],
   "continuity_updates": [],
   "formula_candidates": [

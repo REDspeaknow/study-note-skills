@@ -37,6 +37,7 @@ source_evidence:
 importance_and_depth:
 already_defined_terms_and_notation:
 prior_results_and_body_labels:
+open_issues_for_this_batch: stable IDs and original descriptions from issues.json
 new_definitions_owned_by_this_unit:
 must_preserve_results_and_boundaries:
 approved_visual_and_reason: optional
@@ -46,7 +47,7 @@ deliver: <unit_id>_body.tex + <unit_id>_handoff.json
 
 The writer owns prose, math, and visuals within that writing batch. Later batches in the same course unit inherit established setup rather than rewriting it. Follow the execution mode and resumption rules in `delegation-policy.md`. A resumed writer still receives the current packet and continuity entries; its memory does not replace these files.
 
-After each unit, locate each assigned ID in the body or an unresolved note, inspect key algebra and visuals, and identify claims already explained elsewhere. Reconcile the handoff's `continuity_updates` into `continuity.md`, resolving notation/definition conflicts before the next unit. Record findings and fixes compactly.
+Initialize `issues.json` as `[]`. After each unit, review its `coverage_map` against actual passages, inspect key algebra/visuals and repetition, and reconcile `continuity_updates` into `continuity.md`. Merge unresolved entries into the persistent issue ledger and record corrections before the next dependent batch. The compact coverage/closure schema lives in `study-note-unit-writer/references/unit-writing.md`; retain original handoffs and closed issues.
 
 ## 3. Document assembly
 
@@ -62,14 +63,14 @@ Only after all units are merged, write at most one `\section{公式速查手册}
 
 Use `scripts/collect_formula_candidates.py` to detect duplicate keys and inconsistent submissions before editorial selection. It does not mandate including every candidate.
 
-Run `scripts/check_handoffs.py` over every handoff and body before merging. It is the only check that reads the JSON and the LaTeX together: it resolves each `body_label` in `formula_candidates` and `continuity_updates` against the supplied bodies, rejects an unknown `kind` or a result key repeated inside one handoff, and verifies each `coverage_ids` entry exists in the inventory. A candidate whose label names nothing, or a result the writer forgot to label, passes both `collect_formula_candidates.py` and `validate_study_note.py` and would otherwise reach the merge unnoticed.
+Run `scripts/check_handoffs.py` over received handoffs and bodies with `--inventory <inventory> --issues <issues.json>` before merging. It checks coverage-map keys and locations, formula/continuity labels and issue retention. Partial runs allow unassigned inventory items and flag open issues; full accounting is the final audit's responsibility.
 
 ## 5. Final audit
 
-Create a compact coverage map: each inventory ID -> body section/label, intentional omission reason, or unresolved. Review actual passages; keyword occurrence alone is not proof. Check important derivations against available source or inherited notes, including assumptions and boundaries.
+Review actual passages and important derivations, including assumptions and boundaries; keyword occurrence alone is not proof. Update handoff coverage entries and inventory statuses after deduplication, then run `scripts/check_handoffs.py` with all handoffs, the final TeX/actually included fragments as `--body`, and `--final --inventory <inventory> --issues <issues.json> --out <audit.json>`. The report consolidates coverage without another manually maintained table. Resolve gaps or document legitimate omissions; report accepted source limitations explicitly. Open issues or incomplete coverage mean a draft, not a completed guide.
 
 Identify each unit's central claim and remove repeated paraphrases from exam cues, mistakes, takeaway boxes, tables, and end matter. Page and heading/box/formula counts are diagnostics, not pass/fail limits.
 
 Compile and run `scripts/validate_study_note.py --tex <entrypoint> --pdf <pdf> --log <log> --inventory <inventory> --unit-fragment <fragment> ...`. Render representative concept, math, table, and end-matter pages. Do not certify raw-source completeness when only an earlier guide is available.
 
-`examples/ols-and-r-squared/` is a small but complete run showing how the five artifacts connect, including a result defined in one batch and reused by another. Use it as the shape reference for the inventory, plan, continuity record, handoffs, and merged output.
+`examples/ols-and-r-squared/` shows the inventory, plan, continuity, handoffs, issue ledger and merged output, including a result defined in one batch and reused by another.
