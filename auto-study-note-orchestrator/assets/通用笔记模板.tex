@@ -1,154 +1,47 @@
 % !TEX program = xelatex
 % 通用中文学习笔记模板（study-note-style-v1）
-% 编译：先运行 scripts/compile_study_note.py --tex 本文件；仅在目录、书签或引用未稳定时重编译。
-% 本文件与 study-note-style.sty 必须位于同一目录。
+% 本模板只示范视觉样式。按课程资料决定章节、图表和末尾模块。
 \documentclass[12pt,a4paper,fontset=none]{ctexart}
 \usepackage{study-note-style}
 
 \begin{document}
 
-% 紧凑标题区
 \begin{center}
   {\Huge\bfseries 课程名称 \\[0.5ex]}
-  {\LARGE 副标题或资料范围 \\[1ex]}
-  {\small 教师姓名 · 院系 · 学期}
+  {\LARGE 复习范围 \\[1ex]}
+  {\small 授课信息或资料范围}
 
   \vspace{0.4em}
-  {\small 标注说明：\PriorityMust\ 必背\;|\;\PriorityImportant\ 重点\;|\;\PriorityKnow\ 了解}
-
-  \vspace{0.4em}
-  {\small\textbf{阅读顺序：}核心概念 $\rightarrow$ 推导与例题 $\rightarrow$ 公式速查 $\rightarrow$ 易错复盘}
+  {\small 标注：\PriorityMust\ 必背\quad\PriorityImportant\ 重点\quad\PriorityKnow\ 了解}
 \end{center}
 \StudyDivider
 
-% 目录保留点击能力，但 study-note-style 使用 hidelinks，不显示红框或彩色链接。
 \tableofcontents
 \clearpage
 
-% 此单章节模板展示“核心知识关系导图”。1--3 个正文主章节用核心概念或机制做节点；
-% 4 章及以上改为“各章节关系导图”，节点对应实际章节。节点和连线须按资料替换，
-% 且正文须解释每个节点与关系；若无可靠关系可画，删去导图并写明 % study-map-omitted: 原因。
-\section*{核心知识关系导图}
-\addcontentsline{toc}{section}{核心知识关系导图}
-\begin{center}
-  {\small\textbf{说明：}本示意图以正文中的概念、条件和推导为节点；生成实际笔记时须依据资料重写每条关系。}
-\end{center}
-\vspace{0.3em}
+% 若关系图确实有助于导航，可在此插入一张有证据支持的图。
+% 不要为了填模板画图。
 
-\begin{center}
-\resizebox{0.98\textwidth}{!}{%
-\begin{tikzpicture}[study map base]
-  \node[study map foundation] (concept) {核心概念\\术语名称};
-  \node[study map core,below left=1.5cm and 2.5cm of concept] (condition) {成立条件\\适用边界};
-  \node[study map core,below right=1.5cm and 2.5cm of concept] (derivation) {推导与应用\\公式速记};
-  \node[study map core,below=2cm of concept] (result) {关键结论\\公式结果};
-  \draw[study map arrow] (condition.north) -- (concept.south west) node[study map label,midway,left] {限定适用};
-  \draw[study map arrow] (concept.south east) -- (derivation.north) node[study map label,midway,right] {用于推导};
-  \draw[study map arrow] (condition.south) -- (result.west) node[study map label,midway,left] {条件约束};
-  \draw[study map arrow] (derivation.south) -- (result.east) node[study map label,midway,right] {推导得到};
-\end{tikzpicture}%
-}
-\end{center}
+\section{主题一：一个核心问题}
 
-\begin{takeawaybox}[title={导图阅读指南}]
-先确认术语定义及适用条件，再读推导与应用，最后核对关键结论成立的条件。实际生成时，把此段替换为依据资料撰写的关系解释，并回指对应正文。
-\end{takeawaybox}
-\StudyDivider
+\subsection{核心区别}
+\StudyTerm{\PriorityMust}{术语 A}{一句准确的定义。}
+随后用短段落说明它解决的问题、最重要的成立条件，以及与容易混淆概念的区别。无需逐项设置“为什么重要”“考试提示”“易错点”等固定栏目。
 
-% 正文章节：概念正文必须先于图表；图表不得单独充当知识覆盖。
-\section{章节标题}
-\begin{center}
-  {\small\textbf{说明：}本章覆盖……，核心概念包括……。重点掌握……，了解……即可。}
-\end{center}
-\vspace{0.3em}
-
-\subsection{核心概念}
-\StudyTerm{\PriorityMust}{术语名称（English Term）}{先给出准确、可独立复习的定义。}
-
-\paragraph{为什么重要。}
-说明它解决什么问题，以及它在本章知识结构中的位置。
-
-\paragraph{条件与边界。}
-列出成立条件、适用范围和不适用情形。
-
-\paragraph{与相邻概念的关系。}
-指出容易混淆的概念以及核心区别。
-
-\paragraph{考试提示与常见误区。}
-给出可操作的识别线索，不用图表替代概念解释。
-
-\begin{definitionbox}[title={关键结论}]
-内容框只放简短结论、记忆链条或复习提示；长推导和长案例留在普通正文中。
-\end{definitionbox}
-
-\subsection{推导与应用}
-先说明目标、假设和变量，再展示必要的中间步骤：
+\subsection{必要推导}
+先给出本题真正用到的设定。只展示理解或复现结论所需的关键变换：
 \begin{align*}
-  y &= a+b, \\
-  z &= y+c = a+b+c.
+  y &= a+b,\\
+  z &= y+c=a+b+c.
 \end{align*}
+最终结果的条件紧邻公式说明；无需再把整个推导写进提示框。
 
-\begin{formulabox}[title={公式速记}]
-\[
-  z=a+b+c.
-\]
-\end{formulabox}
+\section{主题二：一个应用或比较}
 
-\subsection{必要的比较}
-只有在表格能显著减少重复文字时才使用：
-\begin{center}
-\small
-\begin{tabularx}{0.96\textwidth}{>{\bfseries}p{0.22\textwidth}XX}
-\toprule
-比较维度 & 理论 A & 理论 B \\
-\midrule
-核心含义 & …… & …… \\
-适用条件 & …… & …… \\
-考试识别 & …… & …… \\
-\bottomrule
-\end{tabularx}
-\end{center}
+如果比较表能替代平行叙述，先用一句话给出比较判据，再列出真正不同的维度。案例只说明事实、对应机制与结论，不必写成另一套完整概念笔记。
 
-\StudyDivider
-
-\section{公式速查手册}
-\begin{center}
-  {\small\textbf{说明：}按主题分表，只汇总正文已经解释和推导过的关键公式；\PriorityMust\ 表示必须能默写。}
-\end{center}
-
-\subsection{主题一：基础公式}
-\begin{FormulaSummaryTable}
-  \FormulaSummaryRow{示例公式}{$z=a+b+c$}{\PriorityMust\ 必背；说明变量含义、成立条件与单位。}
-  \FormulaSummaryRow{边界或变形式}{$a=z-b-c$}{只在需要反解参数时使用；不要省略符号条件。}
-\end{FormulaSummaryTable}
-
-\subsection{主题二：推断、检验或扩展公式}
-\begin{FormulaSummaryTable}
-  \FormulaSummaryRow{示例统计量}{$T=(\widehat\theta-\theta_0)/\operatorname{se}(\widehat\theta)$}{写明原假设、参考分布、自由度或大样本条件。}
-\end{FormulaSummaryTable}
-
-\section{背诵优先级速览}
-\subsection{第一优先级 \PriorityMust（必背）}
-\textbf{章节 A}：术语 1、术语 2；\textbf{核心公式}：公式 1。
-
-\subsection{第二优先级 \PriorityImportant（重点）}
-术语 3、术语 4。
-
-\subsection{第三优先级 \PriorityKnow（了解）}
-术语 5、拓展案例。
-
-\section{全局易错点}
-\begin{mistakebox}[title={考前最后检查}]
-\begin{enumerate}[leftmargin=2em]
-  \item 不要用图表标题代替概念定义。
-  \item 不要把恒等式、假设、估计量和结论混为一谈。
-  \item 检查公式的适用条件、符号和边界情况。
-\end{enumerate}
-\end{mistakebox}
-
-\StudyDivider
-\begin{center}
-  {\large\bfseries —— 祝考试顺利 ——}
-\end{center}
+% 全文写完后，编排器可按需添加一次“公式速查手册”，
+% 再按需添加简短的优先级速览或跨章节易错点。
+% 单元正文片段中不得写这些文档级模块。
 
 \end{document}

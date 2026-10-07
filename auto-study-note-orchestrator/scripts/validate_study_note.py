@@ -176,13 +176,13 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             if token not in style:
                 failures.append(f"style package is missing {label}")
 
-    formula_match = re.search(r"\\section\{公式速查手册\}", tex)
+    formula_matches = list(re.finditer(r"\\section\{公式速查手册\}", tex))
+    formula_match = formula_matches[0] if formula_matches else None
     section_matches = list(re.finditer(r"\\section(\*?)\{([^{}]+)\}", tex))
     special_titles = {"核心知识关系导图", "各章节关系导图", "公式速查手册", "背诵优先级速览", "全局易错点"}
     main_sections = [
         match for match in section_matches
         if not match.group(1) and match.group(2) not in special_titles
-        and (formula_match is None or match.start() < formula_match.start())
     ]
     main_count = len(main_sections)
     # A compact regression fixture can generate many sections via \foreach.
@@ -203,32 +203,19 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         failures.append("document contains multiple relationship maps")
     if omission and map_matches:
         failures.append("map omission reason is present alongside a relationship map")
-    if main_count >= 1 and not map_matches and not omission:
-        failures.append("relationship map is missing without a specific omission reason")
     if map_matches:
         expected = "knowledge" if main_count <= 3 else "chapter"
         if not maps[expected]:
             failures.append(f"{main_count} main section(s) require the {expected} relationship map")
 
-    required_order = [r"\\tableofcontents"]
-    if map_matches:
-        required_order.append(r"\\section\*?\{(?:核心知识关系导图|各章节关系导图)\}")
-    required_order.extend(
-        [
-            r"\\section\{公式速查手册\}",
-            r"\\section\{背诵优先级速览\}",
-            r"\\section\{全局易错点\}",
-        ]
-    )
-    positions = [re.search(pattern, tex) for pattern in required_order]
-    if any(match is None for match in positions):
-        failures.append("required document order sections are missing")
-    elif [match.start() for match in positions if match] != sorted(match.start() for match in positions if match):
-        failures.append("required document sections are out of order")
+    toc_match = re.search(r"\\tableofcontents", tex)
+    if toc_match is None:
+        failures.append("table of contents is missing")
+    elif main_sections and toc_match.start() > main_sections[0].start():
+        failures.append("table of contents must precede main chapters")
 
     if map_matches:
         map_position = min(match.start() for match in map_matches)
-        toc_match = re.search(r"\\tableofcontents", tex)
         if toc_match is not None and map_position < toc_match.start():
             failures.append("relationship map must appear after the table of contents")
         if main_sections and map_position > main_sections[0].start():
@@ -240,10 +227,49 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     formula_rows = len(re.findall(r"\\FormulaSummaryRow\b", tex))
     metrics["formula_summary_tables"] = formula_tables
     metrics["formula_summary_rows"] = formula_rows
-    if formula_tables == 0:
-        failures.append("formula summary does not use FormulaSummaryTable")
-    if formula_rows == 0:
-        failures.append("formula summary has no FormulaSummaryRow entries")
+    metrics["formula_summary_sections"] = len(formula_matches)
+    if len(formula_matches) > 1:
+        failures.append("document contains more than one formula summary section")
+    if formula_match is None:
+        if formula_tables or formula_rows:
+            failures.append("formula summary table/rows appear without a document-level formula section")
+    else:
+        if main_sections and formula_match.start() < max(match.start() for match in main_sections):
+            failures.append("formula summary must follow all main chapters")
+        if formula_tables == 0 or formula_rows == 0:
+            failures.append("formula summary section needs at least one table and row")
+        first_table = re.search(r"\\begin\{FormulaSummaryTable\}", tex)
+        first_row = re.search(r"\\FormulaSummaryRow\b", tex)
+        if (first_table and first_table.start() < formula_match.start()) or (
+            first_row and first_row.start() < formula_match.start()
+        ):
+            failures.append("formula summary content appears before the global formula section")
+
+    priority_match = re.search(r"\\section\{背诵优先级速览\}", tex)
+    mistake_match = re.search(r"\\section\{全局易错点\}", tex)
+    for label, match in (("priority overview", priority_match), ("global mistakes", mistake_match)):
+        if match and main_sections and match.start() < max(item.start() for item in main_sections):
+            failures.append(f"{label} must follow all main chapters")
+        if match and formula_match and match.start() < formula_match.start():
+            failures.append(f"{label} must follow the formula summary")
+    if priority_match and mistake_match and priority_match.start() > mistake_match.start():
+        failures.append("priority overview must precede global mistakes")
+
+    for fragment_path in args.unit_fragment or []:
+        fragment = strip_comments(read_text(fragment_path.resolve()))
+        forbidden = {
+            "document class": r"\\documentclass\b",
+            "document start": r"\\begin\{document\}",
+            "formula summary section": r"\\section\{公式速查手册\}",
+            "formula summary table": r"\\begin\{FormulaSummaryTable\}",
+            "formula summary row": r"\\FormulaSummaryRow\b",
+            "priority overview": r"\\section\{背诵优先级速览\}",
+            "global mistakes": r"\\section\{全局易错点\}",
+        }
+        for label, pattern in forbidden.items():
+            if re.search(pattern, fragment):
+                failures.append(f"unit fragment {fragment_path.name} contains {label}")
+    metrics["unit_fragments_checked"] = len(args.unit_fragment or [])
 
     metrics["concept_priority_markers"] = len(
         re.findall(r"\\Priority(?:Must|Important|Know)\b", tex)
@@ -309,6 +335,7 @@ def main() -> int:
     parser.add_argument("--pdf", type=Path, help="compiled PDF")
     parser.add_argument("--log", type=Path, help="XeLaTeX log")
     parser.add_argument("--inventory", type=Path, help="source inventory markdown")
+    parser.add_argument("--unit-fragment", type=Path, action="append", default=[], help="unit body fragment; repeatable")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
 
@@ -316,6 +343,9 @@ def main() -> int:
         path = getattr(args, label)
         if path is not None and not path.is_file():
             parser.error(f"--{label} is not a file: {path}")
+    for path in args.unit_fragment:
+        if not path.is_file():
+            parser.error(f"--unit-fragment is not a file: {path}")
 
     report = validate(args)
     if args.format == "json":

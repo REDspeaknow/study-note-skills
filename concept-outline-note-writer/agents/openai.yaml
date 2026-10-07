@@ -1,4 +1,0 @@
-interface:
-  display_name: "Concept Outline Note Writer"
-  short_description: "Write complete concept-first Chinese LaTeX note sections."
-  default_prompt: "Use $concept-outline-note-writer to write complete concept-first Chinese LaTeX sections with priority labels, coverage ids, stable concept and section names for the appropriate knowledge or chapter relationship map, exam cues, and common mistakes."
