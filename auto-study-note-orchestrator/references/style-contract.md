@@ -22,9 +22,7 @@ The presence or absence of optional modules does not change the style version. T
 
 ## Content and visual economy
 
-A key concept needs an accurate explanation, not a seven-heading block. A comparison may use a governing sentence plus table. A model may need a full setup once, then shorter inherited results. Put equations beside the explanation that licenses them.
-
-Choose the smallest adequate representation: prose, compact chain, comparison table, then full diagram if spatial or equilibrium geometry matters. A figure or table must add information or reduce repetition. Do not repeat its content in a long caption and adjacent paragraph. Keep boxes short and optional.
+Apply the [highest body-writing rules](../../study-note-unit-writer/references/unit-writing.md) to explanations, cases, captions and boxes. The template demonstrates visual components; it does not prescribe content modules or override those rules.
 
 ## QA
 

@@ -30,8 +30,7 @@
 
 \StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 是它的样本对应物，拟合的是手头这组数据。}
 
-讲义反复强调的一点：$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是它的估计量。前者不会因为重抽样本而改变，
-后者会。混用这两个符号是本课程最常见的失分点。
+$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是用样本计算的估计量。总体不变时，重新抽样会改变估计量的取值，参数本身保持不变。
 
 \subsection{一阶条件与斜率}\label{sec:foc}
 
@@ -39,7 +38,13 @@
 $SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
 
 记 $\hat S_{xy}=\sum_i (x_i-\bar x)(y_i-\bar y)$、$\hat S_{xx}=\sum_i (x_i-\bar x)^2$。
-对 $\hat\beta_1$ 求偏导并令其为零，得到一阶条件
+分别对截距和斜率求偏导并令其为零，得到
+\begin{align*}
+  \sum_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0,\\
+  \sum_ix_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0.
+\end{align*}
+第一式给出 $\hat\beta_0=\bar y-\hat\beta_1\bar x$。从第二式减去第一式的 $\bar x$ 倍，再代入截距，得
+$\sum_i(x_i-\bar x)[(y_i-\bar y)-\hat\beta_1(x_i-\bar x)]=0$，即
 
 \begin{equation}
   \hat S_{xy}-\hat\beta_1\hat S_{xx}=0.
@@ -52,11 +57,9 @@ $SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
 \end{equation}
 
 整理时除以 $\hat S_{xx}$ 这一步骤要求 $\hat S_{xx}>0$，也就是 $x$ 在样本中不是常数。
-若 $x$ 取值全部相同，一阶条件对 $\hat\beta_1$ 不再构成约束，斜率不可识别——这不是技术细节，
-而是“解释变量必须有变异”这一要求的代数来源。
+若 $x$ 取值全部相同，截距可补偿任意斜率，无法分别确定两者。
 
-同一个一阶条件的另一支给出 $\sum_i\hat u_i=0$，即残差和为零；代回可得回归线过样本均值点
-$(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖任何分布假设。
+截距的一阶条件同时给出 $\sum_i\hat u_i=0$，且 $\hat\beta_0+\hat\beta_1\bar x=\bar y$，因此含截距的 OLS 回归线过样本均值点。这些代数性质不需要误差项的分布假设。
 
 % ════ U02 正文片段（u02_body.tex）════
 
@@ -64,10 +67,10 @@ $(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖
 
 \subsection{平方和分解}\label{sec:sst-decomp}
 
-按 \eqref{eq:ols-slope} 定出的 OLS 斜率，其残差 $\hat u_i=y_i-\hat y_i$ 与拟合值 $\hat y_i$ 正交。
-这个正交性是下面分解成立的原因，而不是一条额外假设。
+在含截距的样本内 OLS 中，\eqref{eq:ols-slope} 所在推导的一阶条件给出 $\sum_i\hat u_i=0$ 和 $\sum_ix_i\hat u_i=0$，其中 $\hat u_i=y_i-\hat y_i$。
+由于 $\hat y_i=\hat\beta_0+\hat\beta_1x_i$，有 $\sum_i(\hat y_i-\bar y)\hat u_i=0$。
 
-把 $y_i$ 写成 $\hat y_i+\hat u_i$ 再展开总平方和，交叉项因正交性消失：
+将 $y_i-\bar y=(\hat y_i-\bar y)+\hat u_i$ 平方后求和，交叉项为零，得到
 
 \begin{equation}
   \underbrace{\sum_i(y_i-\bar y)^2}_{SST}
@@ -75,19 +78,19 @@ $(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖
   +\underbrace{\sum_i\hat u_i^2}_{SSR}.
 \end{equation}
 
-拟合优度定义为被解释部分占总部分的比例：
+当 $SST>0$ 时，拟合优度定义为被解释平方和占总平方和的比例：
 
 \begin{equation}
   R^2=\frac{SSE}{SST}=1-\frac{SSR}{SST}.\label{eq:r-squared}
 \end{equation}
 
-$R^2$ 描述的是同一样本内部的拟合程度，不携带任何关于 $\beta_1$ 真实取值的信息。
+在上述条件下，$0\leq R^2\leq1$；残差平方和相对总平方和越小，样本内拟合程度越高。
 
 \subsection{常见误读}\label{sec:r2-misread}
 
-讲义列了三条，这里合并为一句：$R^2$ 高既不说明模型设定正确，也不说明解释变量是原因。
-往回归里加一个与本无关系的趋势变量同样能推高 $R^2$；反过来，$R^2$ 只有 $0.1$ 而斜率估计得很准的情形
-在横截面数据里相当常见。把 $R^2$ 当作“模型好不好”的总评分，是本课程明确要避免的做法。
+$R^2$ 只比较同一样本中的平方和，不检验解释变量是否与结构误差相关，也不识别因果方向，因此高 $R^2$ 不能单独证明设定正确或因果关系成立。
+
+对同一组观测增加解释变量时，OLS 可以把新系数设为零而保留原拟合，故最小残差平方和不会增大，普通 $R^2$ 不会下降；这一性质本身不保证新增变量有因果意义。斜率估计的精度则应看标准误，不能仅由 $R^2$ 高低判断。
 
 % ════ 编排器撰写的唯一一处公式速查 ════
 % 两个批次共提名 3 条候选，去重后得 2 个结果键：ols_slope 被 U01、U02 各提名一次，
@@ -99,7 +102,7 @@ $R^2$ 描述的是同一样本内部的拟合程度，不携带任何关于 $\be
 
 \begin{FormulaSummaryTable}
 \FormulaSummaryRow{OLS 斜率}{$\hat\beta_1=\hat S_{xy}/\hat S_{xx}$}{一元回归；需 $\hat S_{xx}>0$，即 $x$ 在样本中有变异；见第 1 节}
-\FormulaSummaryRow{拟合优度}{$R^2=1-SSR/SST$}{含常数项 OLS；只描述样本内拟合，不反映因果或设定正确性；见第 2 节}
+\FormulaSummaryRow{拟合优度}{$R^2=1-SSR/SST$}{含常数项 OLS，$SST>0$；不能单独证明因果或设定正确；见第 2 节}
 \end{FormulaSummaryTable}
 
 \end{document}

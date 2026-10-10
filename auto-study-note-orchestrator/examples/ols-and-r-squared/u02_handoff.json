@@ -37,7 +37,7 @@
       "key": "r_squared",
       "name": "拟合优度",
       "formula": "R^2=1-SSR/SST",
-      "conditions": "含常数项的 OLS；只描述样本内拟合",
+      "conditions": "含常数项的 OLS，SST>0；只描述样本内拟合",
       "body_label": "eq:r-squared"
     },
     {

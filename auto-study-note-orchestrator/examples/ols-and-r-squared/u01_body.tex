@@ -6,8 +6,7 @@
 
 \StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 是它的样本对应物，拟合的是手头这组数据。}
 
-讲义反复强调的一点：$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是它的估计量。前者不会因为重抽样本而改变，
-后者会。混用这两个符号是本课程最常见的失分点。
+$\beta_1$ 是总体的未知参数，$\hat\beta_1$ 是用样本计算的估计量。总体不变时，重新抽样会改变估计量的取值，参数本身保持不变。
 
 \subsection{一阶条件与斜率}\label{sec:foc}
 
@@ -15,7 +14,13 @@
 $SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
 
 记 $\hat S_{xy}=\sum_i (x_i-\bar x)(y_i-\bar y)$、$\hat S_{xx}=\sum_i (x_i-\bar x)^2$。
-对 $\hat\beta_1$ 求偏导并令其为零，得到一阶条件
+分别对截距和斜率求偏导并令其为零，得到
+\begin{align*}
+  \sum_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0,\\
+  \sum_ix_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0.
+\end{align*}
+第一式给出 $\hat\beta_0=\bar y-\hat\beta_1\bar x$。从第二式减去第一式的 $\bar x$ 倍，再代入截距，得
+$\sum_i(x_i-\bar x)[(y_i-\bar y)-\hat\beta_1(x_i-\bar x)]=0$，即
 
 \begin{equation}
   \hat S_{xy}-\hat\beta_1\hat S_{xx}=0.
@@ -28,8 +33,6 @@ $SSR=\sum_i (y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 最小的一对值。
 \end{equation}
 
 整理时除以 $\hat S_{xx}$ 这一步骤要求 $\hat S_{xx}>0$，也就是 $x$ 在样本中不是常数。
-若 $x$ 取值全部相同，一阶条件对 $\hat\beta_1$ 不再构成约束，斜率不可识别——这不是技术细节，
-而是“解释变量必须有变异”这一要求的代数来源。
+若 $x$ 取值全部相同，截距可补偿任意斜率，无法分别确定两者。
 
-同一个一阶条件的另一支给出 $\sum_i\hat u_i=0$，即残差和为零；代回可得回归线过样本均值点
-$(\bar x,\bar y)$。这两条代数性质由一阶条件直接落出，不依赖任何分布假设。
+截距的一阶条件同时给出 $\sum_i\hat u_i=0$，且 $\hat\beta_0+\hat\beta_1\bar x=\bar y$，因此含截距的 OLS 回归线过样本均值点。这些代数性质不需要误差项的分布假设。

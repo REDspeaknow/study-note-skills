@@ -5,31 +5,18 @@ description: Turn course materials into a concise, source-traceable Chinese LaTe
 
 # Auto Study Note Orchestrator
 
-Create a guide that a learner can review: complete in key claims and derivations, concise in presentation. Use `study-note-style-v1` for visual consistency. The source inventory tracks evidence; it does **not** prescribe one section per slide or a full template per concept. Before drafting any guide, read `references/delegation-policy.md` to choose and record local or delegated execution, and `references/orchestration-workflow.md` for unit planning and continuity. Read `references/style-contract.md` when assembling a complete document. Copy the canonical assets instead of rebuilding the preamble.
+生成知识点可追踪、关键解释与推导清楚的中文复习资料。正文首要规则是**禁止元视角写作与防御性写作，知识解释优先、案例按需保留**；起草和统稿前读取[正文规则](../study-note-unit-writer/references/unit-writing.md)。模板或示例的表达与它冲突时，以该规则为准。
 
-## Roles
+## 工作流
 
-- The orchestrator owns source inventory, synthesis plan, notation, cross-unit continuity, formula selection, final assembly, coverage and repetition audit, compilation, and PDF validation.
-- `study-note-unit-writer` owns a coherent unit's concept explanation, necessary derivation, cases, and approved visuals together. Multiple instances can use this same skill; the orchestrator schedules them by dependencies under the delegation policy, using the registered writer subagent or a general-purpose subagent loading the skill.
-- `$coverage-audit-note-reviewer` is optional for a requested independent review or a concrete unresolved concern; it is not a routine drafting agent.
+读取 `references/orchestration-workflow.md`，按以下流程执行：
 
-The delegation policy defines when to use each execution mode and the explicit local fallback. Both modes produce the same unit files and follow the same quality requirements.
+1. **盘点。** 按来源列出必须保留的知识、推导和独特案例信息；一条清单不自动生成一个正文小节。
+2. **分工。** 在综合计划中统一讲解归属、记号与依赖；同一种综合写作器可启动多个实例，并行处理前置条件齐备的独立批次。
+3. **写作。** 每批交正文片段与交接 JSON；主编接收关键结果，维护公共设定和真实未决问题，再派发依赖批次。
+4. **统稿。** 主编按教学顺序合并、补足解释、删去重复和无关案例细节，统一筛选至多一个位于全部正文之后的公式速查章节。
+5. **验收。** 集中核对知识覆盖、解释充分性、推导和版式，编译并检查 PDF。独立审核器只在用户要求或存在具体疑点时调用。
 
-## Workflow
+## 交付
 
-1. **Ground the scope.** Inspect source files, page counts, existing notes, and user priorities. Extract text and inspect source figures where needed. Mark ambiguous evidence rather than filling gaps.
-2. **Build an item-level source inventory for traceability.** Record substantive concepts, results, derivations, cases, and visuals with precise source cues. Mark administrative material and true duplicates. Keep it outside the PDF.
-3. **Plan writing batches and execution.** Map course units/chapters to bounded writing units in `synthesis_plan.md`. A large course unit may need several batches around its subtopics, model results or derivation stages. For each batch, record its parent chapter, central claim, needed setup/derivation, source IDs and ranges, prior notation and justified visuals. Preserve teaching order and apply the scope-based delegation policy before writing.
-4. **Draft unit bodies.** Execute bounded packets according to the recorded mode and dependency schedule; delegated instances write independent ready batches concurrently. Produce `<unit_id>_body.tex` and `<unit_id>_handoff.json` in either case. As results arrive, review coverage maps, algebra, unsupported claims and repetition. Update continuity and the persistent `issues.json` ledger before dispatching dependent batches; issue closure follows the handoff reference schema.
-5. **Assemble once.** Merge units, normalize notation and links, and remove repeated definitions, setup, cases, warnings, and boxed restatements. The orchestrator alone writes front matter and optional end matter. Collect formula candidates from handoffs, resolve duplicate keys and conflicting conditions, and select distinct high-value retrieval targets explained in the body. If useful, create **one** `\section{公式速查手册}` after all main units, with topic-grouped `FormulaSummaryTable`s. Never append a table to each unit.
-6. **Verify.** Review every inventory ID's teaching passage or justified omission, then run final coverage/issue accounting as described in the workflow. Audit repetition and information density. Compile until references stabilize, run `scripts/validate_study_note.py`, inspect representative PDF pages, and report accepted limitations or unfinished work.
-
-## Boundaries
-
-- Unit writers may propose formula candidates in JSON but may not emit document-level summary sections or `FormulaSummaryTable` in TeX fragments.
-- A formula sheet, glossary, diagram, or title mention does not by itself teach a substantive claim. A comparison table plus a concise governing explanation can cover comparison dimensions without parallel prose for every cell.
-- A named model warrants full setup only when the source develops it and that setup is needed for understanding or assessment. Show essential algebra; do not expand every identity into a model card.
-- Do not use a page-count floor or ceiling as a completion proxy. Report page and content-count changes as diagnostics.
-- Preserve source and previous outputs. Workflow files stay outside the guide.
-
-For a complete deliverable, link the PDF, TeX, inventory, synthesis plan, and coverage/repetition audit. State when original files were unavailable and an earlier note was the only basis for revision.
+整本笔记使用 `references/style-contract.md` 与 `assets/` 中的统一样式。保留原资料和旧产物，交付 PDF、TeX、来源清单、综合计划与最终审核结果；流程记录留在正文之外。来源缺失、未完成项和用户暂缓的检查在交付说明中如实记录。

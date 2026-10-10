@@ -2,10 +2,10 @@
 
 \subsection{平方和分解}\label{sec:sst-decomp}
 
-按 \eqref{eq:ols-slope} 定出的 OLS 斜率，其残差 $\hat u_i=y_i-\hat y_i$ 与拟合值 $\hat y_i$ 正交。
-这个正交性是下面分解成立的原因，而不是一条额外假设。
+在含截距的样本内 OLS 中，\eqref{eq:ols-slope} 所在推导的一阶条件给出 $\sum_i\hat u_i=0$ 和 $\sum_ix_i\hat u_i=0$，其中 $\hat u_i=y_i-\hat y_i$。
+由于 $\hat y_i=\hat\beta_0+\hat\beta_1x_i$，有 $\sum_i(\hat y_i-\bar y)\hat u_i=0$。
 
-把 $y_i$ 写成 $\hat y_i+\hat u_i$ 再展开总平方和，交叉项因正交性消失：
+将 $y_i-\bar y=(\hat y_i-\bar y)+\hat u_i$ 平方后求和，交叉项为零，得到
 
 \begin{equation}
   \underbrace{\sum_i(y_i-\bar y)^2}_{SST}
@@ -13,16 +13,16 @@
   +\underbrace{\sum_i\hat u_i^2}_{SSR}.
 \end{equation}
 
-拟合优度定义为被解释部分占总部分的比例：
+当 $SST>0$ 时，拟合优度定义为被解释平方和占总平方和的比例：
 
 \begin{equation}
   R^2=\frac{SSE}{SST}=1-\frac{SSR}{SST}.\label{eq:r-squared}
 \end{equation}
 
-$R^2$ 描述的是同一样本内部的拟合程度，不携带任何关于 $\beta_1$ 真实取值的信息。
+在上述条件下，$0\leq R^2\leq1$；残差平方和相对总平方和越小，样本内拟合程度越高。
 
 \subsection{常见误读}\label{sec:r2-misread}
 
-讲义列了三条，这里合并为一句：$R^2$ 高既不说明模型设定正确，也不说明解释变量是原因。
-往回归里加一个与本无关系的趋势变量同样能推高 $R^2$；反过来，$R^2$ 只有 $0.1$ 而斜率估计得很准的情形
-在横截面数据里相当常见。把 $R^2$ 当作“模型好不好”的总评分，是本课程明确要避免的做法。
+$R^2$ 只比较同一样本中的平方和，不检验解释变量是否与结构误差相关，也不识别因果方向，因此高 $R^2$ 不能单独证明设定正确或因果关系成立。
+
+对同一组观测增加解释变量时，OLS 可以把新系数设为零而保留原拟合，故最小残差平方和不会增大，普通 $R^2$ 不会下降；这一性质本身不保证新增变量有因果意义。斜率估计的精度则应看标准误，不能仅由 $R^2$ 高低判断。

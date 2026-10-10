@@ -8,9 +8,9 @@ Read the requested scope, available sources, inventory, plan, bodies/handoffs, `
 
 1. For each substantive inventory ID, locate the actual teaching passage and record its section/label. Use the handoff contract's exact status values: `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing`. A keyword match is a search aid only.
 2. For major models, compare setup, symbols, equilibrium/result, necessary algebra, and boundary conditions with available evidence. Later results may inherit a setup already established.
-3. Check whether the reader can answer the unit's central question without reading repeated restatements.
+3. Apply the [highest body-writing rules](../../study-note-unit-writer/references/unit-writing.md): flag author/process commentary, empty defensive qualifications, and stories that displace explanation. If removing narrative leaves only terms and conclusions, request the missing mechanism or derivation. Preserve necessary worked steps, assumptions, genuine uncertainty and unique case knowledge; judge sentence function rather than banned words or length ratios.
 4. Inspect visuals for valid source cues, meaningful placement, readable labels, and correct axes/arrows/intersections. Reject decorative or duplicate figures.
-5. Check issue closures against the cited corrections and acceptance reasons, using `study-note-unit-writer/references/unit-writing.md`. Structural accounting cannot establish teaching quality; open gaps prevent completion, and accepted limitations must appear in the delivery note.
+5. Check issue closures against the cited corrections and acceptance reasons, using the same writing reference's handoff contract. Structural accounting cannot establish teaching quality; open gaps prevent completion, and accepted limitations must appear in the delivery note.
 
 ## Repetition and retrieval
 
@@ -20,7 +20,7 @@ Inspect unit handoffs. A formula candidate is a nomination, not required output.
 
 ## Technical QA
 
-Run the compile helper and validator. Confirm A4, embedded configured fonts, extractable Chinese text, clickable borderless links, no unresolved references or missing glyphs, and sensible page breaks. Render representative concept, derivation, visual, formula-reference, and final pages. A low or high page count triggers editorial inspection, not an automatic verdict.
+Use existing compile/PDF reports when they cover the current output; run missing or affected checks within the requested scope. Confirm the style contract's fonts, links, references, extractability and representative page layout. Respect deferred tests/compilation and list them as unverified. Page counts are diagnostics, not automatic verdicts.
 
 ## Output
 

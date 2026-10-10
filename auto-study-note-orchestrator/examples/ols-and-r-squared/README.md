@@ -2,7 +2,7 @@
 
 这份样例演示的是**流程产物之间能不能接上**，不是版式参考。视觉样式看
 `../../assets/通用笔记模板.tex`；本目录关心的是 `source_inventory.md`、`synthesis_plan.md`、
-`continuity.md`、正文片段与交接 JSON 这条链。
+正文片段与交接 JSON 这条链；公共设定直接保存在综合计划中。
 
 素材是一份 12 页的一元回归讲义：一个课程单元内部有两个可独立讲解的问题，因此拆成两个写作批次。
 
@@ -10,9 +10,8 @@
 
 | 文件 | 由谁产出 | 说明 |
 | --- | --- | --- |
-| `source_inventory.md` | 编排器 | 6 个盘点项，附 `status` 终态 |
-| `synthesis_plan.md` | 编排器 | 交付范围、execution_mode、两个批次的划分 |
-| `continuity.md` | 编排器 | 可复用的定义、记号、结果键与正文标签 |
+| `source_inventory.md` | 编排器 | 6 个来源要求，不另维护覆盖状态 |
+| `synthesis_plan.md` | 编排器 | 批次分工与依赖、公共定义/记号/结果键 |
 | `issues.json` | 编排器 | 保留问题原始编号、描述及解决依据 |
 | `u01_body.tex` / `u01_handoff.json` | 写作批次 U01 | OLS 斜率的推导 |
 | `u02_body.tex` / `u02_handoff.json` | 写作批次 U02 | $R^2$ 的解释，复用 U01 的记号 |
@@ -30,6 +29,7 @@
    L1-03 的一阶条件直接落出，正文在推导尾部一段交代，不单独设小节。
 5. **覆盖与问题分别对账。** 每份交接的 `coverage_map` 对应实际段落；U02 提出的问题在
    `issues.json` 中保留原始记录及解决依据，关闭后不从交接中删除。
+6. **知识解释优先。** 正文直接解释 OLS 一阶条件与 R² 的边界，去掉编纂自述和无关故事；必要推导步骤与成立条件保留。两批有依赖，因此本例顺序写；独立主题可使用多个实例并行。
 
 ## 怎么跑
 
@@ -49,7 +49,7 @@ python ../../scripts/validate_study_note.py --tex merged.tex \
 ```
 
 后一条命令要求 `study-note-style.sty` 与 `merged.tex` 同目录。工作流本来就要复制 `assets/`
-（见 `orchestration-workflow.md` §3），本目录没有把 `.sty` 复制进来，以免样式文件出现第二份副本
+（见 `orchestration-workflow.md` 的统稿步骤），本目录没有把 `.sty` 复制进来，以免样式文件出现第二份副本
 而产生版本漂移。测试脚本会在临时目录里复制后运行。
 
 ## 检查边界

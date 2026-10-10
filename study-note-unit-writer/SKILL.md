@@ -5,23 +5,13 @@ description: Write one coherent Chinese study-guide unit from grouped course evi
 
 # Study Note Unit Writer
 
-Write **one bounded writing unit (batch)**, not a miniature study guide. A course unit/chapter may contain many such batches; `unit_id` identifies this packet's writing scope. The orchestrator supplies its parent chapter, learning question, grouped source/coverage IDs, importance, source excerpts, prior definitions and notation, and any must-preserve results. Read `references/unit-writing.md` for treatment choices and the handoff format.
+完成主编分配的一批正文。先读取 `references/unit-writing.md`：其中**禁止元视角与防御性写作、知识解释优先和案例取舍**是正文首要规则，交接格式也仅在该文件维护。
 
-Other instances may write independent batches concurrently. Use the packet's confirmed context and definition ownership; edit only its assigned body/handoff paths. Prefix new body labels as assigned, retain inherited labels, and report context conflicts in `unresolved`. The orchestrator owns shared records and integration.
+其他实例可并行写独立批次。沿用任务包提供的公共设定和讲解归属，仅编辑分配的正文与交接路径；新标签默认使用小写 `unit_id` 前缀，继承标签保持原名。公共设定冲突交给主编处理。
 
 ## Deliverables
 
-1. `<unit_id>_body.tex`: body content only. It may contain subsection headings, explanations, necessary intermediate algebra, cases, and approved local visuals. It must not contain a preamble, `\begin{document}`, a relationship map, `\section{公式速查手册}`, `FormulaSummaryTable`, a priority overview, or global mistakes. A final equation belongs beside its explanation; a short local takeaway is optional, not a required ending.
-2. `<unit_id>_handoff.json`: `unit_id`, `coverage_ids`, `coverage_map`, `unresolved`, `formula_candidates`, and `continuity_updates`, following the schema in `references/unit-writing.md`. Map each assigned ID to its teaching passage or explicit gap/omission; give unresolved issues stable IDs. These are metadata for the orchestrator, not LaTeX for the PDF. Optional lists may be empty.
+1. `<unit_id>_body.tex`：只写知识正文，重要结论的条件和必要推导在对应位置讲清楚。不含导言区、`\begin{document}`、全书关系图、`公式速查手册`、`FormulaSummaryTable` 或全局复盘模块。
+2. `<unit_id>_handoff.json`：按契约记录覆盖对应、真实问题、候选公式及新增公共设定。没有问题、候选或变动时相应列表为 `[]`。
 
-## Editorial decisions
-
-- Group related coverage IDs around one question or model. An inventory row is evidence to account for, not a command to create a heading or paragraph.
-- State each concept once, at the point needed. Use prior definitions and notation from the packet rather than reintroducing them. Cross-reference a prior unit when necessary.
-- Choose treatment by need: a short definition for a simple term; one synthesis paragraph and a table for a genuine comparison; one or two sentences for an illustrative case; setup and intermediate algebra for an important model result. Do not emit fixed "why important / scope / relation / exam cue / mistakes" headings for every item.
-- Show transformations a learner must understand or reproduce. Compress mechanical substitutions and repeated algebra. Explain assumptions at the step where they matter.
-- Use a figure only when the source geometry is examinable or prose is materially less clear. Avoid repeating the same mechanism in prose, table, figure, and caption.
-- Include a local warning only when it prevents a likely misunderstanding not already resolved by the explanation. Keep global review lists out of the unit.
-- Preserve source-specific claims. Mark insufficient evidence in `unresolved` rather than filling it with generic textbook material.
-
-Before handing off, check that every assigned ID has a traceable place in the body or a specific unresolved note; every formula candidate is already explained in the body; and no claim is restated simply to fill a template slot.
+完成后返回两份文件路径与确有必要的疑点，不另写通过项清单。主编负责后续调度、共享记录和整本统稿。

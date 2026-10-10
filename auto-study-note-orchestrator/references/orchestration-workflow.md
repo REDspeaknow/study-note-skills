@@ -1,78 +1,59 @@
-# Orchestration workflow
+# 编排、并行与统稿
 
-Use this for all guides. The inventory is an evidence ledger; the synthesis plan is the writing plan. Keep them distinct. Apply `delegation-policy.md` after planning units and before drafting.
+本文件统一维护执行流程。正文表达与交接格式见[写作参考](../../study-note-unit-writer/references/unit-writing.md)，版式见 `style-contract.md`；以下记录留在笔记正文之外。
 
-## 1. Source ledger
+## 1. 盘点与综合计划
 
-List source files and exact ranges. For every substantive item, record `id`, source page/slide, title or cue, type, importance, required fact/result, and status. Types may include concept, derivation, comparison, diagram, case, and admin/duplicate. Merge continuation slides that express one result; do not merge unrelated claims just to reduce row count.
+`source_inventory.md` 只记录必须保留的内容：表格首列为稳定 `id`，其余为来源页/范围、知识点及必留事实或结果；类型、重要性仅在影响处理方式时补充。合并同一结果的连续页，保留独特条件、推导与案例知识。一条清单不规定篇幅，也不自动成为正文小节。覆盖位置和状态只在交接 `coverage_map` 中维护，最终由脚本汇总。
 
-`status` starts at `pending` and closes as one of `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing` — the same vocabulary the audit protocol uses, so the inventory and the independent audit can be compared row by row.
+`synthesis_plan.md` 包含两部分：
 
-| Source item | Typical treatment |
-| --- | --- |
-| Simple definition or scope note | One precise sentence or compact paragraph |
-| Easily confused alternatives | Governing distinction plus table or short comparison |
-| Illustrative case | One or two sentences linked to the mechanism |
-| Central model | Setup once, decision/equilibrium result, essential derivation, interpretation |
-| Later result in the same model | Inherit setup; show changed assumption or key step |
-| Source figure with examinable geometry | Explain adjacent to a checked figure |
+- **批次计划：** 按教学顺序记录 `unit_id`、所属章节、来源 ID、必须讲清的问题、`depends_on`、正文/交接输出路径与进度；委派后附实际 agent ID。批次围绕连贯问题或推导阶段划分，一个课程单元可以分多批，也不要为并行拆碎推导。
+- **公共设定：** 只记需要跨批复用的定义、记号、结果键、正文标签与讲解归属。结合交接的 `continuity_updates` 更新，不复制正文。
 
-Importance guides space and retrieval priority, not the number of mandatory headings. Preserve source-specific exceptions and boundaries when they change a conclusion.
+同一知识点明确主要讲解归属，其他批次引用它。新任务不再单建 `continuity.md`；续写旧任务时先将相关记录并入计划，旧文件保留为历史，后续只更新计划。
 
-## 2. Synthesis plan and unit packet
+## 2. 执行与并行
 
-Distinguish course chapters from writing units (batches). A course unit can span hundreds of pages; one writer packet covers a coherent question, model result or derivation stage within it. Follow the batching and dependency scheduling rules in `delegation-policy.md`; `unit_id` identifies a writing batch, not an entire course chapter. Save `synthesis_plan.md` with the parent course unit/chapter, writing-unit ID, source IDs and ranges, learning question, primary claim, prerequisite notation, depth, visual decision and master-outline position. Record execution mode, `depends_on`, definition ownership, exclusive output paths and agent IDs there. Maintain `continuity.md` with canonical definitions, notation, result/formula keys, body labels and owning writing units; track each batch as planned, drafting, received or integrated.
+用户指定执行方式时遵从用户。否则，指定片段起草或局部修订由主编就地完成；生成、重构或续写整章/整本资料时委派综合写作器。在计划中记录 `execution_mode`（`local` / `delegated` / `local-fallback`）；仅覆盖默认规则或降级时补一句原因。
 
-Give the integrated writer current source excerpts and relevant prior context:
+共享基础定义与必要前置结果由主编或前置写作批次先建立并确认。多个独立批次前置条件齐备时，默认启动多个同类型写作实例并行；依赖尚未确认结果的批次等待。同一实例一次处理一个批次，并发数量按就绪工作、用户要求和环境容量决定，不设课程单元数、页数或固定代理数门槛。
 
-```text
-unit_id:
-course_unit_or_chapter: parent chapter and this batch's position within it
-depends_on: prerequisite batch IDs, all received before dispatch; [] if none
-output_paths: absolute paths for this unit's two files
-new_body_label_prefix: batch-specific prefix for new labels, e.g. u03:
-writer_skill_path: absolute path to study-note-unit-writer/SKILL.md
-writer_reference_path: absolute path to references/unit-writing.md
-learning_question:
-coverage_ids:
-source_evidence:
-importance_and_depth:
-already_defined_terms_and_notation:
-prior_results_and_body_labels:
-open_issues_for_this_batch: stable IDs and original descriptions from issues.json
-new_definitions_owned_by_this_unit:
-must_preserve_results_and_boundaries:
-approved_visual_and_reason: optional
-style_contract: study-note-style-v1
-deliver: <unit_id>_body.tex + <unit_id>_handoff.json
-```
+Claude Code 使用环境实际提供的子代理工具（Agent，旧版可能为 Task）。优先调用已注册的 `study-note-unit-writer`；否则用可写文件的通用子代理读取写作 skill。用并发或后台能力先派发就绪批次，再接收结果，避免每派一个就同步等待。加载 skill 本身不算委派。工具不可用或调用被权限拒绝时记录原因并就地完成；普通执行错误先修复，未注册专用代理不构成降级理由。若环境只能串行，记录限制并继续。
 
-The writer owns prose, math, and visuals within that writing batch. Each packet carries the relevant confirmed context at dispatch; writers use inherited setup rather than rewriting it. Follow the execution mode, parallel scheduling and resumption rules in `delegation-policy.md`. A resumed writer still receives the current packet and continuity entries; its memory does not replace these files. Only the orchestrator edits shared records and the master document.
+主编按完成情况接收并派发新就绪任务，无关分支无需相互等待。同一依赖链可恢复已空闲实例，仍提供最新任务范围和公共设定。公共设定变更时只通知受影响的实例修订。各实例只编辑独占的正文与交接；计划、来源清单、`issues.json`、总稿和公式汇总由主编修改。
 
-Initialize `issues.json` as `[]`. After each unit, review its `coverage_map` against actual passages, inspect key algebra/visuals and repetition, and reconcile `continuity_updates` into `continuity.md`. Merge unresolved entries into the persistent issue ledger and record corrections before the next dependent batch. The compact coverage/closure schema lives in `study-note-unit-writer/references/unit-writing.md`; retain original handoffs and closed issues.
+## 3. 简短任务包与接收
 
-## 3. Document assembly
+任务包可直接引用计划和来源文件的具体位置，不重复抄写整套背景。给出四项即可：
 
-Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty`. The fixed visual language does not require fixed content modules. The orchestrator, not the unit writer, owns title/contents, any source-grounded overview map, global formula reference, priority overview, and cross-unit mistakes. Include a module only if it helps navigation or retrieval. A map may be omitted with `% study-map-omitted: <reason>`; do not label it `user-requested` unless the user requested it.
+1. **范围：** `unit_id`、分配的来源 ID、必须讲清的问题及本批负责的新定义。
+2. **证据：** 可读取的来源绝对路径和页/节范围；无法直接读取时附相关摘录。
+3. **上下文：** 计划中已确认的相关定义、记号、前置结果与标签，以及相关未决问题原编号；没有特殊事项时省略说明。
+4. **交付：** 独占的 `<unit_id>_body.tex` 与 `<unit_id>_handoff.json` 绝对路径。新标签默认使用小写批次 ID 前缀（如 `u03:`），继承标签不改名；必要时指定其他前缀。未预加载 skill 时，附写作 skill 和 `references/unit-writing.md` 的绝对路径。
 
-After all required batches are received, merge body fragments in the plan's teaching order, regardless of completion order. Keep the first complete definition; replace later restatements with a reference or changed implication. Compare prose, tables, captions, cases, local boxes, and exam tips for repeated conclusions. Delete a repeated representation while preserving unique conditions and exceptions.
+特殊深度、必留案例或图表要求仅在影响该批时补充。写作器每批只读相关材料，以相同正文规则完成概念、推导和必要例题。
 
-## 4. One global formula reference
+两份文件完整后，主编先检查分配范围是否交齐，以及影响后续工作的设定、关键结果和真实疑点。去掉故事性叙述若只剩术语和结论，退回补足解释；必要计算例题可承担教学过程。将可复用更新并入计划，将新问题合入 `issues.json`，再接收该批并推进依赖任务。未完成或中断的批次继续原任务，已接收文件由主编统稿时修改，避免与写作器同时编辑。
 
-Read each handoff's `formula_candidates`. The `key` identifies a result, not a TeX spelling. Group identical keys, resolve incompatible formulas or conditions against the body, and reject intermediate algebra, worked substitutions, and numerical-example steps. Every accepted candidate must point to a real body label.
+`issues.json` 初始为 `[]`，仅登记真实问题；稳定编号、关闭依据及历史保留遵循交接契约。常规批次无需重复生成完整审核报告。只有疑点会影响后续工作时，提前运行相关检查或按需独立复核。
 
-Only after all units are merged, write at most one `\section{公式速查手册}` following the main units. It may contain multiple topic tables using `FormulaSummaryTable`; none may appear earlier or in unit fragments. Omit the section when there are no distinct retrieval formulas. It is an index, not a second derivation.
+## 4. 统稿与公式筛选
 
-Use `scripts/collect_formula_candidates.py` to detect duplicate keys and inconsistent submissions before editorial selection. It does not mandate including every candidate.
+全部所需批次接收后，按教学顺序合并。主编逐段核对正文规则，补足重要概念的原因和推导，合并重复定义、例证、图注与结论框；保留独特条件和必要计算步骤。来源清单项可以共同对应一个段落或表格，不为逐项对账扩写正文。
 
-Run `scripts/check_handoffs.py` over received handoffs and bodies with `--inventory <inventory> --issues <issues.json>` before merging. It checks coverage-map keys and locations, formula/continuity labels and issue retention. Partial runs allow unassigned inventory items and flag open issues; full accounting is the final audit's responsibility.
+使用 `assets/通用笔记模板.tex` 与 `study-note-style.sty`；模板中的演示内容应按实际资料替换。导言、目录及全局模块由主编编写。候选公式按结果键去重并核对条件，只选正文已解释且值得检索的结果；中间代数和数值代入步骤不进入速查表。可使用 `collect_formula_candidates.py` 辅助汇集。
 
-## 5. Final audit
+整本最多在全部正文之后出现一个 `公式速查手册` 章节，可按主题分表；没有值得速查的公式时省略。其他可选模块按 `style-contract.md` 决定。
 
-Review actual passages and important derivations, including assumptions and boundaries; keyword occurrence alone is not proof. Update handoff coverage entries and inventory statuses after deduplication, then run `scripts/check_handoffs.py` with all handoffs in teaching/repair order (not completion order), the final TeX/actually included fragments as `--body`, and `--final --inventory <inventory> --issues <issues.json> --out <audit.json>`. The report consolidates coverage without another manually maintained table. Resolve gaps or document legitimate omissions; report accepted source limitations explicitly. Open issues or incomplete coverage mean a draft, not a completed guide.
+## 5. 集中验收与交付
 
-Identify each unit's central claim and remove repeated paraphrases from exam cues, mistakes, takeaway boxes, tables, and end matter. Page and heading/box/formula counts are diagnostics, not pass/fail limits.
+最终阅读每个实质来源 ID 对应的正文，核对解释充分性、推导条件和省略理由；关键词、公式表或标题命中不能代替知识讲解。去重后更新交接的正文位置和覆盖状态，来源清单不再另维护一份状态。
 
-Compile and run `scripts/validate_study_note.py --tex <entrypoint> --pdf <pdf> --log <log> --inventory <inventory> --unit-fragment <fragment> ...`. Render representative concept, math, table, and end-matter pages. Do not certify raw-source completeness when only an earlier guide is available.
+运行 `scripts/check_handoffs.py`：按教学/修订顺序提供全部 `--handoff`（不按代理完成顺序），`--body` 只提供最终 TeX 及其实际包含的片段，并指定 `--final --inventory <source_inventory.md> --issues <issues.json> --out <audit.json>`。报告自动汇总覆盖对应；保留所有问题历史，未完成覆盖或未关闭问题意味着草稿。
 
-`examples/ols-and-r-squared/` shows the inventory, plan, continuity, handoffs, issue ledger and merged output, including a result defined in one batch and reused by another.
+用 `scripts/compile_study_note.py` 编译至引用稳定，再用 `scripts/validate_study_note.py --tex <entrypoint> --pdf <pdf> --log <log> --inventory <inventory> --unit-fragment <fragment> ...` 检查结构与 PDF，并查看代表性页面。编译命令参数以脚本帮助为准。检查集中在最终稿，只有改动影响已有结果或出现具体问题时才重跑相关部分。
+
+用户要求独立审核或存在具体未解疑点时，委派 `coverage-audit-note-reviewer`，传入材料与审核 skill 的绝对路径；未注册时使用通用子代理。就地自审不能称为独立复核。沿用可用的技术检查结果，报告只列具体发现和未验证项。
+
+交付 PDF、TeX 与追踪文件的路径，简述结果和未解决限制。原始资料缺失时，只报告现有材料的保留情况。用户暂缓测试或编译时交付未验证草稿，列出暂缓项。
