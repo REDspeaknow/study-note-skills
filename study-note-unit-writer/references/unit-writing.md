@@ -25,7 +25,6 @@ Save UTF-8 JSON beside the body fragment:
 ```json
 {
   "unit_id": "U03",
-  "coverage_ids": ["L1-13", "L1-14", "L1-15"],
   "coverage_map": {
     "L1-13": {"status": "represented", "body_labels": ["sec:two-sided-pricing"]},
     "L1-14": {"status": "represented-indirectly", "body_labels": ["sec:two-sided-pricing"]},
@@ -54,7 +53,7 @@ Save UTF-8 JSON beside the body fragment:
 
 ### Coverage and issue records
 
-`coverage_ids` lists the assigned items, including unfinished ones. `coverage_map` has exactly those IDs as keys. Its `status` is `pending`, `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing`. Represented/indirect/weak entries identify the actual teaching passage with `body_labels`; all other statuses, and `weak`, require a short `reason`. Several IDs may share a paragraph/table label without individual explanations or headings. Coverage status is maintained here and consolidated by the checker; the source inventory only records requirements. A label proves location, not sufficient explanation.
+`coverage_map` contains every assigned ID as a key, including unfinished items; omit the redundant top-level `coverage_ids`. The checker derives IDs from the map; if a legacy `coverage_ids` list is present, it must match the keys. Its `status` is `pending`, `represented`, `represented-indirectly`, `intentionally-omitted`, `weak`, or `missing`. Represented/indirect/weak entries identify the actual teaching passage with `body_labels`; all other statuses, and `weak`, require a short `reason`. Several IDs may share a paragraph/table label without individual explanations or headings. Coverage status is maintained here and consolidated by the checker; the source inventory only records requirements. A label proves location, not sufficient explanation.
 
 Each `unresolved` entry is `{"issue_id":"U03-Q01","coverage_ids":["L1-15"],"description":"来源未说明内点解成立条件"}`. Use a stable batch-prefixed ID for a new issue; reuse the supplied ID and original description for an existing one. Report new or still-open issues relevant to this batch. The orchestrator owns closure after reading the correction.
 

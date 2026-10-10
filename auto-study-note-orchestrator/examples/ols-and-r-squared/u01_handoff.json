@@ -1,6 +1,5 @@
 {
   "unit_id": "U01",
-  "coverage_ids": ["L1-01", "L1-02", "L1-03", "L1-04"],
   "coverage_map": {
     "L1-01": {"status": "represented", "body_labels": ["sec:prf-srf"]},
     "L1-02": {"status": "represented", "body_labels": ["sec:foc"]},

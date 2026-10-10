@@ -118,28 +118,31 @@ def check(
             failures.append(f"{name}: duplicate unit_id {unit_id!r}")
         units.append(unit_id)
 
-        coverage = record.get("coverage_ids")
-        assigned: set[str] = set()
-        if not isinstance(coverage, list) or not coverage:
-            failures.append(f"{name}: coverage_ids must be a non-empty list")
-        elif not all(isinstance(item, str) and item.strip() for item in coverage):
-            failures.append(f"{name}: coverage_ids entries must be non-empty strings")
-        else:
-            assigned = {item.strip() for item in coverage}
-            if len(assigned) != len(coverage):
-                failures.append(f"{name}: duplicate coverage_ids")
-            for coverage_id in assigned:
-                if known_ids is not None and coverage_id not in known_ids:
-                    failures.append(
-                        f"{name}: coverage id {coverage_id.strip()!r} is not in the source inventory"
-                    )
-
         mapping = record.get("coverage_map")
-        if not isinstance(mapping, dict):
-            failures.append(f"{name}: coverage_map must be an object keyed by coverage ID")
+        if not isinstance(mapping, dict) or not mapping:
+            failures.append(f"{name}: coverage_map must be a non-empty object keyed by coverage ID")
             mapping = {}
-        if set(mapping) != assigned:
-            failures.append(f"{name}: coverage_map keys must match coverage_ids")
+        for coverage_id in mapping:
+            if not coverage_id.strip() or coverage_id != coverage_id.strip():
+                failures.append(f"{name}: coverage_map keys must be non-empty IDs without surrounding whitespace")
+            if known_ids is not None and coverage_id not in known_ids:
+                failures.append(f"{name}: coverage id {coverage_id!r} is not in the source inventory")
+
+        # New handoffs derive IDs from the map; retain strict legacy validation.
+        if "coverage_ids" in record:
+            coverage = record["coverage_ids"]
+            if not isinstance(coverage, list) or not coverage:
+                failures.append(f"{name}: coverage_ids must be a non-empty list")
+            elif not all(isinstance(item, str) and item.strip() for item in coverage):
+                failures.append(f"{name}: coverage_ids entries must be non-empty strings")
+            else:
+                assigned = {item.strip() for item in coverage}
+                if len(assigned) != len(coverage):
+                    failures.append(f"{name}: duplicate coverage_ids")
+                if known_ids is not None and not assigned <= known_ids:
+                    failures.append(f"{name}: coverage_ids not in the source inventory")
+                if set(mapping) != assigned:
+                    failures.append(f"{name}: coverage_map keys must match coverage_ids")
         for coverage_id, item in mapping.items():
             where = f"{name}: coverage {coverage_id}"
             if not isinstance(item, dict):

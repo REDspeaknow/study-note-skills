@@ -108,6 +108,27 @@ class ContractViolations(unittest.TestCase):
         failures = self.report()["failures"]
         self.assertTrue(any("coverage_ids must be a non-empty list" in item for item in failures), failures)
 
+    def test_map_only_handoff_matches_legacy_report(self):
+        compact = self.report(with_inventory=True)
+        self.assertEqual(compact["failures"], [])
+        self.record["coverage_ids"] = list(self.record["coverage_map"])
+        self.assertEqual(self.report(with_inventory=True), compact)
+
+    def test_legacy_ids_must_match_the_map(self):
+        self.record["coverage_ids"] = ["L1-01"]
+        failures = self.report()["failures"]
+        self.assertTrue(any("keys must match coverage_ids" in item for item in failures), failures)
+
+    def test_map_only_unknown_id_fails(self):
+        self.record["coverage_map"]["L1-99"] = self.record["coverage_map"].pop("L1-01")
+        failures = self.report(with_inventory=True)["failures"]
+        self.assertTrue(any("not in the source inventory" in item for item in failures), failures)
+
+    def test_empty_map_fails(self):
+        self.record["coverage_map"] = {}
+        failures = self.report()["failures"]
+        self.assertTrue(any("coverage_map must be a non-empty object" in item for item in failures), failures)
+
 
 class CoverageAndClosure(unittest.TestCase):
     """Accounting gaps and issue loss should fail independently of prose quality."""
@@ -133,7 +154,6 @@ class CoverageAndClosure(unittest.TestCase):
                      EXAMPLES / "source_inventory.md", ledger, final=final)
 
     def test_unassigned_inventory_item_fails_only_at_final_accounting(self):
-        self.records[1]["coverage_ids"].remove("L1-05")
         del self.records[1]["coverage_map"]["L1-05"]
         self.assertEqual(self.report(final=False)["failures"], [])
         self.assertTrue(any("has no coverage_map entry" in f for f in self.report()["failures"]))

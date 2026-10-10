@@ -1,6 +1,5 @@
 {
   "unit_id": "U02",
-  "coverage_ids": ["L1-05", "L1-06"],
   "coverage_map": {
     "L1-05": {"status": "represented", "body_labels": ["sec:sst-decomp"]},
     "L1-06": {"status": "represented", "body_labels": ["sec:r2-misread"]}
