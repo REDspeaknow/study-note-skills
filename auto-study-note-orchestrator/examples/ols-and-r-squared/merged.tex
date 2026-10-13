@@ -1,0 +1,50 @@
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+\begin{document}
+\begin{center}{\LARGE\bfseries 一元回归复习}\end{center}
+\tableofcontents
+\section{一元线性回归}\label{sec:ols-slope}
+\StudyTerm{\PriorityMust}{总体回归函数}{$E(y\mid x)=\beta_0+\beta_1x$ 描述给定 $x$ 时 $y$ 的条件均值。}\label{sec:prf-srf}
+\StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 拟合当前样本；重新抽样会改变估计值，总体参数不随之改变。}
+\StudyPoint{\PriorityMust}{OLS 斜率}\label{sec:foc}
+\begin{proofbox}[title=推导]
+记 $\hat S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y)$、$\hat S_{xx}=\sum_i(x_i-\bar x)^2>0$。最小化 $SSR=\sum_i(y_i-\hat\beta_0-\hat\beta_1x_i)^2$ 的一阶条件为
+\begin{align*}
+\sum_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0,\\
+\sum_ix_i(y_i-\hat\beta_0-\hat\beta_1x_i)&=0.
+\end{align*}
+第一式给出 $\hat\beta_0=\bar y-\hat\beta_1\bar x$；第二式减去第一式的 $\bar x$ 倍后代入：
+\begin{align*}
+\sum_i(x_i-\bar x)[(y_i-\bar y)-\hat\beta_1(x_i-\bar x)]&=0,\\
+\hat S_{xy}-\hat\beta_1\hat S_{xx}&=0.
+\end{align*}
+\begin{equation}
+\hat\beta_1=\frac{\hat S_{xy}}{\hat S_{xx}}.\label{eq:ols-slope}
+\end{equation}
+若 $\hat S_{xx}=0$，截距与斜率无法分别确定。含截距的一阶条件还给出 $\sum_i\hat u_i=0$，回归线过 $(\bar x,\bar y)$；这些代数性质不依赖误差分布。
+\end{proofbox}
+
+\section{拟合优度}\label{sec:r-squared}
+\StudyPoint{\PriorityMust}{平方和分解与拟合优度}\label{sec:sst-decomp}
+\begin{proofbox}[title=推导]
+在含截距的样本内 OLS 中，$\hat u_i=y_i-\hat y_i$；\eqref{eq:ols-slope} 对应的一阶条件给出 $\sum_i\hat u_i=\sum_ix_i\hat u_i=0$，故
+\begin{align*}
+\sum_i(\hat y_i-\bar y)\hat u_i
+&=(\hat\beta_0-\bar y)\sum_i\hat u_i+\hat\beta_1\sum_ix_i\hat u_i=0,\\
+\underbrace{\sum_i(y_i-\bar y)^2}_{SST}
+&=\underbrace{\sum_i(\hat y_i-\bar y)^2}_{SSE}+\underbrace{\sum_i\hat u_i^2}_{SSR}.
+\end{align*}
+第二式由 $y_i-\bar y=(\hat y_i-\bar y)+\hat u_i$ 平方求和、消去交叉项得到。$SST>0$ 时，
+\begin{equation}
+R^2=\frac{SSE}{SST}=1-\frac{SSR}{SST}\in[0,1].\label{eq:r-squared}
+\end{equation}
+\end{proofbox}
+\StudyPoint{\PriorityImportant}{拟合优度的解释边界}\label{sec:r2-misread}
+高 $R^2$ 仅表示样本内拟合程度较高，不能单独证明因果关系或设定正确。对相同观测增加解释变量，最小 $SSR$ 不会增大，普通 $R^2$ 不会下降；系数精度仍须看标准误。
+
+\section{公式速查手册}
+\begin{FormulaSummaryTable}
+\FormulaSummaryRow{OLS 斜率}{$\hat\beta_1=\hat S_{xy}/\hat S_{xx}$}{一元回归；$\hat S_{xx}>0$；见\hyperref[sec:foc]{OLS 斜率}}
+\FormulaSummaryRow{拟合优度}{$R^2=1-SSR/SST$}{含截距的样本内 OLS；$SST>0$；见\hyperref[sec:sst-decomp]{平方和分解}}
+\end{FormulaSummaryTable}
+\end{document}

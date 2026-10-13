@@ -1,4 +1,4 @@
 interface:
-  display_name: "Auto Study Note Orchestrator"
-  short_description: "Build concise, source-traceable Chinese study guides."
-  default_prompt: "Use $auto-study-note-orchestrator to turn my course materials into a concise Chinese LaTeX/PDF study guide with coherent learning units, necessary derivations, one optional end-of-book formula reference, and coverage and layout checks."
+  display_name: "复习笔记编排"
+  short_description: "生成逐知识点星标、蓝框推导和例题的精简复习指南。"
+  default_prompt: "使用 $auto-study-note-orchestrator 将课程资料整理为中文 LaTeX/PDF 复习指南：逐知识点三级星标，必要推导和例题统一蓝框，精简衔接、总结与后台流程。"

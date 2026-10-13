@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only structural and PDF QA for study-note-style-v1 outputs."""
+"""Read-only structural and PDF QA for star-marked study-note-style-v2 outputs."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 
-STYLE_VERSION = "study-note-style-v1"
+STYLE_VERSION = "study-note-style-v2"
 A4_WIDTH_PT = 595.28
 A4_HEIGHT_PT = 841.89
 
@@ -26,6 +26,107 @@ def read_text(path: Path | None) -> str:
 
 def strip_comments(tex: str) -> str:
     return re.sub(r"(?<!\\)%.*", "", tex)
+
+
+def expand_inputs(path: Path, failures: list[str]) -> tuple[str, list[str]]:
+    """Read the actual body, including build/ fragments; reject missing/cyclic inputs."""
+    entry_dir = path.parent
+    visited: list[str] = []
+    pattern = re.compile(r"\\(?:input|include)\s*\{([^{}]+)\}")
+
+    def read(current: Path, stack: tuple[Path, ...]) -> str:
+        current = current.resolve()
+        if current in stack or len(stack) >= 64:
+            failures.append(f"cyclic or excessively deep TeX input: {current}")
+            return ""
+        if not current.is_file():
+            failures.append(f"missing TeX input: {current}")
+            return ""
+        visited.append(str(current))
+        source = strip_comments(read_text(current))
+
+        def replace(match: re.Match[str]) -> str:
+            name = match.group(1).strip()
+            if "\\" in name or "#" in name:
+                failures.append(f"dynamic TeX input must be resolved for validation: {name}")
+                return ""
+            candidates = [entry_dir / name, current.parent / name]
+            candidates = [p if p.suffix else p.with_suffix(".tex") for p in candidates]
+            target = next((p for p in candidates if p.is_file()), candidates[0])
+            return "\n" + read(target, stack + (current,)) + "\n"
+
+        expanded = pattern.sub(replace, source)
+        if re.search(r"\\(?:input|include)\b", expanded):
+            failures.append(f"unresolved TeX input syntax in {current}; use literal braced paths")
+        return expanded
+
+    return read(path, ()), list(dict.fromkeys(visited))
+
+
+def study_body_checks(tex: str, failures: list[str], metrics: dict[str, Any]) -> None:
+    """Check the supported authoring syntax, leaving semantic point/rating review to humans."""
+    body = tex.split(r"\begin{document}", 1)[-1].split(r"\end{document}", 1)[0]
+    if re.search(r"\\(?:subsubsection|paragraph|subparagraph)\*?\s*\{", body):
+        failures.append("body contains thesis-style third-level headings; use StudyPoint")
+    if re.search(r"\\(?:section|subsection)\*?\s*\{\s*\d+\.\d+", body):
+        failures.append("body heading contains explicit hierarchical numbering")
+    if re.search(r"\\setcounter\s*\{secnumdepth\}\s*\{\s*[1-9]\d*\s*\}", tex):
+        failures.append("document re-enables hierarchical heading numbering")
+    if re.search(r"\\(?:ref|autoref|cref)\s*\{", body):
+        failures.append("unnumbered headings need named hyperref links instead of bare ref/autoref/cref")
+
+    points = list(re.finditer(r"\\Study(?:Point|Term)\b", body))
+    metrics["knowledge_point_entries"] = len(points)
+    if not points:
+        failures.append("body has no star-marked knowledge point entries")
+    for point in points:
+        if not re.match(r"\s*\{\s*\\Priority(?:Must|Important|Know)\s*\}\s*\{", body[point.end():]):
+            failures.append("knowledge point entry lacks a valid one/two/three-star priority")
+
+    blue = {"proofbox", "formulabox", "examplebox"}
+    old = {"definitionbox", "takeawaybox", "keypointbox", "mistakebox"}
+    math = {"align", "align*", "alignat", "alignat*", "gather", "gather*", "equation", "equation*",
+            "multline", "multline*", "eqnarray", "eqnarray*", "displaymath"}
+    tokens = re.compile(
+        r"\\(?P<heading>section|subsection)\*?\s*\{|"
+        r"\\(?P<point>StudyPoint|StudyTerm)\b|"
+        r"\\(?P<action>begin|end)\{(?P<env>[^{}]+)\}|"
+        r"(?P<display>(?<!\\)\\\[|(?<!\\)\\\]|\$\$)"
+    )
+    active_point = False
+    stack: list[str] = []
+    blue_count = 0
+    for match in tokens.finditer(body):
+        if match.group("heading"):
+            active_point = False
+        elif match.group("point"):
+            active_point = True
+        elif match.group("action"):
+            env = match.group("env")
+            if match.group("action") == "begin":
+                if env in blue:
+                    blue_count += 1
+                    if not active_point:
+                        failures.append(f"{env} has no owning star-marked knowledge point")
+                    if blue.intersection(stack):
+                        failures.append("blue content boxes must not be nested")
+                if env in old:
+                    failures.append(f"legacy {env} repeats review scaffolding; use a knowledge point or blue box")
+                if env in math and not (blue | {"FormulaSummaryTable", "tikzpicture"}).intersection(stack):
+                    failures.append(f"display math ({env}) is outside a blue box")
+                stack.append(env)
+            elif stack and stack[-1] == env:
+                stack.pop()
+            else:
+                failures.append(f"mismatched environment in body: {env}")
+        elif match.group("display") in {r"\[", "$$"}:
+            if not (blue | {"FormulaSummaryTable", "tikzpicture"}).intersection(stack):
+                failures.append("display math is outside a blue box")
+    if stack:
+        failures.append("unclosed body environments: " + ", ".join(stack))
+    metrics["blue_content_boxes"] = blue_count
+    # Headings and counters cannot reveal prose-only new concepts or justify ratings.
+    metrics["semantic_priority_review_required"] = True
 
 
 def count_inventory_rows(text: str) -> int:
@@ -47,7 +148,7 @@ def dereference(value: Any) -> Any:
     return value.get_object() if hasattr(value, "get_object") else value
 
 
-def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics: dict[str, Any]) -> None:
+def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics: dict[str, Any], has_math: bool = True) -> None:
     try:
         from pypdf import PdfReader
     except ImportError:
@@ -125,14 +226,14 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
     normalized_fonts = " ".join(fonts).lower().replace("-", "")
     if "timesnewroman" not in normalized_fonts:
         failures.append("Times New Roman was not found in PDF font resources")
-    if "xitsmath" not in normalized_fonts:
+    if has_math and "xitsmath" not in normalized_fonts:
         failures.append("XITS Math was not found in PDF font resources")
-    if "kaiti" not in normalized_fonts:
-        failures.append("a standard Kai font (KaiTi / Kaiti SC / STKaiti) was not found in PDF font resources")
+    if "fandolkai" not in normalized_fonts:
+        failures.append("FandolKai was not found in PDF font resources")
     if unembedded_fonts:
         failures.append("PDF contains unembedded fonts: " + ", ".join(sorted(unembedded_fonts)))
-    if legacy_cjk_fonts:
-        failures.append("CJK fonts use predefined Adobe CID collections; this template requires self-contained Identity mapping")
+    # Embedded Fandol fonts can use predefined Adobe collections. Verify actual
+    # extraction below rather than inferring a missing font from the collection.
     if visible_link_borders:
         failures.append(f"{visible_link_borders} link annotations have visible borders")
 
@@ -143,6 +244,7 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
             failures.append(f"non-A4 page size detected: {width} x {height} pt")
 
     extracted = ""
+    extractor = "none"
     pdftotext = shutil.which("pdftotext")
     if pdftotext:
         result = subprocess.run(
@@ -155,16 +257,34 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
         )
         if result.returncode == 0:
             extracted = result.stdout
+            extractor = "pdftotext"
         else:
             warnings.append(f"pdftotext returned exit code {result.returncode}")
-    if not extracted.strip():
+    if not re.search(r"[\u4e00-\u9fff]", extracted):
         try:
-            extracted = "\n".join(page.extract_text() or "" for page in reader.pages)
+            fallback = "\n".join(page.extract_text() or "" for page in reader.pages)
+            if len(re.findall(r"[\u4e00-\u9fff]", fallback)) > len(re.findall(r"[\u4e00-\u9fff]", extracted)) or not extracted.strip():
+                extracted, extractor = fallback, "pypdf"
         except Exception as exc:  # pragma: no cover - tool-facing error path
             warnings.append(f"fallback PDF text extraction failed: {exc}")
+    # Some bundled Poppler builds lack Adobe CMap language packs; MuPDF has
+    # its own mappings. A successful Latin-only extraction must not mask this.
+    if not re.search(r"[\u4e00-\u9fff]", extracted):
+        try:
+            import fitz
+            with fitz.open(pdf_path) as document:
+                fallback = "\n".join(page.get_text() for page in document)
+            if re.search(r"[\u4e00-\u9fff]", fallback):
+                extracted, extractor = fallback, "PyMuPDF"
+        except (ImportError, RuntimeError):
+            pass
+    metrics["text_extractor"] = extractor
     metrics["extracted_text_chars"] = len(extracted.strip())
+    metrics["extracted_chinese_chars"] = len(re.findall(r"[\u4e00-\u9fff]", extracted))
     if len(extracted.strip()) < 20:
         failures.append("PDF text is empty or not meaningfully extractable")
+    if metrics["extracted_chinese_chars"] == 0:
+        failures.append("Chinese study-note text could not be extracted from PDF")
 
 
 def validate(args: argparse.Namespace) -> dict[str, Any]:
@@ -174,7 +294,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
     tex_path = args.tex.resolve()
     raw_tex = read_text(tex_path)
-    tex = strip_comments(raw_tex)
+    tex, input_files = expand_inputs(tex_path, failures)
+    metrics["tex_files_checked"] = input_files
     style_path = tex_path.parent / "study-note-style.sty"
     style = read_text(style_path) if style_path.exists() else ""
 
@@ -189,8 +310,12 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "Times New Roman main font": r"\setmainfont{Times New Roman}",
             "Times New Roman sans font": r"\setsansfont{Times New Roman}",
             "XITS Math": r"\setmathfont{XITS Math}",
-            "standard Kai font configuration": r"\providecommand{\StudyKaiFont}{KaiTi}",
-            "Kai bold treatment": "FakeBold=1.5",
+            "Kai body font": r"\setCJKmainfont{FandolKai-Regular.otf}",
+            "Song bold font": "BoldFont=FandolSong-Bold.otf",
+            "unnumbered headings and contents": r"\setcounter{secnumdepth}{0}",
+            "knowledge point entry": r"\newcommand{\StudyPoint}",
+            "shared blue box style": "studyblue/.style",
+            "example box": r"\newtcolorbox{examplebox}",
             "borderless links": "hidelinks",
             "must-know priority macro": r"\PriorityMust",
             "important priority macro": r"\PriorityImportant",
@@ -209,7 +334,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     special_titles = {"核心知识关系导图", "各章节关系导图", "公式速查手册", "背诵优先级速览", "全局易错点"}
     main_sections = [
         match for match in section_matches
-        if not match.group(1) and match.group(2) not in special_titles
+        if match.group(2) not in special_titles
     ]
     main_count = len(main_sections)
     # A compact regression fixture can generate many sections via \foreach.
@@ -230,15 +355,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         failures.append("document contains multiple relationship maps")
     if omission and map_matches:
         failures.append("map omission reason is present alongside a relationship map")
-    if map_matches:
-        expected = "knowledge" if main_count <= 3 else "chapter"
-        if not maps[expected]:
-            failures.append(f"{main_count} main section(s) require the {expected} relationship map")
-
     toc_match = re.search(r"\\tableofcontents", tex)
-    if toc_match is None:
-        failures.append("table of contents is missing")
-    elif main_sections and toc_match.start() > main_sections[0].start():
+    if toc_match is not None and main_sections and toc_match.start() > main_sections[0].start():
         failures.append("table of contents must precede main chapters")
 
     if map_matches:
@@ -309,7 +427,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     metrics["included_graphics"] = len(re.findall(r"\\includegraphics\b", tex))
     metrics["content_boxes"] = len(
         re.findall(
-            r"\\begin\{(?:definitionbox|takeawaybox|keypointbox|formulabox|proofbox|mistakebox)\}",
+            r"\\begin\{(?:definitionbox|takeawaybox|keypointbox|formulabox|proofbox|examplebox|mistakebox)\}",
             tex,
         )
     )
@@ -319,6 +437,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         + metrics["figures"]
         + metrics["included_graphics"]
     )
+    study_body_checks(tex, failures, metrics)
 
     inventory = read_text(args.inventory.resolve()) if args.inventory else ""
     if args.inventory:
@@ -346,7 +465,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         warnings.append(f"compile log contains {underfull} underfull box warning(s)")
 
     if args.pdf:
-        pdf_checks(args.pdf.resolve(), failures, warnings, metrics)
+        has_math = bool(re.search(r"\$|\\\(|\\\[|\\begin\{(?:align|equation|gather)", tex))
+        pdf_checks(args.pdf.resolve(), failures, warnings, metrics, has_math)
 
     return {
         "status": "pass" if not failures else "fail",

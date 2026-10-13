@@ -1,31 +1,25 @@
-# Study Note Style Contract v1
+# 复习笔记版式契约 v2
 
-Read this when creating or auditing a complete document. `study-note-style-v1` fixes the **visual language**, not the number of paragraphs or document modules.
+复制 assets/通用笔记模板.tex 与 assets/study-note-style.sty，使用 XeLaTeX。内容遵循[正文写作规则](../../study-note-unit-writer/references/unit-writing.md)。
 
-## Canonical assets
+## 阅读结构
 
-Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty` beside the main TeX. Compile with XeLaTeX. Keep the package's A4 geometry, standard KaiTi Chinese text, Times New Roman ordinary Latin text, XITS Math, priority macros, colors, boxes, and `hyperref` `hidelinks` behavior. Chinese bold uses the same Kai font with `FakeBold=1.5`; it must not switch to Hei or WenKai. Do not rebuild these in the main TeX.
+- \section 表示课程章节，\subsection 仅作必要分组；标题和目录均隐藏数字编号，正文不使用三级论文式标题。
+- \StudyPoint{星级宏}{知识点名称} 从新段落开始显示一至三星与蓝色粗体标题。短定义可用三参数 \StudyTerm，其内部复用同一入口。
+- 每个独立知识点可直接定位到入口；数学结论和独立例题也适用。框内附属步骤无需重复标星。
+- 紧凑标题区只放课程、范围与一次星级图例。目录按检索需要添加，默认仅列章节。默认直接进入正文，关系图、阅读指南、优先级总表和全局易错表均不生成；用户要求或明确能减少检索成本时才添加。
+- 公式速查可省略；添加时至多一节，位于所有正文之后。
 
-The compiler uses the installed KaiTi TrueType font and embeds it into the PDF. Readers should not need to install it. Do not redistribute proprietary system font files with the skill. On another system, define `\StudyKaiFont` before loading the style to select an installed standard Kai font (for example Kaiti SC or STKaiti), then check the output. Do not silently fall back to WenKai. Verify both font embedding and rendered Chinese; font-name detection or text extraction alone cannot prove that a previewer displays the glyphs.
+## 蓝框
 
-Use `\PriorityMust`, `\PriorityImportant`, and `\PriorityKnow` to show study priority. Do not force a priority marker on every paragraph.
+proofbox、formulabox、examplebox 统一浅蓝底、蓝边、可跨页，字号与正文一致。推导链或题目解答整体放入一个框，标题用“推导”“例题”等短语；框外不重复同一结论。普通概念采用无框星标文字。
 
-## Document structure
+旧的 definitionbox、keypointbox、takeawaybox、mistakebox 定义只为兼容已有 TeX 保留；新稿用星标文字或必要蓝框替代。校验器将新稿中这些旧式框报为结构问题，避免模板回到多框复述。
 
-Keep a compact title block, clickable contents, and coherent main chapters. Optional modules follow their purpose:
+## 字体与技术
 
-- Add a source-grounded relationship map after the contents only when it improves navigation. Its nodes resolve to body sections and its edges express real relationships. Otherwise omit it; a comment `% study-map-omitted: <reason>` can document the decision.
-- Add at most one `\section{公式速查手册}` **after all main chapters** when the guide has distinct formulas worth retrieving. Group rows by topic with `FormulaSummaryTable` and `\FormulaSummaryRow`. A row contains one canonical result and its minimum conditions/use. No intermediate algebra, worked substitution, or numerical-example step belongs here.
-- Add a priority overview or global mistakes section only when it condenses cross-chapter decisions that the body does not already make easy to retrieve. Keep each brief and place it after the main body and any formula reference.
+保留当前已安装版的字体配置：正文 FandolKai，粗体 FandolSong Bold，普通西文 Times New Roman，数学 XITS Math；A4、四边 2cm、1.15 行距、无框链接。此次改造不改变字体选择。
 
-The presence or absence of optional modules does not change the style version. The unit writer does not author any of them.
+来源追踪与流程状态不进入 PDF。标签可用 \label{kp:...}，交叉检索用 \hyperref[kp:...]{知识点名称}；章节编号隐藏后，不用裸 \ref 生成含混数字。
 
-## Content and visual economy
-
-A key concept needs an accurate explanation, not a seven-heading block. A comparison may use a governing sentence plus table. A model may need a full setup once, then shorter inherited results. Put equations beside the explanation that licenses them.
-
-Choose the smallest adequate representation: prose, compact chain, comparison table, then full diagram if spatial or equilibrium geometry matters. A figure or table must add information or reduce repetition. Do not repeat its content in a long caption and adjacent paragraph. Keep boxes short and optional.
-
-## QA
-
-The validator checks technical and structural invariants: style marker, A4, fonts, extractable text, link borders, references, optional module order, and unit-fragment boundaries. Editorial review checks source coverage, derivation correctness, formula provenance, and redundancy; counts are diagnostics rather than quotas.
+验收应核对：星标是否逐知识点可见且有依据、蓝框是否涵盖推导与例题、是否存在纯衔接或重复解释，以及字体嵌入、文本可提取、无缺字/未解析引用和合理分页。自动校验报告只能证明其列明的结构与技术项。

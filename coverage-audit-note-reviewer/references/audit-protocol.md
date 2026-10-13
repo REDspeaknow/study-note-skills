@@ -1,26 +1,22 @@
-# Audit protocol
+# 审核方法
 
-## Inputs
+读取用户范围、可用来源、正文和 PDF，追踪表与已有技术报告按需读取。先展开主 TeX 的引用，避免漏看 build 中实际正文。仅有旧笔记时，审核相对于旧笔记的保留情况。
 
-Read the requested scope, available source files, source inventory, synthesis plan, unit bodies and handoffs, final TeX/PDF, compile log, and deterministic validator report. If only a prior note exists, audit preservation relative to that note and the inventory, not the unavailable original course material.
+## 阅读与内容
 
-## Coverage and correctness
+1. 逐个识别独立概念、定理、结果和题型；找到各自的可见星标入口。不能仅凭封面图例或星号总数判定合格，也不能让一个批次的星级覆盖多个无关知识点。
+2. 对照教师重点、范围与原题核实星级；按课程结构推断的标为暂定。难度和篇幅不是星级依据，缺少证据时不能声称必考。
+3. 检查三级论文标题、导读、转场与总结是否挤占知识内容。普通概念用无框文字；推导、独立公式和例题用所属知识点下的蓝框。
+4. 推导保留设定、非显然中间式、结果与适用条件。文字仅补充公式无法自明的内容；压缩逐行口述的移项和求导，避免同一结论连续给两条证明，除非来源或考试确实要求。
+5. 例题保留题目条件、问题、可复现的步骤与答案，整体位于一个蓝框；有必要时验证可行性、边界与单位。拒绝只有答案的过度压缩。
+6. 核对每个实质来源项的实际正文位置或有依据的省略，检查数学和事实正确性。标题、关键词和速查行本身不是完整讲解。
 
-1. For each substantive inventory ID, locate the actual teaching passage and record its section/label. Mark represented, represented indirectly, intentionally omitted, weak, or missing. A keyword match is a search aid only.
-2. For major models, compare setup, symbols, equilibrium/result, necessary algebra, and boundary conditions with available evidence. Later results may inherit a setup already established.
-3. Check whether the reader can answer the unit's central question without reading repeated restatements.
-4. Inspect visuals for valid source cues, meaningful placement, readable labels, and correct axes/arrows/intersections. Reject decorative or duplicate figures.
+## 去重与技术
 
-## Repetition and retrieval
+邻近知识点、表格、图注、蓝框和末尾速查一起阅读。同义总结、表格逐行复述、重复故事和多种装饰性表达合并，保留独特条件。图表应增加可考查信息；默认不要求关系图或全局总结。
 
-Read neighboring sections and the end matter together. Highlight repeated definitions, reused setup, parallel case narratives, prose that merely reads back a table, long captions that restate the surrounding text, and boxes/exam tips that restate the same conclusion. Preserve any unique condition or exception when consolidating.
+全书公式速查至多一次，在所有正文之后；正文片段不含全书速查。新工程没有逐批交接文件不构成缺陷。
 
-Inspect unit handoffs. A formula candidate is a nomination, not required output. Check duplicate keys and conflicting conditions. In the final TeX, unit fragments contain no FormulaSummaryTable or document-level summary sections; at most one formula-reference section follows the main chapters, with topic tables if useful. Reject intermediate algebra, worked substitutions, and numerical-example steps from that reference. Every retained row points to a body explanation.
+使用当前输出对应的编译与校验报告，查看代表性 PDF 页面。确认标题与目录无层级编号、星标可见、蓝框整齐且能跨页、中文可读、字体嵌入、链接无边框与引用稳定。自动通过不替代语义判断；页数只是诊断。
 
-## Technical QA
-
-Run the compile helper and validator. Confirm A4, embedded configured fonts, extractable Chinese text, clickable borderless links, no unresolved references or missing glyphs, and sensible page breaks. Render representative concept, derivation, visual, formula-reference, and final pages. A low or high page count triggers editorial inspection, not an automatic verdict.
-
-## Output
-
-Return a compact table of actionable findings with source ID, body location, problem, and correction. State what evidence was unavailable. Finish with pass, pass with notes, or revise. Do not mark a guide complete merely because inventory titles appear in PDF text.
+输出精简问题表：正文位置、来源或依据、问题、修正。结尾给出“通过 / 有说明地通过 / 需修改”，附真实证据缺口。

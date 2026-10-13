@@ -1,35 +1,26 @@
 ---
 name: auto-study-note-orchestrator
-description: Turn course materials into a concise, source-traceable Chinese LaTeX/PDF study guide with coherent learning units, necessary derivations, one document-level formula reference, and PDF quality checks.
+description: 将课程资料整理或重构为中文 LaTeX/PDF 复习指南，逐知识点标注三级星级，用蓝框呈现必要推导和例题，简化衔接与流程文件。
 ---
 
-# Auto Study Note Orchestrator
+# 复习笔记编排
 
-Create a guide that a learner can review: complete in key claims and derivations, concise in presentation. Use `study-note-style-v1` for visual consistency. The source inventory tracks evidence; it does **not** prescribe one section per slide or a full template per concept. Read `references/orchestration-workflow.md` for multi-file work and `references/style-contract.md` when assembling a complete document. Copy the canonical assets instead of rebuilding the preamble.
+以“数字经济”参考笔记的**星标知识点入口与紧凑表达**组织复习资料。每个独立知识点都有标题和一至三星；必要推导、公式块与例题放入蓝框。章节直接进入知识点，篇幅用于知识与可复现的计算。
 
-## Roles
+起草或修改正文前，读取[正文写作规则](../study-note-unit-writer/references/unit-writing.md)；生成整本 LaTeX 时，读取[版式契约](references/style-contract.md)，复制 assets 中的模板与样式。分批、续写或来源较多时，读取[简化工作流](references/orchestration-workflow.md)。正文规则是内容的唯一依据，模板只示范排版。
 
-- The orchestrator owns source inventory, synthesis plan, notation, cross-unit continuity, formula selection, final assembly, coverage and repetition audit, compilation, and PDF validation.
-- `$study-note-unit-writer` owns a coherent unit's concept explanation, necessary derivation, cases, and approved visuals together. Reuse one writer across adjacent units when supported. Do not split one unit among concept, math, and figure agents.
-- `$coverage-audit-note-reviewer` is optional for a requested independent review or a concrete unresolved concern; it is not a routine drafting agent.
+## 执行
 
-The user may opt out of subagents. If delegation is unavailable, follow the same unit contract locally.
+1. **核实材料。** 递归检查资料和现有 TeX 的 \input / \include 引用，包括 build 等子目录。确认实际正文后再比较；保留原文件。
+2. **确定知识点与星级。** 按课程章节归组，逐项确定独立知识点、来源、重要性依据及必要推导或例题。星级含义与缺少考试证据时的处理遵循正文规则。
+3. **写作。** 使用“章节 → 星标知识点 → 必要蓝框”的结构。一个批次可以含多个知识点，批次边界不产生导读、过渡或总结。统一记号，已定义内容直接沿用。
+4. **统稿。** 删除重复解释、同义总结和纯衔接文字；保留影响结论的假设、非显然的数学步骤和题目条件。根据需要在末尾添加至多一个公式速查，默认不加关系图、优先级总表或全局易错模块。
+5. **验收。** 核对每个实质知识点的入口、星级依据、内容和来源，再检查蓝框与计算。用 scripts/compile_study_note.py 编译、scripts/validate_study_note.py 验证并查看代表性 PDF 页面。技术通过不代替内容审查。
 
-## Workflow
+## 流程与交付
 
-1. **Ground the scope.** Inspect source files, page counts, existing notes, and user priorities. Extract text and inspect source figures where needed. Mark ambiguous evidence rather than filling gaps.
-2. **Build an item-level source inventory for traceability.** Record substantive concepts, results, derivations, cases, and visuals with precise source cues. Mark administrative material and true duplicates. Keep it outside the PDF.
-3. **Plan learning units.** Group related inventory IDs around a question or model in `synthesis_plan.md`. For each unit, state its central claim, needed setup/derivation, source IDs, prior notation, and any justified visual. Preserve the user's requested order.
-4. **Draft unit bodies.** Send one bounded unit packet to `$study-note-unit-writer`; receive `<unit_id>_body.tex` and `<unit_id>_handoff.json`. The body is a fragment, never a standalone guide. Check missing IDs, algebra, unsupported claims, and repeated explanations before continuing.
-5. **Assemble once.** Merge units, normalize notation and links, and remove repeated definitions, setup, cases, warnings, and boxed restatements. The orchestrator alone writes front matter and optional end matter. Collect formula candidates from handoffs, resolve duplicate keys and conflicting conditions, and select distinct high-value retrieval targets explained in the body. If useful, create **one** `\section{公式速查手册}` after all main units, with topic-grouped `FormulaSummaryTable`s. Never append a table to each unit.
-6. **Verify.** Map every inventory ID to a specific body passage or justified omission. Audit repetition and information density alongside coverage. Compile until references stabilize, run `scripts/validate_study_note.py`, inspect representative PDF pages, and report source limitations.
+默认就地完成。只有用户要求委派或独立审核时，调用 $study-note-unit-writer 或 $coverage-audit-note-reviewer；不为每个知识点创建代理或交接文件。
 
-## Boundaries
+来源较多时用**一份** review_notes.md 记录来源、星级依据、正文位置和真实未决项；已有有效清单可直接更新。只有实际委派需要时才创建分工记录。synthesis_plan.md、逐批 JSON、公共设定更新和 issues.json 均不是新任务的必交产物。
 
-- Unit writers may propose formula candidates in JSON but may not emit document-level summary sections or `FormulaSummaryTable` in TeX fragments.
-- A formula sheet, glossary, diagram, or title mention does not by itself teach a substantive claim. A comparison table plus a concise governing explanation can cover comparison dimensions without parallel prose for every cell.
-- A named model warrants full setup only when the source develops it and that setup is needed for understanding or assessment. Show essential algebra; do not expand every identity into a model card.
-- Do not use a page-count floor or ceiling as a completion proxy. Report page and content-count changes as diagnostics.
-- Preserve source and previous outputs. Workflow files stay outside the guide.
-
-For a complete deliverable, link the PDF, TeX, inventory, synthesis plan, and coverage/repetition audit. State when original files were unavailable and an earlier note was the only basis for revision.
+交付 PDF、TeX 及必要样式文件；有追踪记录时附其路径。说明缺失来源、暂定星级和未完成验证。未取得原课件时，只声明对现有材料的保留情况。

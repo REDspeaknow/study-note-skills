@@ -28,7 +28,7 @@
 \foreach \n in {1,...,72}{
   \section{核心概念单元 \n}
   \StudyTerm{\PriorityMust}{Concept \n}{用于目录分页、优先级符号和西文字体回归测试。}
-  \paragraph{为什么重要。}该条目验证概念正文先于任何视觉内容。
+  该条目用于字体与目录分页验证。
 }
 
 \section{公式速查手册}
@@ -41,9 +41,9 @@
 \PriorityMust\ 必背；\PriorityImportant\ 重点；\PriorityKnow\ 了解。
 
 \section{全局易错点}
-\begin{mistakebox}[title={Final check}]
+\StudyPoint{\PriorityKnow}{技术核对}
 目录链接不得显示边框；Latin text 必须使用 Times New Roman。
 
 代码例外保持等宽：\texttt{for x in data: print(x)}。
-\end{mistakebox}
+
 \end{document}

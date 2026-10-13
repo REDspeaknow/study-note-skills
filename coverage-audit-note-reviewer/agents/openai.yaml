@@ -1,4 +1,4 @@
 interface:
-  display_name: "Coverage Audit Note Reviewer"
-  short_description: "Review coverage, derivations, repetition, formula provenance, and PDF quality."
-  default_prompt: "Use $coverage-audit-note-reviewer to independently review this study guide for source coverage, correct derivations, non-redundant explanations, one optional end-of-book formula reference, and study-note-style-v1 PDF quality."
+  display_name: "复习指南审核"
+  short_description: "审核知识点星级、蓝框、数学正确性、冗余与 PDF。"
+  default_prompt: "使用 $coverage-audit-note-reviewer 检查这份复习指南的逐知识点星级、推导和例题蓝框、来源覆盖、数学正确性及 PDF 版式。"

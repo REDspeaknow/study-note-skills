@@ -1,21 +1,12 @@
 ---
 name: coverage-audit-note-reviewer
-description: Independently review a Chinese LaTeX/PDF study guide for source coverage, correct derivations, semantic repetition, formula provenance, justified visuals, and technical PDF quality.
+description: 审查中文复习指南的逐知识点星级、推导和例题蓝框、来源覆盖、数学正确性、冗余文字及 PDF 版式。
 ---
 
-# Coverage Audit Note Reviewer
+# 复习指南审核
 
-Use this skill only when the user requests an independent review or the orchestrator has a concrete unresolved coverage or correctness concern. Read `references/audit-protocol.md` and the orchestrator's `references/style-contract.md` for a complete document.
+读取[审核方法](references/audit-protocol.md)、[正文规则](../study-note-unit-writer/references/unit-writing.md)和[版式契约](../auto-study-note-orchestrator/references/style-contract.md)。依据可用来源、实际正文和 PDF 审核；来源记录可是一份简表，不要求综合计划、交接 JSON 或问题账本。
 
-Review the source inventory, synthesis plan, body fragments, unit handoffs, final TeX/PDF, and available original materials. If originals are absent, state that raw-source completeness cannot be certified.
+优先检查每个独立知识点是否有星标入口，星级是否有依据，推导和例题是否集中在蓝框、数学步骤是否够用，以及章节之间和框前后是否有重复或空衔接。
 
-## Findings to report
-
-- Every substantive inventory ID has a specific passage, an intentional omission reason, or a missing/weak finding. A title, keyword hit, or formula-sheet row alone is insufficient evidence.
-- Important derivations have the correct setup, conditions, key intermediate step, and result. Do not demand a full model card for a formula that inherits earlier setup.
-- Repeated claims across neighboring units, prose/table/caption/box, exam tips, local mistakes, and end matter are identified with concrete locations. Prefer one clear treatment and a cross-reference.
-- Every accepted figure has a source-supported purpose and correct geometry or flow. A comparison table may carry dimensions when a short governing sentence explains the distinction.
-- Unit fragments contain no document-level formula tables or summary sections. The final guide has at most one formula-reference section, after all main chapters; each retained row is body-backed and useful for retrieval.
-- The PDF passes typography, link, reference, extractability, and layout checks.
-
-Use page counts, source-to-output ratio, and content counts as diagnostics, never automatic evidence of completeness or concision. Give a short pass/revise recommendation with exact fixes rather than a long checklist of passed items.
+仅报告具体位置、问题、修正建议与未验证项，给出通过或需修改结论。缺少原资料时不能认证原课件覆盖率。由主编自审时如实称为自审，不称为独立复核。

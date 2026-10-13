@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{study-note-style}[2026/10/07 study-note-style-v1]
+\ProvidesPackage{study-note-style}[2026/10/13 study-note-style-v2]
 
 \RequirePackage{iftex}
 \ifXeTeX\else
@@ -11,21 +11,15 @@
 \setmainfont{Times New Roman}
 \setsansfont{Times New Roman}
 \setmonofont{Latin Modern Mono}
-% Set \StudyKaiFont before loading this package to select another installed
-% standard Kai font. Keep PDF embedding; do not substitute a handwritten font.
-\providecommand{\StudyKaiFont}{KaiTi}
-\setCJKmainfont{\StudyKaiFont}[
-  BoldFont=\StudyKaiFont,
-  BoldFeatures={FakeBold=1.5},
-  ItalicFont=\StudyKaiFont,
-  BoldItalicFont=\StudyKaiFont,
-  BoldItalicFeatures={FakeBold=1.5}
+% 正文用楷体，加粗改用宋体真 Bold 字重：FandolKai 只有 Regular，映射到黑体会让
+% 强调处与正文风格割裂。FandolSong-Bold 随 TeX Live 分发，不引入额外字体依赖。
+\setCJKmainfont{FandolKai-Regular.otf}[
+  BoldFont=FandolSong-Bold.otf,
+  ItalicFont=FandolKai-Regular.otf,
+  BoldItalicFont=FandolSong-Bold.otf
 ]
-\setCJKsansfont{\StudyKaiFont}[
-  BoldFont=\StudyKaiFont,
-  BoldFeatures={FakeBold=1.5}
-]
-\setCJKmonofont{\StudyKaiFont}
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\setCJKmonofont{FandolFang-Regular.otf}
 
 \RequirePackage{geometry}
 \geometry{left=2cm,right=2cm,top=2cm,bottom=2cm}
@@ -71,6 +65,9 @@
 \titleformat{\subsection}{\large\bfseries\color{sectioncolor!80!black}}{}{0em}{}
 \titlespacing{\section}{0pt}{8pt}{4pt}
 \titlespacing{\subsection}{0pt}{6pt}{2pt}
+% Hide numbering in both printed headings and the optional table of contents.
+\setcounter{secnumdepth}{0}
+\setcounter{tocdepth}{1}
 
 \setlist{nosep,leftmargin=*,itemsep=0pt,parsep=0pt}
 \setlength{\parindent}{0pt}
@@ -82,12 +79,16 @@
 \fancyfoot[C]{\small\thepage}
 \renewcommand{\headrulewidth}{0pt}
 
-\newcommand{\StudyNoteStyleVersion}{study-note-style-v1}
+\newcommand{\StudyNoteStyleVersion}{study-note-style-v2}
 \newcommand{\StudyStar}{\ding{72}}
 \newcommand{\PriorityMust}{\textcolor{starred}{\StudyStar\StudyStar\StudyStar}}
 \newcommand{\PriorityImportant}{\textcolor{important}{\StudyStar\StudyStar}}
 \newcommand{\PriorityKnow}{\textcolor{know}{\StudyStar}}
-\newcommand{\StudyTerm}[3]{#1\enspace\textbf{\color{termcolor}#2}：#3\par}
+\newcommand{\StudyPoint}[2]{%
+  \par\addvspace{0.65em}\phantomsection\noindent
+  {#1\enspace\textbf{\color{termcolor}#2}}\par\nopagebreak[4]%
+}
+\newcommand{\StudyTerm}[3]{\StudyPoint{#1}{#2}#3\par}
 
 \tcbset{
   studybase/.style={
@@ -102,16 +103,19 @@
     bottom=1.5mm,
     before skip=0.3em,
     after skip=0.3em,
-    fonttitle=\small\bfseries,
-    fontupper=\small
+    fonttitle=\normalsize\bfseries,
+    fontupper=\normalsize
   }
 }
 
 \newtcolorbox{definitionbox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!30,#1}
 \newtcolorbox{takeawaybox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!40,#1}
 \newtcolorbox{keypointbox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!50,#1}
-\newtcolorbox{formulabox}[1][]{studybase,colback=formulabg,colframe=sectioncolor!30,#1}
-\newtcolorbox{proofbox}[1][]{studybase,colback=formulabg,colframe=sectioncolor!30,#1}
+\tcbset{studyblue/.style={studybase,colback=termcolor!3!white,colframe=termcolor!65!white,
+  colbacktitle=termcolor!8!white,coltitle=termcolor}}
+\newtcolorbox{formulabox}[1][]{studyblue,#1}
+\newtcolorbox{proofbox}[1][]{studyblue,#1}
+\newtcolorbox{examplebox}[1][]{studyblue,#1}
 \newtcolorbox{mistakebox}[1][]{studybase,colback=boxbg,colframe=starred!45,#1}
 
 % Reusable chapter-relationship map styles.  Edges must be source-grounded and

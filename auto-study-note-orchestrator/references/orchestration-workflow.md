@@ -1,63 +1,40 @@
-# Orchestration workflow
+# 简化工作流
 
-Use this for multi-file or chapter-range guides. The inventory is an evidence ledger; the synthesis plan is the writing plan. Keep them distinct.
+## 来源与组织
 
-## 1. Source ledger
+递归读取来源和 TeX 引用；正文可能在 build/body_all.tex 或多个片段中。记录当前材料的范围，按课程章节归组知识点。若只有旧笔记，保留其中独特事实和条件，不能声称已核验原课件。
 
-List source files and exact ranges. For every substantive item, record `id`, source page/slide, title or cue, type, importance, required fact/result, and status. Types may include concept, derivation, comparison, diagram, case, and admin/duplicate. Merge continuation slides that express one result; do not merge unrelated claims just to reduce row count.
+小范围修订可直接依据来源完成；多来源、整章或整本使用一份 review_notes.md：
 
-| Source item | Typical treatment |
-| --- | --- |
-| Simple definition or scope note | One precise sentence or compact paragraph |
-| Easily confused alternatives | Governing distinction plus table or short comparison |
-| Illustrative case | One or two sentences linked to the mechanism |
-| Central model | Setup once, decision/equilibrium result, essential derivation, interpretation |
-| Later result in the same model | Inherit setup; show changed assumption or key step |
-| Source figure with examinable geometry | Explain adjacent to a checked figure |
+| ID | 来源页/节 | 知识点 | 星级及依据 | 正文标签 | 状态/问题 |
+| --- | --- | --- | --- | --- | --- |
+| K01 | 第1讲 p.8 | 网络效应 | ★★★；基础定义，暂无考试证据 | kp:network-effect | 已核对 |
 
-Importance guides space and retrieval priority, not the number of mandatory headings. Preserve source-specific exceptions and boundaries when they change a conclusion.
+同一结果的连续页可归一项，保留不同假设、独特结论和必要例题。正文标签定位实际内容，不以关键词命中当作已讲解。暂定重要性、材料缺口与有意省略在这份记录中注明，不另建空问题账本。已有来源清单可扩充这些列，不再生成重复的状态文件。
 
-## 2. Synthesis plan and unit packet
+## 写作与可选分工
 
-Group inventory IDs into learning units around one central question or model. Save `synthesis_plan.md` with unit ID, source IDs, learning question, primary claim, prerequisite notation, depth, visual decision, and master-outline position. Keep a model's setup and application together; do not create one batch per slide.
+默认就地写作。按实际材料决定分批，不把每批变成一个小节；已确认的符号和设定直接沿用。主编在统稿时检查独立知识点有没有自己的星标入口，数学条件是否随结果保留。
 
-Give the integrated writer current source excerpts and relevant prior context:
+用户要求委派时，给写作器来源路径/范围、知识点与星级依据、已有记号以及独占输出路径即可。写作器交正文和必要疑点，主编更新统一记录。多批确有依赖时，在同一记录追加简短依赖与进度，不必默认维护候选公式、公共设定更新和复杂交接对象。
 
-```text
-unit_id:
-learning_question:
-coverage_ids:
-source_evidence:
-importance_and_depth:
-already_defined_terms_and_notation:
-must_preserve_results_and_boundaries:
-approved_visual_and_reason: optional
-style_contract: study-note-style-v1
-deliver: <unit_id>_body.tex + <unit_id>_handoff.json
-```
+续写旧工程可沿用已有 JSON 与 check_handoffs.py，仅在该工程确实使用这些产物时检查；它们不是新版复习指南的必备结构。不要因缺少旧流程文件拒绝验收一份来源清楚的完整笔记。
 
-The writer owns prose, math, and visuals within that unit. Keep related units sequential and reuse writer context if possible. If delegation is unavailable or declined, write locally under the same boundaries.
+## 统稿与速查
 
-After each unit, locate each assigned ID in the body or an unresolved note, inspect key algebra and visuals, and identify claims already explained elsewhere. Record findings and fixes compactly.
+合并时保留每个知识点最清楚的一次表述，删去导读、重复设定、表格复述和结尾重述。用正文规则检查推导：保留关键链条，压缩显然运算的口述说明。推导和例题蓝框不再拆成设定框、证明框、结论框、易错框的连续套装。
 
-## 3. Document assembly
+全书有实际检索需求时，手工选取正文中已讲解的独立结果，末尾集中添加一次“公式速查手册”，使用 FormulaSummaryTable / \FormulaSummaryRow。每行只列结果、最小条件与用途。无须先生成每批候选 JSON；已有候选时可用 collect_formula_candidates.py 去重。
 
-Copy `assets/通用笔记模板.tex` and `assets/study-note-style.sty` beside the main TeX. Confirm KaiTi is installed on the compiling machine, or select an installed standard Kai font using `\StudyKaiFont`. The fixed visual language does not require fixed content modules. The orchestrator, not the unit writer, owns title/contents, any source-grounded overview map, global formula reference, priority overview, and cross-unit mistakes. Include a module only if it helps navigation or retrieval. A map may be omitted with `% study-map-omitted: <reason>`; do not label it `user-requested` unless the user requested it.
+## 验收
 
-Merge body fragments in teaching order. Keep the first complete definition; replace later restatements with a reference or changed implication. Compare prose, tables, captions, cases, local boxes, and exam tips for repeated conclusions. Delete a repeated representation while preserving unique conditions and exceptions.
+先逐知识点核对来源、星级、正文位置和必要计算，再运行：
 
-## 4. One global formula reference
+~~~text
+python scripts/compile_study_note.py --tex <main.tex>
+python scripts/validate_study_note.py --tex <main.tex> --pdf <main.pdf> --log <main.log>
+~~~
 
-Read each handoff's `formula_candidates`. The `key` identifies a result, not a TeX spelling. Group identical keys, resolve incompatible formulas or conditions against the body, and reject intermediate algebra, worked substitutions, and numerical-example steps. Every accepted candidate must point to a real body label.
+校验器会展开正文 \input / \include，检查遗漏引用、标题层级、星标入口、蓝框归属、显示公式位置和 PDF 技术质量；它不能判断星级证据是否充分，也不能发现所有隐藏在普通段落中的新知识点，需人工语义审查。发现符号或公式变更时同步核对受影响例题和速查。
 
-Only after all units are merged, write at most one `\section{公式速查手册}` following the main units. It may contain multiple topic tables using `FormulaSummaryTable`; none may appear earlier or in unit fragments. Omit the section when there are no distinct retrieval formulas. It is an index, not a second derivation.
-
-Use `scripts/collect_formula_candidates.py` to detect duplicate keys and inconsistent submissions before editorial selection. It does not mandate including every candidate.
-
-## 5. Final audit
-
-Create a compact coverage map: each inventory ID -> body section/label, intentional omission reason, or unresolved. Review actual passages; keyword occurrence alone is not proof. Check important derivations against available source or inherited notes, including assumptions and boundaries.
-
-Identify each unit's central claim and remove repeated paraphrases from exam cues, mistakes, takeaway boxes, tables, and end matter. Page and heading/box/formula counts are diagnostics, not pass/fail limits.
-
-Compile and run `scripts/validate_study_note.py --tex <entrypoint> --pdf <pdf> --log <log> --inventory <inventory> --unit-fragment <fragment> ...`. Render representative concept, math, table, and end-matter pages. Do not certify raw-source completeness when only an earlier guide is available.
+用渲染图查看概念、推导、例题和跨页蓝框；若有目录或速查，检查其链接与跨页布局。交付时只列具体限制和未完成项，不逐批附一套通过清单。

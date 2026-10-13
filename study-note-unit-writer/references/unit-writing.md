@@ -1,36 +1,54 @@
-# Unit writing and handoff
+# 正文写作规则
 
-## Unit shape
+## 知识点是阅读单位
 
-The title should answer one learning question. Start with the result or distinction that organizes the unit, then add only the setup, mechanism, derivation, example, or boundary needed to understand it. Several source slides may map to one paragraph or table. One source slide may require a worked derivation. Importance changes the depth of explanation; it does not create a mandatory list of subheadings.
+采用“章节分组 → 星标知识点 → 必要推导或例题蓝框”。章节可以用 \section{第一章：主题}，需要归组时用 \subsection{分组名}。独立知识点统一用 \StudyPoint{星级宏}{名称}，短定义可用 \StudyTerm{星级宏}{名称}{定义}。两者都从新段落开始，以彩色星标和蓝色粗体名称划定入口。
 
-For a model, establish notation once. A first substantive result may need actors, choices, assumptions, and equilibrium. Later results in the same model should inherit that setup and show only the changed step. Distinguish a source-derived result from an added explanation.
+每个可独立背诵、提问或计算的概念、定理、模型结果、题型都有自己的入口。一个模型中的“设定—推导—结果”可共用同一入口；另一个独立结论另起入口。比较表中若包含可单独考查的术语，先分别给出星标定义，或在对应名称旁标星。不能只在封面、章节或优先级总表标星，让正文知识点无标识。
 
-For a derivation, show the key transformation, the condition that licenses it, and the final result. Skip algebra that merely repeats an immediately visible substitution. A formula intended for memorization may be proposed in handoff metadata; do not build a local formula-summary table.
+章节之间直接切换。正文用定义、机制、条件、公式或题目起笔；只在逻辑确需时用一句话指明前提。正文与目录都不显示 1.1、1.1.1 等层级编号，不使用 \subsubsection、\paragraph 来拆解知识点；框内“题目、解、条件”等用普通粗体短标签。
 
-For a comparison, use one short synthesis sentence plus a compact table when the table replaces several parallel paragraphs. The table can be the main representation of comparison dimensions; the surrounding prose states the governing distinction.
+## 三级星标
 
-## Handoff record
+| 星级宏 | 复习含义 | 判断依据 |
+| --- | --- | --- |
+| \PriorityMust（★★★，红） | 核心掌握：能准确复述或复现关键计算 | 教师或大纲明确要求、真题与作业中的核心考点、支撑主要模型的基本定义和结果 |
+| \PriorityImportant（★★，橙） | 重点理解：掌握机制、区别和应用条件 | 重要扩展、比较、论述依据或主要结果的应用 |
+| \PriorityKnow（★，灰） | 了解识别：记住含义与作用 | 背景、辅助事实、非核心延伸 |
 
-Save UTF-8 JSON beside the body fragment:
+用户提供的星级、教师重点和考试范围优先于推断。资料无考试证据时，按课程中的作用暂定星级，在统一追踪记录或交付说明注明“按知识结构暂定”；不得写成“必考”。难推导不自动升星，短定义不自动降星，也不按篇幅或数量配额分星。修订已有笔记时保留有依据的星级，仅对缺失或证据冲突处重新判断。
 
-```json
-{
-  "unit_id": "U03",
-  "coverage_ids": ["L1-13", "L1-14", "L1-15"],
-  "unresolved": [],
-  "formula_candidates": [
-    {
-      "key": "two_sided_price_structure_foc",
-      "name": "固定总价的内点条件",
-      "formula": "(D_B)'/D_B=(D_S)'/D_S",
-      "conditions": "两侧需求为正且可微，解在可行区间内部",
-      "body_label": "sec:two-sided-pricing"
-    }
-  ]
-}
-```
+## 文字密度
 
-`key` identifies the result across units. If another unit reuses the result, use the same key and point to its earlier body explanation; do not create a new summary row. Formula candidates are optional nominations. The orchestrator decides which distinct retrieval targets enter one end-of-book formula section.
+简单概念通常是一句定义，必要时再补机制、区别或条件。复杂概念可用短段落或紧凑条目，保留读者理解与答题所需的信息。没有统一字数上限，但每句应增加知识、条件或推理。
 
-Keep process notes and source coverage metadata outside the `.tex` body. Never add a local `\section{公式速查手册}` or `FormulaSummaryTable` even when the unit contains many formulas.
+删除编纂过程、自评、泛化导读、纯过渡和同义总结。表格已经列明的维度不再逐行复述；已有结论不再另配 takeaway、易错框和“本节小结”。案例只保留新增的机制、边界、必学事实或必要计算。示例中的专名、时间线和情节不是扩写理由。
+
+星级区分复习优先顺序，不能取代解释；删去长叙述后仍须有定义、必要机制和结果成立条件。保留真实假设、反例与证据不足造成的不确定性，写出具体限制。来源缺失、覆盖状态和处理选择放在后台记录或交付说明。
+
+## 蓝框中的公式、推导与例题
+
+整段推导用 proofbox，独立公式块用 formulabox，例题题面和解答一起用 examplebox。三者统一为浅蓝底、蓝边的可跨页框。知识点入口在框前；附属推导沿用所属知识点星级，独立题型另起星标入口。普通概念不套框，行内公式可直接放在定义或条件中。
+
+推导按“最少设定 → 关键变换 → 结果及条件”组织，数学关系优先用 align* / aligned 连写。文字只说明新符号、非显然变换及限制条件，可紧邻公式用短注。不逐行把显然的移项、代入、求导再口述一遍，也不在框外复述整段结论。考试要求某种证明时保留该证明；否则同一结论通常只留一条足够理解和复现的路线。
+
+例题在同一个框中给出必要题面、求什么、主要步骤和答案；仅在需要时追加边界、可行性或单位核对。基础中间步骤要够用，避免只列最终答案，也避免强制套“审题—建模—求解—验证—推广—总结”栏目。
+
+以下是版式演示，星级不构成对实际课程的考试判断：
+
+~~~latex
+\StudyTerm{\PriorityMust}{网络效应}{新增用户改变其他用户从产品或服务中获得的价值，属于消费外部性。}
+正负取决于新增参与者带来互补还是拥挤；组内与跨组按施加者和承受者是否同群体区分。
+
+\StudyPoint{\PriorityImportant}{社会边际收益}
+\begin{proofbox}[title=推导]
+设连续规模为 $N$，人均毛收益 $U(N)$ 可微，单位资源成本 $c$ 恒定。
+\begin{align*}
+W(N)&=NU(N)-cN,\\
+W'(N)&=U(N)+NU'(N)-c.
+\end{align*}
+$NU'(N)$ 是对既有用户的边际外部收益；内点最优须满足 $W'(N)=0$，还需检查边界与最优性。
+\end{proofbox}
+~~~
+
+图表只在承载可考查的关系、几何或比较时使用；放在所属星标知识点下，保留唯一新增信息。公式速查由主编按需在全书末尾集中写一次，不代替正文推导。

@@ -34,14 +34,8 @@ def compile_note(tex_path: Path, max_passes: int) -> tuple[bool, int, str]:
     if engine is None:
         return False, 0, "xelatex is not available on PATH"
 
-    source = tex_path.read_text(encoding="utf-8", errors="replace")
-    has_toc = r"\tableofcontents" in source
-    has_refs = bool(re.search(r"\\(?:ref|eqref|pageref|autoref|cref|label|cite)\b", source))
-    tracked = [tex_path.with_suffix(".out")]
-    if has_toc:
-        tracked.append(tex_path.with_suffix(".toc"))
-    if has_refs:
-        tracked.append(tex_path.with_suffix(".aux"))
+    # Labels and contents may live in input fragments rather than the entrypoint.
+    tracked = [tex_path.with_suffix(suffix) for suffix in (".out", ".toc", ".aux")]
 
     for pass_number in range(1, max_passes + 1):
         before = {path: read_sidecar(path) for path in tracked}

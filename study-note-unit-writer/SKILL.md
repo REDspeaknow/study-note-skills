@@ -1,25 +1,17 @@
 ---
 name: study-note-unit-writer
-description: Write one coherent Chinese study-guide unit from grouped course evidence, combining concepts, necessary derivations, cases, and justified visuals without repeating a full-document template.
+description: 按课程证据写作或精简一段中文复习笔记，以三级星标标识独立知识点，用蓝框呈现推导和例题，保留必要步骤并去除冗余衔接。
 ---
 
-# Study Note Unit Writer
+# 星标知识点写作
 
-Write **one learning unit**, not a miniature study guide. The orchestrator supplies a unit question, grouped source/coverage IDs, importance, the source excerpts, prior definitions and notation, and any must-preserve results. Read `references/unit-writing.md` for treatment choices and the handoff format.
+先读取 [references/unit-writing.md](references/unit-writing.md)，按其中的知识点边界、星级和推导规则写作。版式宏由编排器提供的 study-note-style-v2 定义。
 
-## Deliverables
+完成分配范围中的知识点；沿用既有定义、记号和标签。若需要分批，批次只是执行范围，不自动产生正文标题。独立概念、模型结果和独立题型都必须有可见的星标入口。
 
-1. `<unit_id>_body.tex`: body content only. It may contain subsection headings, explanations, necessary intermediate algebra, cases, and approved local visuals. It must not contain a preamble, `\begin{document}`, a relationship map, `\section{公式速查手册}`, `FormulaSummaryTable`, a priority overview, or global mistakes. A final equation belongs beside its explanation; a short local takeaway is optional, not a required ending.
-2. `<unit_id>_handoff.json`: `unit_id`, `coverage_ids`, `unresolved`, and `formula_candidates`. Each formula candidate has `key`, `name`, `formula`, `conditions`, and `body_label`. This is metadata for the orchestrator, not LaTeX for the PDF. Return an empty candidate list when nothing merits end-of-book retrieval.
+## 交付
 
-## Editorial decisions
+- 指定的正文 .tex 片段：包含星标知识点、必要的解释和蓝框；不含导言区、全书目录、全局复盘或公式速查章节。
+- 有疑点时简短返回来源位置、问题及受影响知识点；没有疑点直接返回正文路径。默认不生成交接 JSON。
 
-- Group related coverage IDs around one question or model. An inventory row is evidence to account for, not a command to create a heading or paragraph.
-- State each concept once, at the point needed. Use prior definitions and notation from the packet rather than reintroducing them. Cross-reference a prior unit when necessary.
-- Choose treatment by need: a short definition for a simple term; one synthesis paragraph and a table for a genuine comparison; one or two sentences for an illustrative case; setup and intermediate algebra for an important model result. Do not emit fixed "why important / scope / relation / exam cue / mistakes" headings for every item.
-- Show transformations a learner must understand or reproduce. Compress mechanical substitutions and repeated algebra. Explain assumptions at the step where they matter.
-- Use a figure only when the source geometry is examinable or prose is materially less clear. Avoid repeating the same mechanism in prose, table, figure, and caption.
-- Include a local warning only when it prevents a likely misunderstanding not already resolved by the explanation. Keep global review lists out of the unit.
-- Preserve source-specific claims. Mark insufficient evidence in `unresolved` rather than filling it with generic textbook material.
-
-Before handing off, check that every assigned ID has a traceable place in the body or a specific unresolved note; every formula candidate is already explained in the body; and no claim is restated simply to fill a template slot.
+只有接续已有工程且主编明确要求原交接格式时，按该工程的既有格式返回覆盖与候选公式。追踪数据留在正文之外；主编维护统一记录。不要为了填满流程字段扩写知识内容。
