@@ -2,7 +2,7 @@
 
 本样例依据用户提供的平台经济现有正文及 build/transcripts 转录整理；当前对比文件夹没有原始课件 PDF。只核对下列选段，不声明原课件覆盖。星级均按知识结构暂定，正式使用须以教师和考试证据调整。
 
-编译前将 ../../assets/study-note-style.sty 复制到本目录，再以 XeLaTeX 编译复习密度校准.tex。这样只维护一份样式源文件。
+编译前将 ../../../auto-study-note-orchestrator/assets/study-note-style.sty 复制到本目录，再以 XeLaTeX 编译复习密度校准.tex。这样只维护一份样式源文件。
 
 | 选段 | 来源 | 处理 |
 | --- | --- | --- |

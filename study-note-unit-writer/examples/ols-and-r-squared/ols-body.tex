@@ -1,8 +1,3 @@
-\documentclass[12pt,a4paper,fontset=none]{ctexart}
-\usepackage{study-note-style}
-\begin{document}
-\begin{center}{\LARGE\bfseries 一元回归复习}\end{center}
-\tableofcontents
 \section{一元线性回归}\label{sec:ols-slope}
 \StudyTerm{\PriorityMust}{总体回归函数}{$E(y\mid x)=\beta_0+\beta_1x$ 描述给定 $x$ 时 $y$ 的条件均值。}\label{sec:prf-srf}
 \StudyTerm{\PriorityMust}{样本回归函数}{$\hat y=\hat\beta_0+\hat\beta_1x$ 拟合当前样本；重新抽样会改变估计值，总体参数不随之改变。}
@@ -23,7 +18,6 @@
 \end{equation}
 若 $\hat S_{xx}=0$，截距与斜率无法分别确定。含截距的一阶条件还给出 $\sum_i\hat u_i=0$，回归线过 $(\bar x,\bar y)$；这些代数性质不依赖误差分布。
 \end{proofbox}
-
 \section{拟合优度}\label{sec:r-squared}
 \StudyPoint{\PriorityMust}{平方和分解与拟合优度}\label{sec:sst-decomp}
 \begin{proofbox}[title=推导]
@@ -41,10 +35,3 @@ R^2=\frac{SSE}{SST}=1-\frac{SSR}{SST}\in[0,1].\label{eq:r-squared}
 \end{proofbox}
 \StudyPoint{\PriorityImportant}{拟合优度的解释边界}\label{sec:r2-misread}
 高 $R^2$ 仅表示样本内拟合程度较高，不能单独证明因果关系或设定正确。对相同观测增加解释变量，最小 $SSR$ 不会增大，普通 $R^2$ 不会下降；系数精度仍须看标准误。
-
-\section{公式速查手册}
-\begin{FormulaSummaryTable}
-\FormulaSummaryRow{OLS 斜率}{$\hat\beta_1=\hat S_{xy}/\hat S_{xx}$}{一元回归；$\hat S_{xx}>0$；见\hyperref[sec:foc]{OLS 斜率}}
-\FormulaSummaryRow{拟合优度}{$R^2=1-SSR/SST$}{含截距的样本内 OLS；$SST>0$；见\hyperref[sec:sst-decomp]{平方和分解}}
-\end{FormulaSummaryTable}
-\end{document}

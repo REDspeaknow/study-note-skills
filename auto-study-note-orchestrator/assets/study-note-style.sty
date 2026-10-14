@@ -32,6 +32,7 @@
 
 \RequirePackage{xcolor}
 \RequirePackage{enumitem}
+\RequirePackage{needspace}
 \RequirePackage{titlesec}
 \RequirePackage{fancyhdr}
 \RequirePackage{booktabs}
@@ -85,6 +86,7 @@
 \newcommand{\PriorityImportant}{\textcolor{important}{\StudyStar\StudyStar}}
 \newcommand{\PriorityKnow}{\textcolor{know}{\StudyStar}}
 \newcommand{\StudyPoint}[2]{%
+  \Needspace{4\baselineskip}%
   \par\addvspace{0.65em}\phantomsection\noindent
   {#1\enspace\textbf{\color{termcolor}#2}}\par\nopagebreak[4]%
 }
@@ -112,9 +114,6 @@
   }
 }
 
-\newtcolorbox{definitionbox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!30,#1}
-\newtcolorbox{takeawaybox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!40,#1}
-\newtcolorbox{keypointbox}[1][]{studybase,colback=boxbg,colframe=sectioncolor!50,#1}
 % Reference: fcolorbox{termcolor!40}{boxbg}, small text, .92 textwidth
 % content. Keep this visual while allowing the box to break across pages.
 \tcbset{studyblue/.style={studybase,
@@ -128,7 +127,6 @@
 \newtcolorbox{formulabox}[1][]{studyblue,#1}
 \newtcolorbox{proofbox}[1][]{studyblue,#1}
 \newtcolorbox{examplebox}[1][]{studyblue,#1}
-\newtcolorbox{mistakebox}[1][]{studybase,colback=boxbg,colframe=starred!45,#1}
 
 % Reusable chapter-relationship map styles.  Edges must be source-grounded and
 % use a short relationship label; these styles only control presentation.

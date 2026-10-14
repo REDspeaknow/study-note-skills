@@ -3,6 +3,8 @@
 from argparse import Namespace
 from pathlib import Path
 import sys
+import shutil
+import tempfile
 import unittest
 
 
@@ -10,7 +12,6 @@ TESTS = Path(__file__).resolve().parent
 SCRIPTS = TESTS.parent / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from collect_formula_candidates import collect  # noqa: E402
 from validate_study_note import validate  # noqa: E402
 
 
@@ -48,14 +49,20 @@ class FormulaBoundaryRegression(unittest.TestCase):
         self.assertTrue(any("more than one formula summary" in item for item in failures))
         self.assertTrue(any("formula summary must follow" in item for item in failures))
 
-    def test_two_units_submit_one_semantic_candidate(self):
-        fixture = TESTS / "fixtures"
-        report = collect(
-            [fixture / "duplicate-u01.json", fixture / "duplicate-u02.json"]
-        )
-        self.assertEqual(report["distinct_candidates"], 1)
-        self.assertEqual(report["duplicate_keys"], ["network_pairs"])
-        self.assertEqual(report["formula_conflicts"], [])
+    def test_writer_math_sample_keeps_summary_outside_body(self):
+        root = TESTS.parent
+        example = root.parent / "study-note-unit-writer/examples/ols-and-r-squared"
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            shutil.copy2(root / "assets/study-note-style.sty", tmp)
+            shutil.copy2(example / "merged.tex", tmp)
+            shutil.copy2(example / "ols-body.tex", tmp)
+            report = validate(Namespace(
+                tex=tmp / "merged.tex", pdf=None, log=None, inventory=None,
+                unit_fragment=[tmp / "ols-body.tex"],
+            ))
+            self.assertEqual(report["failures"], [])
+            self.assertEqual(report["metrics"]["formula_summary_sections"], 1)
 
 
 if __name__ == "__main__":

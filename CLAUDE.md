@@ -1,13 +1,11 @@
-# Study Note Skills — Claude Code 使用说明
+# Study Note Skills — Claude Code 入口
 
-默认使用中文，用户要求优先。按角色读取 auto-study-note-orchestrator、study-note-unit-writer 或 coverage-audit-note-reviewer 的 SKILL.md。
+默认使用中文，用户要求优先。整本整理使用 auto-study-note-orchestrator；指定范围写作使用 study-note-unit-writer；审核使用 coverage-audit-note-reviewer。
 
-正文表达先读 study-note-unit-writer/references/unit-writing.md 及其链接的 reference-calibration.md：知识点边界清楚、定义准确、各点直接展开，删除铺垫与转场，保留必要解释。模型参数和运算步骤不各自加星；一个完整推导/例题一个蓝边框，辅助公式可无框。旧稿需重组内容，不能只换标题与框外壳。
+正文写作先读 study-note-unit-writer/references/body-example.tex，再读 references/unit-writing.md。样例示范表达，课程资料决定知识内容。知识点与定义直接展开，逐点三级星标，必要解释和步骤写足；删除铺垫、转场与重复，不设定义句数或字数目标。
 
-主代理按 auto-study-note-orchestrator/references/orchestration-workflow.md 核实来源、归组知识点、统稿和验收，版式使用 study-note-style-v3（细蓝边、暖白底、小号字、框内题头）。先完成代表稿自审，再展开全书；先核对内容，再做技术检查。脚本通过不表示内容合格。默认就地完成；用户要求委派或独立审核时，使用对应代理。分批只是执行范围，不自动生成正文标题。
+主编负责来源范围、记号、分工、合并与交付；写作器交正文和必要疑点。委派时把写作器 SKILL.md、正文样例、写作要求的绝对路径一同交给子代理。默认就地完成，仅在用户要求时委派或独立审核。
 
-新任务默认不要求逐批交接 JSON。写作实例交指定正文和必要疑点，主代理维护统一来源记录；已有工程明确需要时可沿用原交接工具。公式速查按需在全部正文后集中添加一次。
+模板与样式在 auto-study-note-orchestrator/assets，使用 study-note-style-v3。推导与例题各放一个完整蓝边框，普通辅助公式可无框。多来源时主编用一份 review_notes.md；公式速查按需在全部正文后集中一次。
 
-定义不设句数或字数上限：与课程定义相比，关键特征和条件必须完整；必要解释写足。精简只针对衔接与重复，不以“一点一句”压缩知识，也不因星级低而删掉定义条件。
-
-保留原资料与旧产物。用户暂缓测试或编译时，交付说明标明未验证项。
+先检查内容，再做编译与技术校验；脚本通过不表示内容合格。保留原资料；用户暂缓验证时说明未验证项。
