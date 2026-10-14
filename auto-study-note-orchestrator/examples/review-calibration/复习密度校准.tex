@@ -3,6 +3,7 @@
 % 编译前将 ../../assets/study-note-style.sty 复制到本目录。
 \documentclass[12pt,a4paper,fontset=none]{ctexart}
 \usepackage{study-note-style}
+\usepackage{needspace}
 \begin{document}
 \begin{center}
 {\LARGE\bfseries 平台经济：知识点与蓝框样张}\\[0.4ex]
@@ -66,6 +67,9 @@ q'&=-0.2-4p^B,\qquad q''=-4.
 
 \section{新旧网络竞争：需求与收费}
 
+\StudyTerm{\PriorityMust}{满足预期均衡（FEE）}{用户依据对网络规模的预期作出参与决策，由这些决策形成的实际规模恰好等于预期规模。若参与映射为 $n=g(n^e)$，则均衡同时满足 $n=n^e$，即 $n=g(n)$。}
+它要求预期与行为结果一致，不意味着均衡唯一或稳定；同一价格可能对应多个满足预期均衡，稳定性需另按参与调整过程判断。
+
 \StudyPoint{\PriorityMust}{新平台的需求与内点最优收费}
 消费者均匀分布于 $x\in[0,1]$，只选一个网络；新平台在左端、旧网络在右端。$r$ 是共同基础收益，$q$ 是新平台质量优势，$\tau>0$ 是单位偏好距离成本，$\beta_i\ge0$ 是各网络的组内效应强度。旧网络免费，新平台收取 $A_1\ge0$；假设市场完全覆盖、边际成本为零。
 \begin{proofbox}[title=需求与利润的推导]
@@ -93,6 +97,7 @@ A_1^*&=\frac C2,\qquad n_1^*=\frac C{2D},\qquad
 $\beta_2-\tau<q<3\tau-2\beta_1-\beta_2$。
 区间外不能直接套内点公式，应改用份额在 $[0,1]$ 内的需求比较边界。
 \end{proofbox}
+\Needspace{5\baselineskip}
 \StudyPoint{\PriorityImportant}{新平台收费算例}
 \begin{examplebox}[title=例题]
 \textbf{题：}$\tau=1$、$\beta_1=\beta_2=0.6$、$q=0.5$，其余设定同上，求新平台最优收费、份额与利润。
