@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only structural and PDF QA for star-marked study-note-style-v2 outputs."""
+"""Structural/PDF checks for v3 notes; this does not certify content quality."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 
-STYLE_VERSION = "study-note-style-v2"
+STYLE_VERSION = "study-note-style-v3"
 A4_WIDTH_PT = 595.28
 A4_HEIGHT_PT = 841.89
 
@@ -85,13 +85,10 @@ def study_body_checks(tex: str, failures: list[str], metrics: dict[str, Any]) ->
 
     blue = {"proofbox", "formulabox", "examplebox"}
     old = {"definitionbox", "takeawaybox", "keypointbox", "mistakebox"}
-    math = {"align", "align*", "alignat", "alignat*", "gather", "gather*", "equation", "equation*",
-            "multline", "multline*", "eqnarray", "eqnarray*", "displaymath"}
     tokens = re.compile(
         r"\\(?P<heading>section|subsection)\*?\s*\{|"
         r"\\(?P<point>StudyPoint|StudyTerm)\b|"
-        r"\\(?P<action>begin|end)\{(?P<env>[^{}]+)\}|"
-        r"(?P<display>(?<!\\)\\\[|(?<!\\)\\\]|\$\$)"
+        r"\\(?P<action>begin|end)\{(?P<env>[^{}]+)\}"
     )
     active_point = False
     stack: list[str] = []
@@ -112,21 +109,27 @@ def study_body_checks(tex: str, failures: list[str], metrics: dict[str, Any]) ->
                         failures.append("blue content boxes must not be nested")
                 if env in old:
                     failures.append(f"legacy {env} repeats review scaffolding; use a knowledge point or blue box")
-                if env in math and not (blue | {"FormulaSummaryTable", "tikzpicture"}).intersection(stack):
-                    failures.append(f"display math ({env}) is outside a blue box")
                 stack.append(env)
             elif stack and stack[-1] == env:
                 stack.pop()
             else:
                 failures.append(f"mismatched environment in body: {env}")
-        elif match.group("display") in {r"\[", "$$"}:
-            if not (blue | {"FormulaSummaryTable", "tikzpicture"}).intersection(stack):
-                failures.append("display math is outside a blue box")
     if stack:
         failures.append("unclosed body environments: " + ", ".join(stack))
     metrics["blue_content_boxes"] = blue_count
     # Headings and counters cannot reveal prose-only new concepts or justify ratings.
     metrics["semantic_priority_review_required"] = True
+    metrics["content_quality_assessed"] = False
+    # Several boxes under one entry can be legitimate (e.g. two exercises).
+    # Report review candidates, never reject by box count alone.
+    fragments = []
+    for point in points:
+        end = re.search(r"\\(?:StudyPoint|StudyTerm|section|subsection)\b", body[point.end():])
+        chunk = body[point.end():point.end() + end.start()] if end else body[point.end():]
+        count = len(re.findall(r"\\begin\{(?:proofbox|formulabox|examplebox)\}", chunk))
+        if count >= 3:
+            fragments.append({"line": body[:point.start()].count("\n") + 1, "boxes": count})
+    metrics["box_fragmentation_review_candidates"] = fragments
 
 
 def count_inventory_rows(text: str) -> int:
@@ -315,6 +318,10 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "unnumbered headings and contents": r"\setcounter{secnumdepth}{0}",
             "knowledge point entry": r"\newcommand{\StudyPoint}",
             "shared blue box style": "studyblue/.style",
+            "reference blue border": "colframe=termcolor!40",
+            "reference warm background": "colback=boxbg",
+            "small content in blue boxes": r"fontupper=\small",
+            "inline box title": "attach title to upper",
             "example box": r"\newtcolorbox{examplebox}",
             "borderless links": "hidelinks",
             "must-know priority macro": r"\PriorityMust",
@@ -470,6 +477,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
     return {
         "status": "pass" if not failures else "fail",
+        "scope": "structural_and_technical_only",
+        "content_review": "not_assessed",
         "style_contract": STYLE_VERSION,
         "failures": failures,
         "warnings": warnings,
@@ -502,6 +511,7 @@ def main() -> int:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
         print(f"status: {report['status']}")
+        print("scope: structural and technical checks only; content quality not assessed")
         print(f"style contract: {report['style_contract']}")
         for failure in report["failures"]:
             print(f"FAIL: {failure}")

@@ -1,5 +1,5 @@
 % !TEX program = xelatex
-% study-note-style-v2：章节 → 星标知识点 → 必要蓝框。
+% study-note-style-v3：知识点与定义直接展开，推导和例题完整入框。
 % 此处内容仅为版式演示，生成课程笔记时替换；星级需按资料核定。
 \documentclass[12pt,a4paper,fontset=none]{ctexart}
 \usepackage{study-note-style}
@@ -30,7 +30,7 @@
   W'(N)&=\underbrace{U(N)}_{\text{新增者的毛收益}}
     +\underbrace{NU'(N)}_{\text{既有用户的外部收益}}-c.
 \end{align*}
-内点最优候选满足 $W'(N)=0$；判断最优还须检查边界与最优性条件。
+其中 $NU'(N)$ 是新增参与者带给既有用户的外部收益。此式是边际收益分解，不单凭 $W'(N)=0$ 断言全局最优。
 \end{proofbox}
 
 \section{第二章：网络规模计算}

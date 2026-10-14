@@ -61,7 +61,28 @@ class ReviewStructure(unittest.TestCase):
         })
         self.assertEqual(len(report["metrics"]["tex_files_checked"]), 3)
         self.assertTrue(any("third-level" in f for f in report["failures"]))
-        self.assertTrue(any("outside a blue box" in f for f in report["failures"]))
+        # Auxiliary display math is allowed; the deep heading remains invalid.
+        self.assertFalse(any("outside a blue box" in f for f in report["failures"]))
+
+    def test_auxiliary_formula_does_not_force_an_extra_box(self):
+        report = self.run_note(
+            r"\section{模型}\StudyTerm{\PriorityMust}{需求}{给定费用下愿意参与的规模。}"
+            r"固定总费用时，\[p^S=p-p^B.\]"
+        )
+        self.assertEqual(report["failures"], [])
+        self.assertEqual(report["metrics"]["blue_content_boxes"], 0)
+        self.assertEqual(report["content_review"], "not_assessed")
+
+    def test_fragmented_chain_is_a_review_candidate_not_automatic_failure(self):
+        report = self.run_note(
+            r"\section{模型}\StudyPoint{\PriorityMust}{均衡计算}"
+            + r"\begin{formulabox}\[x=1\]\end{formulabox}" * 3
+        )
+        self.assertEqual(report["failures"], [])
+        candidates = report["metrics"]["box_fragmentation_review_candidates"]
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["boxes"], 3)
+        self.assertFalse(report["metrics"]["content_quality_assessed"])
 
     def test_missing_and_cyclic_inputs_fail(self):
         missing = self.run_note(r"\input{build/missing}")

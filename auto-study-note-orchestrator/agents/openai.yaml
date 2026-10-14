@@ -1,4 +1,4 @@
 interface:
   display_name: "复习笔记编排"
-  short_description: "生成逐知识点星标、蓝框推导和例题的精简复习指南。"
-  default_prompt: "使用 $auto-study-note-orchestrator 将课程资料整理为中文 LaTeX/PDF 复习指南：逐知识点三级星标，必要推导和例题统一蓝框，精简衔接、总结与后台流程。"
+  short_description: "生成知识点清楚、定义准确、逐点星标并保留必要推导的复习指南。"
+  default_prompt: "使用 $auto-study-note-orchestrator 整理中文 LaTeX/PDF 复习指南：知识点清楚、定义准确、逐点三级星标，删除铺垫转场，推导与例题各放一个完整蓝边框，保留必要解释和计算。"

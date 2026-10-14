@@ -1,0 +1,108 @@
+% !TEX program = xelatex
+% 校准样例；来源与暂定星级说明见同目录 review_notes.md。
+% 编译前将 ../../assets/study-note-style.sty 复制到本目录。
+\documentclass[12pt,a4paper,fontset=none]{ctexart}
+\usepackage{study-note-style}
+\begin{document}
+\begin{center}
+{\LARGE\bfseries 平台经济：知识点与蓝框样张}\\[0.4ex]
+{\small \PriorityMust\ 核心掌握\quad\PriorityImportant\ 重点理解\quad\PriorityKnow\ 了解识别}
+\end{center}
+\StudyDivider
+
+\section{平台与网络效应}
+
+\StudyTerm{\PriorityImportant}{平台}{组织参与者互动、提供互动条件并制定和执行规则的中介。}
+\textbf{四类交易安排：}收费改变参与和交易成本；搜索、推荐或派单改善匹配；评价降低信息不对称；取消、退款和纠纷规则分配履约风险。会员费对应接入或一定时期的使用，交易费随成交收取。
+
+\StudyTerm{\PriorityMust}{网络效应}{新增用户改变其他用户从产品、服务或互动中获得的价值，属于消费外部性。}
+
+\StudyTerm{\PriorityMust}{组内网络效应}{同一群体的用户相互影响，如微信联系人增加提高其他用户的通信价值。}
+
+\StudyTerm{\PriorityMust}{跨组网络效应}{一类用户的规模或活动改变另一类用户的价值，如买家增加吸引卖家、卖家增加丰富买家选择。}
+
+\StudyTerm{\PriorityImportant}{正向与负向网络效应}{按对其他用户价值的影响方向区分。互补可带来正向效应，拥挤、干扰或资源竞争可带来负向效应。}
+\textbf{两个分类维度独立：}骑手争夺有限订单属于负向组内效应，消费者增加吸引商家属于正向跨组效应。
+
+\StudyTerm{\PriorityImportant}{规模经济}{产量增加使平均资源成本下降，作用于供给侧；网络效应改变用户价值，作用于需求侧。}
+
+\section{双边收费}
+
+\StudyTerm{\PriorityMust}{价格结构非中性}{两侧总费用不变时，改变买卖双方的收费分配仍会改变交易量。}
+按成交向两侧分别收取 $p^B,p^S$；潜在配对总量归一化，两侧收益独立。
+$D^B,D^S$ 表示各侧愿意交易的比例，均随本侧收费提高而下降，故成交量为 $Q=D^B(p^B)D^S(p^S)$。此处假定两侧不能通过转移支付抵消收费分配。
+
+\StudyPoint{\PriorityMust}{固定总价下的最优收费结构}
+\begin{proofbox}[title=推导]
+固定总费用 $p=p^B+p^S$，两侧需求可微且为正。设 $q(p^B)=D^B(p^B)D^S(p-p^B)$。
+由于 $\mathrm dp^S/\mathrm dp^B=-1$，
+\begin{align*}
+q'&=(D^B)'D^S-D^B(D^S)',\\
+\frac{q'}q&=\frac{(D^B)'}{D^B}-\frac{(D^S)'}{D^S}
+=h_S-h_B,\qquad h_i=-\frac{(D^i)'}{D^i}>0.
+\end{align*}
+$h_i$ 为本侧收费增加一单位引起的需求相对降幅。
+\textbf{内点最优的必要条件：}$h_B=h_S$，仍须检验最优性并比较可行边界。
+若 $h_B>h_S$，小幅降低买方收费、等额提高卖方收费可增加交易量。
+\end{proofbox}
+\textbf{局部与全局：}$q'=0$ 只表示该点一阶变化为零，不代表价格结构中性。
+例如 $D^B=1-p^B,D^S=1-p^S$，则 $q=(1-p^B)(1-p+p^B)$，在 $p^B=p/2$ 处 $q'=0$，但改变分配通常改变 $q$。
+若两侧需求均为同参数指数形式 $D^i=e^{-ap^i}$，则 $Q=e^{-ap}$ 仅取决于总价，才是全局中性的例子。
+
+\StudyPoint{\PriorityMust}{非负收费约束下的线性需求算例}
+\begin{examplebox}[title=例题]
+\textbf{题：}总价 $p=0.4$，$D^B=1-2p^B$、$D^S=1-p^S$，两侧收费非负。求交易量最大的收费结构。
+
+\textbf{解：}$p^B\in[0,0.4]$，$p^S=0.4-p^B$。
+\begin{align*}
+q&=(1-2p^B)(0.6+p^B)=0.6-0.2p^B-2(p^B)^2,\\
+q'&=-0.2-4p^B,\qquad q''=-4.
+\end{align*}
+驻点 $p^B=-0.05$ 不可行；在可行区间 $q'<0$，故左端点最优：
+\[
+\boxed{p^{B*}=0,\qquad p^{S*}=0.4,\qquad Q^*=0.6.}
+\]
+\end{examplebox}
+
+\section{新旧网络竞争：需求与收费}
+
+\StudyPoint{\PriorityMust}{新平台的需求与内点最优收费}
+消费者均匀分布于 $x\in[0,1]$，只选一个网络；新平台在左端、旧网络在右端。$r$ 是共同基础收益，$q$ 是新平台质量优势，$\tau>0$ 是单位偏好距离成本，$\beta_i\ge0$ 是各网络的组内效应强度。旧网络免费，新平台收取 $A_1\ge0$；假设市场完全覆盖、边际成本为零。
+\begin{proofbox}[title=需求与利润的推导]
+两种选择的效用为
+\begin{align*}
+u_1(x)&=r+q+\beta_1n_1^e-\tau x-A_1,\\
+u_2(x)&=r+\beta_2n_2^e-\tau(1-x).
+\end{align*}
+无差异用户满足 $u_1(\hat x)=u_2(\hat x)$。由于消费者均匀分布且 $\tau>0$，$n_1=\hat x,n_2=1-\hat x$。令预期等于实际规模：
+\begin{align*}
+q+\beta_1\hat x-\tau\hat x-A_1
+  &=\beta_2(1-\hat x)-\tau(1-\hat x),\\
+D\hat x&=q+\tau-\beta_2-A_1,\qquad D=2\tau-\beta_1-\beta_2>0,\\
+n_1(A_1)&=\frac{C-A_1}{D},\qquad C=q+\tau-\beta_2.
+\end{align*}
+$D>0$ 保证该分割支路需求向下；还须 $0<n_1<1$。利润与最优条件为
+\begin{align*}
+\Pi_1(A_1)&=\frac{A_1(C-A_1)}D,\\
+\Pi_1'(A_1)&=\frac{C-2A_1}D=0,\qquad
+\Pi_1''(A_1)=-\frac2D<0,\\
+A_1^*&=\frac C2,\qquad n_1^*=\frac C{2D},\qquad
+\Pi_1^*=\frac{C^2}{4D}.
+\end{align*}
+\textbf{内点有效范围：}$0<C<2D$，即
+$\beta_2-\tau<q<3\tau-2\beta_1-\beta_2$。
+区间外不能直接套内点公式，应改用份额在 $[0,1]$ 内的需求比较边界。
+\end{proofbox}
+\StudyPoint{\PriorityImportant}{新平台收费算例}
+\begin{examplebox}[title=例题]
+\textbf{题：}$\tau=1$、$\beta_1=\beta_2=0.6$、$q=0.5$，其余设定同上，求新平台最优收费、份额与利润。
+
+\textbf{解：}$D=2-0.6-0.6=0.8>0$，$C=0.5+1-0.6=0.9$，
+且 $0<0.9<1.6=2D$，满足内点条件。
+\[
+A_1^*=\frac{0.9}{2}=0.45,\qquad
+n_1^*=\frac{0.9}{1.6}=0.5625,\qquad
+\Pi_1^*=\frac{0.81}{3.2}=0.253125.
+\]
+\end{examplebox}
+\end{document}

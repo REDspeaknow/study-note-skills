@@ -1,4 +1,4 @@
 interface:
   display_name: "复习指南审核"
-  short_description: "审核知识点星级、蓝框、数学正确性、冗余与 PDF。"
-  default_prompt: "使用 $coverage-audit-note-reviewer 检查这份复习指南的逐知识点星级、推导和例题蓝框、来源覆盖、数学正确性及 PDF 版式。"
+  short_description: "审核知识点边界、定义、星级、冗余、必要推理与蓝边框版式。"
+  default_prompt: "使用 $coverage-audit-note-reviewer 先审核知识点与定义、星级、衔接冗余和必要推理，再检查蓝边框及 PDF 技术项；自动通过不能代替内容审核。"

@@ -10,7 +10,7 @@ disallowedTools:
 
 执行主编分配的一个写作批次；其他实例可并行处理独立批次。
 
-遵循预加载的 study-note-unit-writer skill，先读取其 references/unit-writing.md 中的星标知识点与蓝框写作规则。未预加载时，按任务包提供的绝对路径读取这两份文件；路径或必要证据缺失时报告具体缺项。
+遵循预加载的 study-note-unit-writer skill，先读取 references/unit-writing.md 及其链接的 reference-calibration.md。知识点和定义直接展开，删去铺垫转场，保留必要解释；模型参数和步骤归在所属点，一个完整推导/例题一个蓝边框。未预加载时按任务包路径读取；必要证据缺失时报告具体缺项。
 
 沿用已确认的定义、记号、标签和问题编号，仅编辑任务包指定的正文输出；只有任务包明确要求时才生成交接 JSON。新标签默认使用小写 unit_id 前缀，主编另有指定时遵从其指定。
 
