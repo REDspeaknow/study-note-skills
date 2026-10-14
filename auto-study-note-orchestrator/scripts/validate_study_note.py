@@ -17,6 +17,11 @@ STYLE_VERSION = "study-note-style-v3"
 A4_WIDTH_PT = 595.28
 A4_HEIGHT_PT = 841.89
 
+# The blue content boxes.  Every one must sit under a star-marked entry; they
+# must never nest, and a full derivation/example/procedure is one box.
+CONTENT_BOXES = ("proofbox", "formulabox", "examplebox", "stepbox")
+CONTENT_BOX_RE = "|".join(CONTENT_BOXES)
+
 
 def read_text(path: Path | None) -> str:
     if path is None:
@@ -83,7 +88,7 @@ def study_body_checks(tex: str, failures: list[str], metrics: dict[str, Any]) ->
         if not re.match(r"\s*\{\s*\\Priority(?:Must|Important|Know)\s*\}\s*\{", body[point.end():]):
             failures.append("knowledge point entry lacks a valid one/two/three-star priority")
 
-    blue = {"proofbox", "formulabox", "examplebox"}
+    blue = set(CONTENT_BOXES)
     old = {"definitionbox", "takeawaybox", "keypointbox", "mistakebox"}
     tokens = re.compile(
         r"\\(?P<heading>section|subsection)\*?\s*\{|"
@@ -126,7 +131,7 @@ def study_body_checks(tex: str, failures: list[str], metrics: dict[str, Any]) ->
     for point in points:
         end = re.search(r"\\(?:StudyPoint|StudyTerm|section|subsection)\b", body[point.end():])
         chunk = body[point.end():point.end() + end.start()] if end else body[point.end():]
-        count = len(re.findall(r"\\begin\{(?:proofbox|formulabox|examplebox)\}", chunk))
+        count = len(re.findall(rf"\\begin\{{(?:{CONTENT_BOX_RE})\}}", chunk))
         if count >= 3:
             fragments.append({"line": body[:point.start()].count("\n") + 1, "boxes": count})
     metrics["box_fragmentation_review_candidates"] = fragments
@@ -323,6 +328,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
             "small content in blue boxes": r"fontupper=\small",
             "inline box title": "attach title to upper",
             "example box": r"\newtcolorbox{examplebox}",
+            "procedure step box": r"\newtcolorbox{stepbox}",
             "borderless links": "hidelinks",
             "must-know priority macro": r"\PriorityMust",
             "important priority macro": r"\PriorityImportant",
@@ -434,7 +440,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     metrics["included_graphics"] = len(re.findall(r"\\includegraphics\b", tex))
     metrics["content_boxes"] = len(
         re.findall(
-            r"\\begin\{(?:definitionbox|takeawaybox|keypointbox|formulabox|proofbox|examplebox|mistakebox)\}",
+            rf"\\begin\{{(?:definitionbox|takeawaybox|keypointbox|mistakebox|{CONTENT_BOX_RE})\}}",
             tex,
         )
     )

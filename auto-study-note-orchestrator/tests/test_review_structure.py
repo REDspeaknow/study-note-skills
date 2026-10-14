@@ -44,6 +44,20 @@ class ReviewStructure(unittest.TestCase):
         self.assertEqual(report["failures"], [])
         self.assertEqual(report["metrics"]["knowledge_point_entries"], 3)
 
+    def test_procedure_step_box_is_a_blue_content_box(self):
+        report = self.run_note(
+            r"\section{模型}\StudyPoint{\PriorityMust}{最优收费}"
+            r"\begin{stepbox}[title=操作步骤]\begin{enumerate}\item 定总价。\end{enumerate}\end{stepbox}"
+        )
+        self.assertEqual(report["failures"], [])
+        self.assertEqual(report["metrics"]["blue_content_boxes"], 1)
+
+    def test_step_box_without_an_owning_point_is_rejected(self):
+        report = self.run_note(
+            r"\section{模型}\begin{stepbox}先算再看边界。\end{stepbox}"
+        )
+        self.assertTrue(any("no owning" in f for f in report["failures"]))
+
     def test_canonical_template_passes_with_title_line_spacing(self):
         entry = self.root / "template.tex"
         shutil.copy2(ROOT / "assets/通用笔记模板.tex", entry)

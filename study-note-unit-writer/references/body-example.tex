@@ -39,6 +39,15 @@ $h_i$ 为本侧收费增加一单位引起的需求相对降幅。
 若两侧需求均为同参数指数形式 $D^i=e^{-ap^i}$，则 $Q=e^{-ap}$ 仅取决于总价，才是全局中性的例子。
 
 \StudyPoint{\PriorityMust}{非负收费约束下的线性需求算例}
+\begin{stepbox}[title=操作步骤]
+\begin{enumerate}
+\item \textbf{定总价、消一侧：}把 $p=p^B+p^S$ 固定，令 $p^S=p-p^B$，只留一个决策变量。
+\item \textbf{写出可行区间：}由两侧非负得 $p^B\in[0,p]$。
+\item \textbf{求驻点并判可行：}解 $q'(p^B)=0$，看驻点是否落在区间内。
+\item \textbf{比较边界与驻点：}驻点不可行时按 $q'$ 的符号取端点；仅凭 $q'=0$ 不能断定最优。
+\item \textbf{汇报整数结构：}$p^{S*}=p-p^{B*}$，再给出 $Q^*$。
+\end{enumerate}
+\end{stepbox}
 \begin{examplebox}[title=例题]
 \textbf{题：}总价 $p=0.4$，$D^B=1-2p^B$、$D^S=1-p^S$，两侧收费非负。求交易量最大的收费结构。
 
@@ -86,6 +95,14 @@ $\beta_2-\tau<q<3\tau-2\beta_1-\beta_2$。
 区间外不能直接套内点公式，应改用份额在 $[0,1]$ 内的需求比较边界。
 \end{proofbox}
 \StudyPoint{\PriorityImportant}{新平台收费算例}
+\begin{stepbox}[title=操作步骤]
+\begin{enumerate}
+\item \textbf{写两侧效用：}把基础收益、质量优势、网络效应、距离成本和收费分项列出。
+\item \textbf{找无差异用户：}令 $u_1(\hat x)=u_2(\hat x)$，解出 $n_1(A_1)$。
+\item \textbf{核有效性：}先验 $D>0$，再用 $0<C<2D$ 判断内点解是否落在市场份额内。
+\item \textbf{求最优收费：}$\Pi_1'(A_1)=0$ 且 $\Pi_1''<0$，必要时改看边界份额。
+\end{enumerate}
+\end{stepbox}
 \begin{examplebox}[title=例题]
 \textbf{题：}$\tau=1$、$\beta_1=\beta_2=0.6$、$q=0.5$，其余设定同上，求新平台最优收费、份额与利润。
 
