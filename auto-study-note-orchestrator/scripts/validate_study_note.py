@@ -156,6 +156,26 @@ def dereference(value: Any) -> Any:
     return value.get_object() if hasattr(value, "get_object") else value
 
 
+def cjk_count(text: str) -> int:
+    return len(re.findall(r"[\u4e00-\u9fff]", text))
+
+
+def cjk_is_plausible(text: str) -> bool:
+    """Whether an extraction carries a plausible amount of Chinese.
+
+    A Latin-only read, or a partial one that leaks a stray CJK codepoint or
+    two, must not be mistaken for a successful read of a Chinese note.  The
+    ratio guard is what catches the partial case: a real note is mostly
+    Chinese, so a handful of characters out of a six-figure total means the
+    extractor never mapped the CJK glyphs.
+    """
+    chinese = cjk_count(text)
+    body = len(text.strip())
+    if chinese == 0 or body == 0:
+        return False
+    return chinese >= 20 and chinese / body >= 0.02
+
+
 def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics: dict[str, Any], has_math: bool = True) -> None:
     try:
         from pypdf import PdfReader
@@ -268,31 +288,39 @@ def pdf_checks(pdf_path: Path, failures: list[str], warnings: list[str], metrics
             extractor = "pdftotext"
         else:
             warnings.append(f"pdftotext returned exit code {result.returncode}")
-    if not re.search(r"[\u4e00-\u9fff]", extracted):
+    if not cjk_is_plausible(extracted):
         try:
             fallback = "\n".join(page.extract_text() or "" for page in reader.pages)
-            if len(re.findall(r"[\u4e00-\u9fff]", fallback)) > len(re.findall(r"[\u4e00-\u9fff]", extracted)) or not extracted.strip():
+            if cjk_count(fallback) > cjk_count(extracted) or not extracted.strip():
                 extracted, extractor = fallback, "pypdf"
         except Exception as exc:  # pragma: no cover - tool-facing error path
             warnings.append(f"fallback PDF text extraction failed: {exc}")
     # Some bundled Poppler builds lack Adobe CMap language packs; MuPDF has
-    # its own mappings. A successful Latin-only extraction must not mask this.
-    if not re.search(r"[\u4e00-\u9fff]", extracted):
+    # its own mappings. A Latin-only extraction must not mask this -- and
+    # neither must a partial one, so the guard is a plausibility test rather
+    # than a presence test: a stray codepoint or two still counts as a miss.
+    if not cjk_is_plausible(extracted):
         try:
             import fitz
             with fitz.open(pdf_path) as document:
                 fallback = "\n".join(page.get_text() for page in document)
-            if re.search(r"[\u4e00-\u9fff]", fallback):
+            if cjk_count(fallback) > cjk_count(extracted):
                 extracted, extractor = fallback, "PyMuPDF"
         except (ImportError, RuntimeError):
             pass
     metrics["text_extractor"] = extractor
     metrics["extracted_text_chars"] = len(extracted.strip())
-    metrics["extracted_chinese_chars"] = len(re.findall(r"[\u4e00-\u9fff]", extracted))
+    metrics["extracted_chinese_chars"] = cjk_count(extracted)
     if len(extracted.strip()) < 20:
         failures.append("PDF text is empty or not meaningfully extractable")
     if metrics["extracted_chinese_chars"] == 0:
         failures.append("Chinese study-note text could not be extracted from PDF")
+    elif not cjk_is_plausible(extracted):
+        warnings.append(
+            "PDF Chinese text extracted only partially "
+            f"({metrics['extracted_chinese_chars']} of {metrics['extracted_text_chars']} chars); "
+            "the extractor most likely never mapped the CJK glyphs"
+        )
 
 
 def validate(args: argparse.Namespace) -> dict[str, Any]:
