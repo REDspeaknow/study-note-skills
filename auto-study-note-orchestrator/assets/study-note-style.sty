@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{study-note-style}[2026/10/14 study-note-style-v3]
+\ProvidesPackage{study-note-style}[2026/10/15 study-note-style-v3]
 
 \RequirePackage{iftex}
 \ifXeTeX\else
@@ -127,12 +127,25 @@
 \newtcolorbox{formulabox}[1][]{studyblue,#1}
 \newtcolorbox{proofbox}[1][]{studyblue,#1}
 \newtcolorbox{examplebox}[1][]{studyblue,#1}
-% 步骤框：一个模型/一讲的动手流程或易错点，属知识内容，放在例题之前。
+% 步骤框：按需承载独立可复用的方法或判据，不重复推导与例题。
 \newtcolorbox{stepbox}[1][]{studyblue,#1}
 
 % Reusable chapter-relationship map styles.  Edges must be source-grounded and
 % use a short relationship label; these styles only control presentation.
 \tikzset{
+  % Local verbal reasoning: optional, compact, same pale green as map core.
+  study logic base/.style={
+    node distance=2mm and 3mm,
+    every node/.style={study logic node},
+  },
+  study logic node/.style={
+    rectangle,draw=sectioncolor!65!black,fill=sectioncolor!6,
+    rounded corners=2pt,line width=0.4pt,
+    align=center,font=\small,text width=3.3cm,
+    minimum width=0pt,minimum height=0pt,
+    inner xsep=3pt,inner ysep=2pt,outer sep=0.5pt,
+  },
+  study logic arrow/.style={->,>=Stealth,sectioncolor!75!black,line width=0.5pt},
   study map base/.style={
     node distance=1.35cm and 1.9cm,
     every node/.style={font=\small},

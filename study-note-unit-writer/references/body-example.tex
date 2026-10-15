@@ -18,17 +18,18 @@
 \StudyPoint{\PriorityImportant}{场景分化与多个稳定大网络}\label{kp:scene-networks}
 \textbf{前提：}不同场景的网络效应范围相对独立，可近似分开分析。
 $n_s$ 为启动临界规模，$n_l$ 为稳定大网络规模。
+% 原截图的连续文字推理明显超过100字；短段无需仿照画图。
+{\setlength{\topsep}{2pt}
 \begin{center}
-\begin{tikzpicture}[node distance=0.6cm,>=Stealth,
-  every node/.style={draw=termcolor!40,fill=boxbg,rounded corners=2pt,
-    align=center,font=\small,text width=3.8cm,inner sep=4pt}]
-  \node (scope) {使用场景分化\\效应范围相对独立};
-  \node[right=of scope] (local) {各自形成预期\\分别确定 $n_s$ 与 $n_l$};
-  \node[right=of local] (large) {若各自形成\\稳定的大网络均衡\\则多个大网络可并存};
-  \draw[->,thick,termcolor] (scope) -- (local);
-  \draw[->,thick,termcolor] (local) -- (large);
+\begin{tikzpicture}[study logic base]
+  \node (scope) {使用\textbf{场景分化}\\效应范围相对独立};
+  \node[right=of scope] (local) {各自形成\textbf{预期}\\分别确定 $n_s$ 与 $n_l$};
+  \node[right=of local,text width=4.1cm] (large) {若各自形成\textbf{稳定大网络}\\则多个大网络\textbf{可并存}};
+  \draw[study logic arrow] (scope) -- (local);
+  \draw[study logic arrow] (local) -- (large);
 \end{tikzpicture}
 \end{center}
+}
 \begin{center}
 {\small
 \begin{tabular}{ll}
