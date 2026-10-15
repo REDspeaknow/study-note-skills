@@ -7,7 +7,7 @@ description: 依据课程资料和样例写作中文复习笔记，定义完整�
 
 写作前依次读取：
 1. [正文样例](references/body-example.tex)：直接观察知识点、定义、解释、推导与例题如何排列。
-2. [写作要求](references/unit-writing.md)：核对定义完整性、星级依据、必要步骤和文字取舍。
+2. [写作要求](references/unit-writing.md)：核对定义完整性、星级依据、必要步骤、同一内容只完整讲一次及同模型关联内容归组。
 
 样例提供表达与排版示范，课程资料决定实际知识内容与重要性。模仿知识点的清楚边界和自然详略，不照搬样例的课程内容、星级或篇幅。样例范围和可选数学示范见[样例说明](references/reference-calibration.md)。
 
