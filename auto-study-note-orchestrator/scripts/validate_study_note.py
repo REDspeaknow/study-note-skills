@@ -372,7 +372,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     formula_matches = list(re.finditer(r"\\section\{公式速查手册\}", tex))
     formula_match = formula_matches[0] if formula_matches else None
     section_matches = list(re.finditer(r"\\section(\*?)\{([^{}]+)\}", tex))
-    special_titles = {"核心知识关系导图", "各章节关系导图", "公式速查手册", "背诵优先级速览", "全局易错点"}
+    special_titles = {"全局思维导图", "课程框架导图", "核心知识关系导图", "各章节关系导图",
+                      "公式速查手册", "背诵优先级速览", "全局易错点"}
     main_sections = [
         match for match in section_matches
         if match.group(2) not in special_titles
@@ -384,14 +385,16 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
     metrics["main_sections"] = main_count
 
     maps = {
+        "global": list(re.finditer(r"\\section\*?\{(?:全局思维导图|课程框架导图)\}", tex)),
         "knowledge": list(re.finditer(r"\\section\*?\{核心知识关系导图\}", tex)),
         "chapter": list(re.finditer(r"\\section\*?\{各章节关系导图\}", tex)),
     }
+    metrics["global_mind_maps"] = len(maps["global"])
     metrics["knowledge_relationship_maps"] = len(maps["knowledge"])
     metrics["chapter_relationship_maps"] = len(maps["chapter"])
     omission = re.search(r"(?m)^\s*%\s*study-map-omitted:\s*(\S.*)$", raw_tex)
     metrics["map_omission_reason"] = omission.group(1).strip() if omission else None
-    map_matches = maps["knowledge"] + maps["chapter"]
+    map_matches = maps["global"] + maps["knowledge"] + maps["chapter"]
     if len(map_matches) > 1:
         failures.append("document contains multiple relationship maps")
     if omission and map_matches:
@@ -402,8 +405,8 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
 
     if map_matches:
         map_position = min(match.start() for match in map_matches)
-        if toc_match is not None and map_position < toc_match.start():
-            failures.append("relationship map must appear after the table of contents")
+        if toc_match is not None and map_position > toc_match.start():
+            failures.append("global relationship map must precede the optional table of contents")
         if main_sections and map_position > main_sections[0].start():
             failures.append("relationship map must appear before the main chapters")
         if formula_match is not None and map_position > formula_match.start():
@@ -446,6 +449,7 @@ def validate(args: argparse.Namespace) -> dict[str, Any]:
         forbidden = {
             "document class": r"\\documentclass\b",
             "document start": r"\\begin\{document\}",
+            "global mind map": r"\\section\*?\{(?:全局思维导图|课程框架导图|核心知识关系导图|各章节关系导图)\}",
             "formula summary section": r"\\section\{公式速查手册\}",
             "formula summary table": r"\\begin\{FormulaSummaryTable\}",
             "formula summary row": r"\\FormulaSummaryRow\b",

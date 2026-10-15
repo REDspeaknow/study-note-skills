@@ -64,6 +64,31 @@ class ReviewStructure(unittest.TestCase):
         report = validate(Namespace(tex=entry, pdf=None, log=None, inventory=None, unit_fragment=[]))
         self.assertEqual(report["failures"], [])
 
+    def test_front_global_map_and_body_diagram_have_different_roles(self):
+        report = self.run_note(
+            r"\section*{全局思维导图}\begin{tikzpicture}\node{课程与主题};\end{tikzpicture}"
+            r"\tableofcontents\section{均衡}\StudyPoint{\PriorityMust}{均衡交点}"
+            r"\begin{tikzpicture}\draw (0,0)--(1,1);\end{tikzpicture}"
+        )
+        self.assertEqual(report["failures"], [])
+        self.assertEqual(report["metrics"]["global_mind_maps"], 1)
+        self.assertEqual(report["metrics"]["main_sections"], 1)
+        self.assertEqual(report["metrics"]["tikz_diagrams"], 2)
+
+    def test_global_map_after_contents_or_body_is_rejected(self):
+        for prefix in [r"\tableofcontents", r"\section{正文}\StudyTerm{\PriorityMust}{定义}{说明。}"]:
+            with self.subTest(prefix=prefix):
+                report = self.run_note(prefix + r"\section*{全局思维导图}"
+                    r"\begin{tikzpicture}\node{课程};\end{tikzpicture}"
+                    r"\section{模型}\StudyTerm{\PriorityMust}{概念}{说明。}")
+                self.assertTrue(any("must precede" in f or "before the main" in f for f in report["failures"]))
+
+    def test_duplicate_global_maps_in_input_fragments_are_rejected(self):
+        report = self.run_note(r"\input{build/maps}\section{正文}\StudyTerm{\PriorityMust}{概念}{说明。}", {
+            "build/maps.tex": r"\section*{全局思维导图}\section*{课程框架导图}"
+        })
+        self.assertTrue(any("multiple relationship maps" in f for f in report["failures"]))
+
     def test_legend_cannot_substitute_for_knowledge_point_entries(self):
         report = self.run_note(r"\PriorityMust 必背\section{模型}这里有一个未标识的概念。")
         self.assertTrue(any("no star-marked" in f for f in report["failures"]))

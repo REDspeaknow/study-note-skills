@@ -69,6 +69,20 @@ q'&=-0.2-4p^B,\qquad q''=-4.
 
 \StudyPoint{\PriorityMust}{新平台的需求与内点最优收费}
 消费者均匀分布于 $x\in[0,1]$，只选一个网络；新平台在左端、旧网络在右端。$r$ 是共同基础收益，$q$ 是新平台质量优势，$\tau>0$ 是单位偏好距离成本，$\beta_i\ge0$ 是各网络的组内效应强度。旧网络免费，新平台收取 $A_1\ge0$；假设市场完全覆盖、边际成本为零。
+% 课件中的线性城市分界关系：保留位置、边际用户和份额，不扩写图注。
+\begin{center}
+\begin{tikzpicture}[x=9cm,every node/.style={font=\small}]
+  \draw[thick] (0,0) -- (1,0);
+  \fill (0,0) circle (1.3pt) node[above] {新平台 1};
+  \fill (1,0) circle (1.3pt) node[above] {旧网络 2};
+  \fill[starred] (0.55,0) circle (1.5pt) node[above] {$\hat x$};
+  \node[below] at (0,0) {$0$};
+  \node[below] at (1,0) {$1$};
+  \node[below] at (0.275,-0.2) {$n_1=\hat x$};
+  \node[below] at (0.775,-0.2) {$n_2=1-\hat x$};
+  \node[below,font=\footnotesize] at (0.5,-0.65) {分界关系示意，位置不代表具体数值};
+\end{tikzpicture}
+\end{center}
 \begin{proofbox}[title=需求与利润的推导]
 两种选择的效用为
 \begin{align*}

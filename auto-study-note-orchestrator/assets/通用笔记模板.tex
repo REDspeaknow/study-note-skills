@@ -11,6 +11,35 @@
   {\small \PriorityMust\ 核心掌握\quad\PriorityImportant\ 重点理解\quad\PriorityKnow\ 了解识别}
 \end{center}
 \StudyDivider
+
+% 主编按实际课程替换本图的主题、关键词与连线；整本只放一张全局导图。
+\section*{全局思维导图}
+\begin{center}
+\begin{tikzpicture}[study map base,
+  every node/.style={font=\small},node distance=0.65cm and 1.0cm]
+  \node[study map core,draw=starred!75,fill=starred!4,
+    minimum width=5cm] (course) {课程名称\\复习知识框架};
+  \node[study map core,below left=0.8cm and 0.15cm of course,
+    text width=5.3cm] (concepts) {第一章：网络效应};
+  \node[study map extension,below right=0.8cm and 0.15cm of course,
+    text width=5.3cm] (models) {第二章：网络规模计算};
+  \node[study map foundation,below=of concepts,text width=5.3cm]
+    (value) {网络效应与规模经济\\用户价值与资源成本};
+  \node[study map core,below=of value,text width=5.3cm]
+    (welfare) {社会边际收益\\私人收益与外部收益};
+  \node[study map extension,below=of models,text width=5.3cm]
+    (participation) {用户效用与边际用户\\参与条件与加入规模};
+  \node[study map extension,below=of participation,text width=5.3cm]
+    (equilibrium) {线性均衡与可行性\\规模求解与阈值核对};
+  \draw[study map arrow] (course.south) -- ++(0,-0.2) -| (concepts.north);
+  \draw[study map extension arrow] (course.south) -- ++(0,-0.2) -| (models.north);
+  \draw[study map arrow] (concepts) -- (value);
+  \draw[study map arrow] (value) -- (welfare);
+  \draw[study map extension arrow] (models) -- (participation);
+  \draw[study map extension arrow] (participation) -- (equilibrium);
+\end{tikzpicture}
+\end{center}
+
 % 需要目录时启用以下一行；默认只显示章节，无数字编号。
 % \tableofcontents
 
@@ -46,6 +75,27 @@
   \hat b^*=40-0.3n^*\approx14.29.
 \end{align*}
 阈值在 $[0,100]$ 内，内点解可行。$n=0$ 不是均衡：$b>40$ 的用户即使没有网络收益仍愿加入。
+
+% 此图示范必要交点图的画法，按本题公式绘制；正式笔记不要求每题配图。
+\begin{center}
+\begin{tikzpicture}[x=0.060cm,y=0.040cm,>=Stealth,
+  every node/.style={font=\footnotesize}]
+  \draw[->] (0,0) -- (110,0) node[right] {$n^e$};
+  \draw[->] (0,0) -- (0,110) node[above] {$n$};
+  \draw[know,thick] (0,0) -- (100,100)
+    node[above left] {$n=n^e$};
+  \draw[termcolor,thick] (0,60) -- (100,90)
+    node[right] {$g(n^e)=60+0.3n^e$};
+  \draw[dashed,know] ({600/7},0) -- ({600/7},{600/7}) -- (0,{600/7});
+  \fill[starred] ({600/7},{600/7}) circle (1.7pt)
+    node[above left] {$n^*$};
+  \node[below] at ({600/7},0) {$85.71$};
+  \node[left] at (0,{600/7}) {$85.71$};
+  \node[left] at (0,60) {$60$};
+  \node[below left] at (0,0) {$0$};
+\end{tikzpicture}
+\end{center}
+均衡位于实际参与映射 $n=g(n^e)$ 与预期一致线 $n=n^e$ 的交点。
 \end{examplebox}
 
 \StudyTerm{\PriorityKnow}{连续规模近似}{用实数表示大量用户的参与规模；有限人数的离散问题须另外规定取整与均衡规则。}
