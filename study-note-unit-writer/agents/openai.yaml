@@ -1,4 +1,4 @@
 interface:
   display_name: "星标知识点写作"
   short_description: "按清楚的知识点和准确定义写作，删除衔接，保留必要解释与计算。"
-  default_prompt: "使用 $study-note-unit-writer 写作指定范围：先读 references/body-example.tex 正文样例，再按 references/unit-writing.md 写作要求完整定义知识点、逐点标星，保留必要解释与推导例题，减少衔接与重复。"
+  default_prompt: "使用 $study-note-unit-writer 写作指定范围：先读正文样例和写作要求，完整定义知识点、逐点三级星标；数理推导用数学链，文字推理用带条件的逻辑链，保留必要图表和例题，减少大段解释与重复。"

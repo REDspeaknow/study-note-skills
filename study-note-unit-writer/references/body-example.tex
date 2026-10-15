@@ -15,6 +15,36 @@
 
 \StudyTerm{\PriorityImportant}{规模经济}{产量增加使平均资源成本下降，作用于供给侧；网络效应改变用户价值，作用于需求侧。}
 
+\StudyPoint{\PriorityImportant}{场景分化与多个稳定大网络}\label{kp:scene-networks}
+\textbf{前提：}不同场景的网络效应范围相对独立，可近似分开分析。
+$n_s$ 为启动临界规模，$n_l$ 为稳定大网络规模。
+\begin{center}
+\begin{tikzpicture}[node distance=0.6cm,>=Stealth,
+  every node/.style={draw=termcolor!40,fill=boxbg,rounded corners=2pt,
+    align=center,font=\small,text width=3.8cm,inner sep=4pt}]
+  \node (scope) {使用场景分化\\效应范围相对独立};
+  \node[right=of scope] (local) {各自形成预期\\分别确定 $n_s$ 与 $n_l$};
+  \node[right=of local] (large) {若各自形成\\稳定的大网络均衡\\则多个大网络可并存};
+  \draw[->,thick,termcolor] (scope) -- (local);
+  \draw[->,thick,termcolor] (local) -- (large);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+{\small
+\begin{tabular}{ll}
+\toprule
+资料中的场景示例 & 网络效应范围的示意口径\\
+\midrule
+微信支付 & 社交关系、周边商户及线下支付\\
+支付宝 & 电商交易、金融与公共服务入口\\
+\bottomrule
+\end{tabular}}
+\end{center}
+\begin{itemize}
+\item \textbf{范围内多重均衡：}给定效应范围及满足条件的接入费，可能有多个均衡；预期影响实际实现的规模。
+\item \textbf{边界：}跨范围的大网络并存不等于范围内多重均衡；仅凭范围重合也不能推出胜者通吃。
+\end{itemize}
+
 \section{双边收费}
 
 \StudyTerm{\PriorityMust}{价格结构非中性}{两侧总费用不变时，改变买卖双方的收费分配仍会改变交易量。}
@@ -34,20 +64,20 @@ $h_i$ 为本侧收费增加一单位引起的需求相对降幅。
 \textbf{内点最优的必要条件：}$h_B=h_S$，仍须检验最优性并比较可行边界。
 若 $h_B>h_S$，小幅降低买方收费、等额提高卖方收费可增加交易量。
 \end{proofbox}
-\textbf{局部与全局：}$q'=0$ 只表示该点一阶变化为零，不代表价格结构中性。
-例如 $D^B=1-p^B,D^S=1-p^S$，则 $q=(1-p^B)(1-p+p^B)$，在 $p^B=p/2$ 处 $q'=0$，但改变分配通常改变 $q$。
-若两侧需求均为同参数指数形式 $D^i=e^{-ap^i}$，则 $Q=e^{-ap}$ 仅取决于总价，才是全局中性的例子。
+\begin{proofbox}[title=局部平稳与全局中性]
+设 $0<p<2$，以下比较在线性需求均为正的可行区间内进行。
+\begin{align*}
+D^B=1-p^B,\quad D^S=1-p^S
+&\Rightarrow q=(1-p^B)(1-p+p^B),\\
+q'=p-2p^B,\quad q''=-2
+&\Rightarrow q'(p/2)=0\quad\text{但 }q\text{ 不恒定};\\
+D^i=e^{-ap^i},\quad a>0
+&\Rightarrow Q=e^{-a(p^B+p^S)}=e^{-ap}\quad\text{只依赖总价}.
+\end{align*}
+\textbf{区别：}某点一阶变化为零 $\neq$ 所有可行收费分配下交易量不变。
+\end{proofbox}
 
 \StudyPoint{\PriorityMust}{非负收费约束下的线性需求算例}
-\begin{stepbox}[title=操作步骤]
-\begin{enumerate}
-\item \textbf{定总价、消一侧：}把 $p=p^B+p^S$ 固定，令 $p^S=p-p^B$，只留一个决策变量。
-\item \textbf{写出可行区间：}由两侧非负得 $p^B\in[0,p]$。
-\item \textbf{求驻点并判可行：}解 $q'(p^B)=0$，看驻点是否落在区间内。
-\item \textbf{比较边界与驻点：}驻点不可行时按 $q'$ 的符号取端点；仅凭 $q'=0$ 不能断定最优。
-\item \textbf{汇报整数结构：}$p^{S*}=p-p^{B*}$，再给出 $Q^*$。
-\end{enumerate}
-\end{stepbox}
 \begin{examplebox}[title=例题]
 \textbf{题：}总价 $p=0.4$，$D^B=1-2p^B$、$D^S=1-p^S$，两侧收费非负。求交易量最大的收费结构。
 
@@ -64,11 +94,23 @@ q'&=-0.2-4p^B,\qquad q''=-4.
 
 \section{新旧网络竞争：需求与收费}
 
-\StudyTerm{\PriorityMust}{满足预期均衡（FEE）}{用户依据对网络规模的预期作出参与决策，由这些决策形成的实际规模恰好等于预期规模。若参与映射为 $n=g(n^e)$，则均衡同时满足 $n=n^e$，即 $n=g(n)$。}
-它要求预期与行为结果一致，不意味着均衡唯一或稳定；同一价格可能对应多个满足预期均衡，稳定性需另按参与调整过程判断。
+\StudyTerm{\PriorityMust}{满足预期均衡（FEE）}{用户依据对网络规模的预期作出参与决策，由这些决策形成的实际规模恰好等于预期规模。若参与映射为 $n=g(n^e)$，则均衡同时满足 $n=n^e$，即 $n=g(n)$。它要求预期与行为结果一致，不意味着均衡唯一或稳定；同一价格可能对应多个满足预期均衡，稳定性需另按参与调整过程判断。}
 
 \StudyPoint{\PriorityMust}{新平台的需求与内点最优收费}
-消费者均匀分布于 $x\in[0,1]$，只选一个网络；新平台在左端、旧网络在右端。$r$ 是共同基础收益，$q$ 是新平台质量优势，$\tau>0$ 是单位偏好距离成本，$\beta_i\ge0$ 是各网络的组内效应强度。旧网络免费，新平台收取 $A_1\ge0$；假设市场完全覆盖、边际成本为零。
+\textbf{设定：}消费者均匀分布于 $x\in[0,1]$，单归属，市场完全覆盖。新平台在左端、旧网络在右端；旧网络免费，边际成本为零。
+\begin{center}
+{\small\begin{tabular}{ll}
+\toprule
+符号 & 含义与条件\\
+\midrule
+$r$ & 共同基础收益\\
+$q$ & 新平台质量优势\\
+$\tau>0$ & 单位偏好距离成本\\
+$\beta_i\ge0$ & 各网络的组内效应强度\\
+$A_1\ge0$ & 新平台接入费\\
+\bottomrule
+\end{tabular}}
+\end{center}
 % 课件中的线性城市分界关系：保留位置、边际用户和份额，不扩写图注。
 \begin{center}
 \begin{tikzpicture}[x=9cm,every node/.style={font=\small}]
@@ -109,14 +151,6 @@ $\beta_2-\tau<q<3\tau-2\beta_1-\beta_2$。
 区间外不能直接套内点公式，应改用份额在 $[0,1]$ 内的需求比较边界。
 \end{proofbox}
 \StudyPoint{\PriorityImportant}{新平台收费算例}
-\begin{stepbox}[title=操作步骤]
-\begin{enumerate}
-\item \textbf{写两侧效用：}把基础收益、质量优势、网络效应、距离成本和收费分项列出。
-\item \textbf{找无差异用户：}令 $u_1(\hat x)=u_2(\hat x)$，解出 $n_1(A_1)$。
-\item \textbf{核有效性：}先验 $D>0$，再用 $0<C<2D$ 判断内点解是否落在市场份额内。
-\item \textbf{求最优收费：}$\Pi_1'(A_1)=0$ 且 $\Pi_1''<0$，必要时改看边界份额。
-\end{enumerate}
-\end{stepbox}
 \begin{examplebox}[title=例题]
 \textbf{题：}$\tau=1$、$\beta_1=\beta_2=0.6$、$q=0.5$，其余设定同上，求新平台最优收费、份额与利润。
 
